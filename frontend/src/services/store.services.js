@@ -22,6 +22,7 @@ const initSettings = {
 }
 const initUser = {}
 const initNomination = {
+  type: 'individual',
   seq: -1,
   category: '',
   year: null,
@@ -30,12 +31,12 @@ const initNomination = {
   organization: '',
   acknowledgment: 'not_accepted',
   title: '',
-  nominees: [{
-    type            : 'nominee',
-    firstname       : '',
-    lastname        : '',
-    organization    : ''
-  }],
+  nominee: {
+    firstname: '',
+    lastname: ''
+  },
+  nominees: 0,
+  partners: [],
   contacts: {
     primary: {
       firstname: '',
@@ -92,12 +93,12 @@ const initValidation = {
   organization: false,
   acknowledgment: false,
   title: false,
-  nominees: false,
+  nominee: false,
+  partners: false,
   contacts: false,
   nominators: false,
   evaluation: false,
   attachments: false,
-  multipleNominees: false,
   counts: {
     total: 0,
     summary: 0,
@@ -196,13 +197,24 @@ const getters = {
     // Organization
     state.validation.title = !!state.nomination.title
 
-    // Nominees
-    state.validation.nominees = state.nomination.nominees.filter(nominee => {
-      return nominee.firstname.length === 0
-        || nominee.lastname.length === 0
-        || ( state.validation.multipleNominees && !nominee.type )
-        || ( state.validation.multipleNominees && !nominee.organization )
-    }).length === 0;
+    // Single Nominee
+    if (formServices.lookupType(state.nomination.category) === 'individual') {
+      state.validation.nominee = !!state.nomination.nominee
+        && !!state.nomination.nominee.firstname
+        && !!state.nomination.nominee.lastname
+        && state.nomination.nominee.firstname.length > 0
+        || state.nomination.nominee.lastname.length > 0
+      state.validation.partners = true
+    } else {
+      // Partners
+      // - ensure nominee count is above zero
+      // - ensure all partners have organizations
+      state.validation.nominee = true
+      state.validation.partners = state.nomination.nominees > 0
+        && state.nomination.partners.filter(partner => {
+        return !partner.organization
+      }).length === 0;
+    }
 
     // Nominators
     const hasAdditional = state.nomination.nominators[1].firstname.length > 0
@@ -426,11 +438,11 @@ const actions = {
             category=null,
             organization='',
             title='',
-            nominees=[{}],
+            nominee={},
             updatedAt=null,
             createdAt=null,
           } = nomination || {}
-          const { firstname='', lastname=''} = nominees[0] || {}
+          const { firstname='', lastname=''} = nominee || {}
           const updatedTS = new Date(updatedAt)
           const createdTS = new Date(createdAt)
           return {

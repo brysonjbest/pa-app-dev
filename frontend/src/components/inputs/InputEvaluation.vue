@@ -9,8 +9,7 @@
         class="mb-2"
       >
         <p>
-          <strong>The combined sections below must not exceed <u>{{ counts.max.total }}</u> words.
-          <em>Note that word counts are estimated as 5 characters per word (ignoring punctuation characters).</em></strong>
+          <strong>The combined sections below must not exceed <u>{{ counts.max.total }}</u> words.</strong>
         </p>
 
         <b-form-group

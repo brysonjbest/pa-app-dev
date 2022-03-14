@@ -35,7 +35,7 @@ export default {
 <style>
 main {
   margin-top: 80px;
-  padding-bottom: 200px;
+  padding-bottom: 300px;
 }
 #app {
   font-family: 'Avenir', Helvetica, Arial, sans-serif;

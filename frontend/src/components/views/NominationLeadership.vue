@@ -28,8 +28,8 @@
               <h4 id="list-item-organization">Organization</h4>
               <organization />
 
-              <h4 id="list-item-nominees">Nominee</h4>
-              <nominees type="single" />
+              <h4 id="list-item-nominee">Nominee</h4>
+              <nominee />
 
               <h4 id="list-item-nominators">Nominators</h4>
               <nominators />
@@ -115,7 +115,7 @@
 
 import pageheader from '../common/PageHeader'
 import organization from '../inputs/InputOrganization'
-import nominees from '../inputs/InputNominees'
+import nominee from '../inputs/InputNominee'
 import nominators from '../inputs/InputNominators'
 import contacts from '../inputs/InputContacts'
 import acknowledgment from '../inputs/InputAcknowledge'
@@ -128,7 +128,7 @@ export default {
   components: {
     pageheader,
     organization,
-    nominees,
+    nominee,
     nominators,
     contacts,
     acknowledgment,
@@ -141,7 +141,7 @@ export default {
       inputs: [
         {label: 'Overview', id: 'acknowledgment', required: true},
         {label: 'Organization', id: 'organization', required: true},
-        {label: 'Nominee', id: 'nominees', required: true},
+        {label: 'Nominee', id: 'nominee', required: true},
         {label: 'Nominators', id: 'nominators', required: true},
         {label: 'Contact Information', id: 'contacts', required: true},
         {label: 'Evaluation Considerations', id: 'evaluation', required: true},

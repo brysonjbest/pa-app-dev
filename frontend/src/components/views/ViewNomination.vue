@@ -40,7 +40,10 @@
               <h5>Category</h5>
             </b-col>
             <b-col>
-              <p>{{ lookup('categories', nomination.category) }}</p>
+              <p>
+                {{ lookup('categories', nomination.category) }}
+                ({{ nomination.category }})
+              </p>
             </b-col>
           </b-row>
           <b-row class="mb-4">
@@ -75,7 +78,20 @@
               {{lookup('organizations', nomination.organization)}}
             </b-col>
           </b-row>
-          <b-row  v-if="!!nomination.title" class="mb-4">
+          <b-row v-if="nomination.nominee && nominationType === 'individual'">
+            <b-col cols="3">
+              <h5>Nominee</h5>
+            </b-col>
+            <b-col>
+              <b-table
+                stacked
+                :items="[nomination.nominee]"
+                :fields="['firstname', 'lastname']"
+                primary-key="id"
+              ></b-table>
+            </b-col>
+          </b-row>
+          <b-row  v-if="!!nomination.title && nominationType === 'organization'" class="mb-4">
             <b-col cols="3">
               <h5>Title</h5>
             </b-col>
@@ -89,24 +105,26 @@
               <p>{{ nomination.acknowledgment.toUpperCase() }}</p>
             </b-col>
           </b-row>
-          <b-row>
-            <b-col cols="3"><h5>Nominees</h5></b-col>
+          <b-row v-if="nomination.nominees && nominationType === 'organization'" class="mb-4">
+            <b-col cols="3">
+              <h5>Nominees</h5>
+            </b-col>
+            <b-col>
+              <p>{{ nomination.nominees }}</p>
+            </b-col>
+          </b-row>
+          <b-row v-if="nomination.partners && nominationType === 'organization'">
+            <b-col cols="3">
+              <h5>Partners</h5>
+            </b-col>
             <b-col>
               <b-table
-                stacked
-                :items="nomination.nominees"
-                :fields="['type', 'firstname', 'lastname', 'organization']"
+                :items="nomination.partners"
+                :fields="['organization']"
                 striped
                 responsive="sm"
                 primary-key="id"
               >
-                <template #cell(type)="nominee">
-                  {{ lookup('nomineeTypes', nominee.item.type) }}
-                </template>
-
-                <template #cell(organization)="nominee">
-                  {{ lookup('organizations', nominee.item.organization) }}
-                </template>
               </b-table>
             </b-col>
           </b-row>
@@ -160,9 +178,6 @@
                 :items="[nomination.evaluation]"
                 primary-key="id"
               >
-                <template #cell(type)="nominee">
-                  {{ lookup('nomineeTypes', nominee.item.type) }}
-                </template>
               </b-table>
             </b-col>
           </b-row>
@@ -245,6 +260,9 @@ export default {
     },
     attachments () {
       return this.$store.getters.getAttachments
+    },
+    nominationType() {
+      return formServices.lookupType(this.nomination.category)
     }
   },
   methods: {

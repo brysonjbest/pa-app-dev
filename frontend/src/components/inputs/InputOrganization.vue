@@ -11,7 +11,7 @@
         <b-form-select
           id="input-organization"
           v-model="organization"
-          :options="options"
+          :options="organizations"
           :state="validation"
           :disabled="submitted"
         >
@@ -39,13 +39,13 @@ export default {
   },
   data() {
     return {
-      options: formServices.get('organizations')
+      organizations: formServices.get('organizations') || []
     }
   },
   computed: {
     organization: {
       get () {
-        return this.$store.getters.getNomination.organization;
+        return this.$store.getters.getNomination.organization
       },
       set (value) {
         this.$store.dispatch("setNomination", { organization: value })

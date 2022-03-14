@@ -36,8 +36,9 @@
               <h4 id="list-item-contacts">Contact Information</h4>
               <contacts />
 
-              <h4 id="list-item-nominees">Nominees</h4>
-              <nominees type="multiple" />
+              <h4 id="list-item-partners">Nominees/Partners</h4>
+              <nominees />
+              <partners />
 
               <h4 id="list-item-evaluation">Evaluation Considerations</h4>
               <evaluation>
@@ -109,6 +110,7 @@
 import pageheader from '../common/PageHeader'
 import organization from '../inputs/InputOrganization'
 import nominationTitle from '../inputs/InputNominationTitle'
+import partners from '../inputs/InputPartners'
 import nominees from '../inputs/InputNominees'
 import nominators from '../inputs/InputNominators'
 import contacts from '../inputs/InputContacts'
@@ -124,6 +126,7 @@ export default {
     organization,
     nominationTitle,
     nominees,
+    partners,
     nominators,
     contacts,
     acknowledgment,
@@ -139,7 +142,7 @@ export default {
         {label: 'Nomination Title', id: 'title', required: true},
         {label: 'Nominators', id: 'nominators', required: true},
         {label: 'Contact Information', id: 'contacts', required: true},
-        {label: 'Nominees', id: 'nominees', required: true},
+        {label: 'Nominees/Partners', id: 'partners', required: true},
         {label: 'Evaluation Considerations', id: 'evaluation', required: true},
         {label: 'Attachments', id: 'attachments', required: false}
       ]
@@ -153,11 +156,11 @@ export default {
           {text: 'Nomination failed to load.', type: 'danger'}
         )
       })
+    // set nomination type
+    this.$store.commit('setNomination', {type: 'organization'})
   }
 };
 </script>
 <style>
-form h4 {
-  padding-top: 70px;
-}
+form h4 { padding-top: 70px; }
 </style>

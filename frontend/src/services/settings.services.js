@@ -19,56 +19,88 @@ const schemaData = {
     {value: 'super-administrator', text: 'Super-Administrator'}
   ],
   "categories": [
-    {value: 'emerging-leader', text: 'Emerging Leader', sections:[
+    {
+      value: 'emerging-leader',
+      type:'individual',
+      text: 'Emerging Leader',
+      sections:[
         'summary',
         'context',
         'valuing_people',
         'commitment',
         'impact',
       ]},
-    {value: 'evidence-based-design', text: 'Evidence-Based Design', sections:[
+    {
+      value: 'evidence-based-design',
+      type:'organization',
+      text: 'Evidence-Based Design',
+      sections:[
         'summary',
         'context',
         'complexity',
         'approach',
         'impact',
       ]},
-    {value: 'innovation', text: 'Innovation', sections:[
+    {
+      value: 'innovation',
+      type: 'organization',
+      text: 'Innovation',
+      sections:[
         'summary',
         'context',
         'complexity',
         'approach',
         'impact',
       ]},
-    {value: 'leadership', text: 'Leadership', sections:[
+    {
+      value: 'leadership',
+      type: 'individual',
+      text: 'Leadership',
+      sections:[
         'summary',
         'context',
         'valuing_people',
         'commitment',
         'impact',
       ]},
-    {value: 'legacy', text: 'Legacy', sections:[
+    {
+      value: 'legacy',
+      type: 'individual',
+      text: 'Legacy',
+      sections:[
         'summary',
         'context',
         'valuing_people',
         'contribution',
         'impact',
       ]},
-    {value: 'organizational-excellence', text: 'Organizational Excellence', sections:[
+    {
+      value: 'organizational-excellence',
+      type: 'organization',
+      text: 'Organizational Excellence',
+      sections:[
         'summary',
         'context',
         'complexity',
         'approach',
         'impact',
       ]},
-    {value: 'partnership', text: 'Partnership', sections:[
+    {
+      value: 'partnership',
+      type: 'organization',
+      text: 'Partnership',
+      sections:[
         'summary',
         'context',
         'valuing_people',
         'commitment',
         'impact',
       ]},
-    {value: 'regional-impact', text: 'Regional Impact', sections:[
+    {
+      value: 'regional-impact',
+      type: 'organization',
+      text: 'Regional Impact',
+      sections:[
         'summary',
         'context',
         'valuing_people',
@@ -114,11 +146,6 @@ const schemaData = {
     {value: 'org-24', text: 'Government Communications and Public Engagement'},
     {value: 'org-25', text: 'Office of the Premier'}
   ],
-  "nomineeTypes": [
-    {value: null, text: 'Please select a nominee type'},
-    {value: 'partner', text: 'Partner'},
-    {value: 'nominee', text: 'Nominee'},
-  ],
   "mimeTypes": [
     {value: null, text: 'Please select a mime type'},
     {value: 'application/pdf', text: 'PDF'},
@@ -144,6 +171,15 @@ export default {
     if (schemaData[key] === 'undefined') return null;
     const found = schemaData[key].filter(item => item.value === value);
     return found.length > 0 ? found[0].text : null;
+  },
+
+  /**
+   * lookup nomination form type
+   * **/
+
+  lookupType: function lookupType(category) {
+    const found = schemaData.categories.filter(item => item.value === category);
+    return found.length > 0 ? found[0].type : null;
   },
 
   /**
