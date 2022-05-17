@@ -79,6 +79,7 @@ function addItem(doc, header, text) {
  */
 
 const generateNominationPDF = async function(jsonData, callback) {
+
   // destructure nomination data
   const {
     _id='',
@@ -94,6 +95,7 @@ const generateNominationPDF = async function(jsonData, callback) {
     evaluation= {},
     attachments= []
   } = jsonData || {};
+
 
   // - use unique sequence number to label file
   // - pad sequence with 00000
@@ -144,7 +146,7 @@ const generateNominationPDF = async function(jsonData, callback) {
 
   // Nominees (count)
   if (nominees > 0) {
-    addItem(doc, 'Number of Nominees', nominees);
+    addItem(doc, 'Number of Nominees', String(nominees));
   }
 
   // Partners
@@ -217,23 +219,25 @@ const generateNominationPDF = async function(jsonData, callback) {
       // include submission PDF file
       merger.add(submissionFilePath);
       // include file attachments
+      console.log('Starting PDF merge...');
       await Promise.all(
         attachments.map(async (attachment) => {
           const {file = {}} = attachment || {};
           const {path = ''} = file || {};
           merger.add(path);
         }));
+      console.log('Saving PDF merge...');
       //save under given name and reset the internal document
       await merger.save(mergedFilePath);
-      // check if page count is exceeded
+      // // check if page count is exceeded
       if (await getPageCount(mergedFilePath) - (range.start + range.count) > attachmentCountLimit) {
         console.log('Page count limit exceeded');
-        return callback('Page count limit exceeded');
+        return null;
       }
       console.log(`Merged PDF file ${mergedFilename} saved.`);
     } catch (err) {
-      console.log(err);
-      return callback(err);
+      console.warn(err);
+      return null;
     }
   })
 

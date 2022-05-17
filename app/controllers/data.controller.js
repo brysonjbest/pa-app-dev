@@ -8,11 +8,12 @@
 const NominationModel = require('../models/nomination.model');
 const AttachmentModel = require('../models/attachment.model');
 const counter = require('../models/counter.model');
-const { fileExists, createZIP, createCSV } = require('../services/files.services');
+const { fileExists, createZIP, createCSV, createZIPPackage} = require('../services/files.services');
 const { generateNominationPDF } = require('../services/pdf.services');
 const { Readable } = require('stream');
 const {validateYear} = require('../services/validation.services')
 
+// limit number of draft nomination submissions
 const maxNumberOfDrafts = 10;
 
 /**
@@ -186,7 +187,11 @@ exports.submit = async (req, res, next) => {
     data.attachments = await AttachmentModel.find({nomination: id});
 
     // generate downloadable PDF version
-    data.filePath = await generateNominationPDF(data, next);
+    const packagePath = await generateNominationPDF(data, next);
+    if (!packagePath)
+      return next(Error('PDFCorrupted'));
+    console.log('(After) Updated File Path:', data.filePath);
+    data.filePath = packagePath;
 
     // update submission status
     data.submitted = true;
@@ -290,8 +295,9 @@ exports.exporter = async (req, res, next) => {
 
     // handle exporting for requested format
     // - generate zipped archive of retrieved data
-    // - PDF
-    // - CSV
+    //  - PDF
+    //  - CSV
+    //  - ZIP
     const exportHandlers = {
       pdf: async () => {
         // bundle PDF versions in compressed folder
@@ -305,6 +311,11 @@ exports.exporter = async (req, res, next) => {
       csv: async () => {
         // convert JSON to CSV data format
         return await createCSV(nominations);
+      },
+      zip: async () => {
+        // bundle PDF versions in compressed folder
+        // - Note: single nomination sent to zipped packager
+        return await createZIPPackage(nominations[0]);
       }
     }
     const data = exportHandlers.hasOwnProperty(format)

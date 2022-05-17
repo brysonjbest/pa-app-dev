@@ -27,6 +27,7 @@
         </b-col>
         <b-col class="mb-2" align="right">
           <span v-if="selected.length > 0"> {{ selected.length }} Item(s) Selected</span>
+          <b-button class="m-1" size="sm" @click="clearFilter">Clear Filter</b-button>
           <b-button class="m-1" size="sm" @click="selectAllRows">Select All</b-button>
           <b-button class="m-1" size="sm" @click="clearSelected">Clear Selected</b-button>
           <b-button
@@ -172,6 +173,13 @@
         >
           Unsubmit
         </b-button>
+        <b-button
+          size="sm"
+          class="m-1"
+          @click="download(row.item)"
+        >
+          Download
+        </b-button>
       </template>
 
     </b-table>
@@ -263,6 +271,11 @@ export default {
     clearSelected() {
       this.$refs.selectableTable.clearSelected()
     },
+    clearFilter() {
+      this.selectStatus = ''
+      this.selectCategory = ''
+      this.selectOrganization = ''
+    },
     exportSelected(format) {
       this.exporter((this.selected || []).map(item => {
         return item.id;
@@ -290,11 +303,11 @@ export default {
               category=null,
               organization='',
               title='',
-              nominees=[{}],
+              nominee={},
               updatedAt=null,
               createdAt=null,
             } = nomination || {}
-            const { firstname='', lastname=''} = nominees[0] || {}
+            const { firstname='', lastname=''} = nominee || {}
             const updatedTS = new Date(updatedAt)
             const createdTS = new Date(createdAt)
             return {
@@ -374,6 +387,11 @@ export default {
           type: 'danger'
         }
       }
+    },
+    download (nomination) {
+      // download zipped version of nomination
+      const {id=''} = nomination || {}
+      this.exporter([id], 'zip')
     },
     async reroute(uri) {
       await this.$router.push(uri)

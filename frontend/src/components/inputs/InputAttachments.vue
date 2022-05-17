@@ -276,7 +276,7 @@ export default {
           }
           return []
         })
-    },
+    }
   }
 };
 </script>

@@ -70,6 +70,7 @@ const schemaData = {
       sections:[
         'summary',
         'context',
+        'complexity',
         'valuing_people',
         'contribution',
         'impact',
@@ -92,8 +93,8 @@ const schemaData = {
       sections:[
         'summary',
         'context',
-        'valuing_people',
-        'commitment',
+        'complexity',
+        'approach',
         'impact',
       ]},
     {
@@ -103,8 +104,8 @@ const schemaData = {
       sections:[
         'summary',
         'context',
-        'valuing_people',
-        'commitment',
+        'complexity',
+        'approach',
         'impact',
       ]},
   ],

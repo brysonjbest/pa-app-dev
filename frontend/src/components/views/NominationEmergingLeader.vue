@@ -42,18 +42,6 @@
               <template v-slot:context_overview>
                 <p>Briefly describe the conditions under which the employee demonstrates exemplary leadership to provide background and perspective.</p>
               </template>
-              <template v-slot:complexity_overview>
-                <div>
-                  <p>Describe the scope and scale of the evidence-based or evidence-informed approach to developing the policy or program including, but not limited to</p>
-                  <ul>
-                    <li>The reason and evidence for the change or initiative necessitating the development of the policy or program</li>
-                    <li>Risks encountered and overcome</li>
-                    <li>Constraints such as time frame, financial or existing policy</li>
-                    <li>Challenges around aligning stakeholder or partner group interests</li>
-                    <li>Technical or organizational difficulties identified and addressed</li>
-                  </ul>
-                </div>
-              </template>
 
               <template v-slot:valuing_people_overview>
                 <p>Identify and describe how the employee demonstrates their leadership in supporting the workplace including, but not limited to</p>
