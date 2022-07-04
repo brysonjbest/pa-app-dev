@@ -91,27 +91,4 @@ export default {
     const found = schemaData[key].filter((item) => item.value === value);
     return found.length > 0 ? found[0].text : null;
   },
-
-  /**
-   * lookup nomination form type
-   * **/
-
-  lookupType: function lookupType(category) {
-    const found = schemaData.categories.filter(
-      (item) => item.value === category
-    );
-    return found.length > 0 ? found[0].type : null;
-  },
-
-  /**
-   * check if category contains given section
-   * **/
-
-  checkSection: function checkSection(section, category) {
-    return (
-      schemaData["categories"].filter((cat) => {
-        return cat.value === category && cat.sections.includes(section);
-      }).length > 0
-    );
-  },
 };
