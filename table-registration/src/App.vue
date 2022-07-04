@@ -19,7 +19,10 @@ import { RouterLink, RouterView } from "vue-router";
 </template>
 
 <style>
-@import "@/assets/base.css";
+/* @import "@/assets/base.css"; */
+@import "primevue/resources/themes/nova/theme.css";
+@import "primevue/resources/primevue.min.css";
+@import "primeicons/primeicons.css";
 
 #app {
   max-width: 1280px;

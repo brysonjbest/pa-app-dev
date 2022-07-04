@@ -4,7 +4,6 @@ import InputFinancial from "../components/inputs/InputFinancial.vue";
 
 <template>
   <main>
-    <p>Hello, this is a test</p>
     <InputFinancial />
   </main>
 </template>
