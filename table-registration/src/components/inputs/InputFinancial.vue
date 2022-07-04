@@ -1,7 +1,7 @@
 <!-- Provides initial registration of financial details -->
 <template>
   <div>
-    <form @submit="onSubmit" @reset="onReset" v-if="show">
+    <form @submit="onSubmit" @reset="onReset">
       <Dropdown
         id="organization"
         v-model="registration.organization"
@@ -10,6 +10,17 @@
         optionValue="value"
         placeholder="Select a Organization"
       />
+      <h5>Branch</h5>
+      <div class="field">
+        <label for="branch">Branch</label>
+        <InputText
+          id="branch"
+          type="branch"
+          aria-describedby="branch-help"
+          v-model="registration.branch"
+        />
+        <small id="branch-help">Enter your branch.</small>
+      </div>
 
       <!-- <form-group id="input-group-branch" label="Branch:" label-for="branch">
         <form-input
@@ -151,168 +162,70 @@
   </div>
 </template>
 
-<script>
+<script setup>
 //import TablesDataService from "@/services/TablesDataService";
 import formServices from "@/services/settings.services";
+import { ref } from "vue";
+import { storeToRefs } from "pinia";
+import { useFinancialStore } from "../../stores/financial";
 
-export default {
-  name: "FinancialRegistrationForm",
-  props: {
-    //show: Boolean,
-  },
-  //   computed: {
-  //     registration: {
-  //       get() {
-  //         return this.$store.getters.getRegistration;
-  //       },
-  //       set(value) {
-  //         this.$store.dispatch("setRegistration", { registration: value });
-  //       },
-  //     },
-  //     clientMinistryState() {
-  //       if (this.registration.clientministry !== null) {
-  //         return this.registration.clientministry.length === 3 ? true : false;
-  //       }
-  //       return null;
-  //     },
-  //     respCodeState() {
-  //       if (this.registration.respcode !== null) {
-  //         return this.registration.respcode.length === 5 ? true : false;
-  //       }
-  //       return null;
-  //     },
-  //     servicelineState() {
-  //       if (this.registration.serviceline !== null) {
-  //         return this.registration.serviceline.length === 5 ? true : false;
-  //       }
-  //       return null;
-  //     },
-  //     stobState() {
-  //       if (this.registration.stob !== null) {
-  //         return this.registration.stob.length === 4 ? true : false;
-  //       }
-  //       return null;
-  //     },
-  //     projectState() {
-  //       if (this.registration.project !== null) {
-  //         return this.registration.project.length === 7 ? true : false;
-  //       }
-  //       return null;
-  //     },
-  //   },
-  data() {
-    return {
-      registration: {
-        organization: "",
-        branch: "",
-        primarycontact: "",
-        primaryemail: "",
-        financialcontact: "",
-        clientministry: null,
-        respcode: null,
-        serviceline: null,
-        stob: null,
-        project: null,
-      },
-      //organizations: formServices.get("organization") || [],
-      organizations: [
-        {
-          value: null,
-          text: "Please select an eligible Ministry or organization",
-          disabled: true,
-        },
-        { value: "org-1", text: "Advanced Education and Skills Training" },
-        { value: "org-2", text: "Agriculture, Food and Fisheries" },
-        { value: "org-3", text: "Attorney General & Housing" },
-        { value: "org-4", text: "Children and Family Development" },
-        { value: "org-5", text: "Citizens’ Services" },
-        { value: "org-6", text: "Education" },
-        { value: "org-7", text: "Emergency Management BC" },
-        { value: "org-8", text: "Energy, Mines and Low Carbon Innovation" },
-        { value: "org-9", text: "Environment and Climate Change Strategy" },
-        { value: "org-10", text: "Environment Assessment Office" },
-        { value: "org-11", text: "Finance" },
-        {
-          value: "org-12",
-          text: "Forests, Lands, Natural Resource Operations and Rural Development",
-        },
-        { value: "org-13", text: "Health" },
-        { value: "org-14", text: "Indigenous Relations and Reconciliation" },
-        { value: "org-15", text: "Jobs, Economic Recovery and Innovation" },
-        { value: "org-16", text: "Labour" },
-        { value: "org-17", text: "Mental Health & Addictions" },
-        { value: "org-18", text: "Municipal Affairs" },
-        { value: "org-19", text: "Public Safety & Solicitor General" },
-        { value: "org-20", text: "Social Development & Poverty Reduction" },
-        { value: "org-21", text: "Tourism, Arts, Culture and Sport" },
-        { value: "org-22", text: "Transportation & Infrastructure" },
-        { value: "org-23", text: "BC Public Service Agency" },
-        {
-          value: "org-24",
-          text: "Government Communications and Public Engagement",
-        },
-        { value: "org-25", text: "Office of the Premier" },
-      ],
-      show: true,
-    };
-  },
-  methods: {
-    onSubmit(event) {
-      event.preventDefault();
-      alert(JSON.stringify(this.registration));
-      console.log("test of reg", this.registration);
-      console.log(this.$store.getters.isRegistered);
+const { registration } = storeToRefs(useFinancialStore());
+// const registration = ref({
+//   organization: "",
+//   branch: "",
+//   primarycontact: "",
+//   primaryemail: "",
+//   financialcontact: "",
+//   clientministry: null,
+//   respcode: null,
+//   serviceline: null,
+//   stob: null,
+//   project: null,
+// });
+const organizations = ref(formServices.get("organizations") || []);
 
-      //   registrationStore
-      //     .addRegistration(this.registration)
-      //     //   TablesDataService.createRegistration(this.registration)
-      //     .then((res) => {
-      //       console.log(res);
-      //       this.$forceUpdate;
-      //       //Perform Success Action
-      //     })
-      //     .catch((error) => {
-      //       console.log(error.response.status);
-      //       // error.response.status Check status code
-      //     })
-      //     .finally(() => {
-      //       //Perform action in always
-      //     });
-    },
-    onReset(event) {
-      event.preventDefault();
-      // Reset our form values
-      this.registration.organization = "";
-      this.registration.branch = "";
-      this.registration.primarycontact = "";
-      this.registration.financialcontact = "";
-      this.registration.clientministry = null;
-      this.registration.respcode = null;
-      this.registration.serviceline = null;
-      this.registration.stob = null;
-      this.registration.project = null;
-      this.show = false;
-      this.$nextTick(() => {
-        this.show = true;
-      });
-    },
-  },
+const onSubmit = function (event) {
+  event.preventDefault();
+  alert(JSON.stringify(this.registration));
+  console.log("test of reg", this.registration);
+  console.log(this.$store.getters.isRegistered);
+
+  //   registrationStore
+  //     .addRegistration(this.registration)
+  //     //   TablesDataService.createRegistration(this.registration)
+  //     .then((res) => {
+  //       console.log(res);
+  //       this.$forceUpdate;
+  //       //Perform Success Action
+  //     })
+  //     .catch((error) => {
+  //       console.log(error.response.status);
+  //       // error.response.status Check status code
+  //     })
+  //     .finally(() => {
+  //       //Perform action in always
+  //     });
+};
+const onReset = function (event) {
+  event.preventDefault();
+  // Reset our form values
+  this.registration.organization = "";
+  this.registration.branch = "";
+  this.registration.primarycontact = "";
+  this.registration.financialcontact = "";
+  this.registration.clientministry = null;
+  this.registration.respcode = null;
+  this.registration.serviceline = null;
+  this.registration.stob = null;
+  this.registration.project = null;
+  this.show = false;
+  this.$nextTick(() => {
+    this.show = true;
+  });
 };
 </script>
 
 <style scoped>
-/* Chrome, Safari, Edge, Opera */
-input::-webkit-outer-spin-button,
-input::-webkit-inner-spin-button {
-  -webkit-appearance: none;
-  margin: 0;
-}
-
-/* Firefox */
-input[type="number"] {
-  -moz-appearance: textfield;
-}
-
 .flex-grid {
   display: flex;
 }
