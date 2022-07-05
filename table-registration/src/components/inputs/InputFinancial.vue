@@ -1,4 +1,5 @@
 <!-- Provides initial registration of financial details -->
+<!-- To put in notifications of error when submitting page -->
 <template>
   <div>
     <form @submit="onSubmit" @reset="onReset">

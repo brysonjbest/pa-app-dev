@@ -22,6 +22,12 @@ import InputMask from "primevue/inputmask";
 import InputNumber from "primevue/inputnumber";
 import InputText from "primevue/inputtext";
 
+//DataTable Component Imports
+import DataTable from "primevue/datatable";
+import Column from "primevue/column";
+import ColumnGroup from "primevue/columngroup";
+import Row from "primevue/row";
+
 const app = createApp(App);
 
 app.use(createPinia());
@@ -43,5 +49,10 @@ app.component("Checkbox", Checkbox);
 app.component("InputMask", InputMask);
 app.component("InputNumber", InputNumber);
 app.component("InputText", InputText);
+
+app.component("DataTable", DataTable);
+app.component("Column", Column);
+app.component("ColumnGroup", ColumnGroup);
+app.component("Row", Row);
 
 app.mount("#app");

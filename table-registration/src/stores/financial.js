@@ -20,7 +20,12 @@ export const useFinancialStore = defineStore({
       },
     };
   },
-  getters: {},
+  getters: {
+    getId() {
+      console.log("testing getId", this.registration);
+      return this.registration._id;
+    },
+  },
   actions: {
     async fill(registrationId) {
       this.registration = await apiRoutes.getRegistration(registrationId);

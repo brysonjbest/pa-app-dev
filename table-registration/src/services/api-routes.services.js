@@ -8,6 +8,10 @@ class TablesDataService {
     return api.get(`/guests/${id}`);
   }
 
+  getGuestByRegistration(registrationID) {
+    return api.get(`/guests/${registrationID}`);
+  }
+
   createGuest(data) {
     return api.post("/guests", data);
   }

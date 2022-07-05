@@ -6,6 +6,26 @@
  */
 
 const schemaData = {
+  registrationSelection: [
+    { field: "organization", text: "Organization" },
+    { field: "branch", text: "Branch" },
+    { field: "primarycontact", text: "Primary Contact" },
+    { field: "primaryemail", text: "Primary Contact's Email" },
+    { field: "financialcontact", text: "Financial Contact" },
+    { field: "clientministry", text: "Client/Ministry Code" },
+    { field: "respcode", text: "RESP Code" },
+    { field: "serviceline", text: "Service Line" },
+    { field: "stob", text: "STOB" },
+    { field: "project", text: "Project Code" },
+  ],
+  guestSelection: [
+    { field: "organization", text: "Organization" },
+    { field: "firstname", text: "First Name" },
+    { field: "lastname", text: "Last Name" },
+    { field: "attendancetype", text: "Attendance Type" },
+    { field: "accessibility", text: "Accessibility Requirements" },
+    { field: "dietary", text: "Dietary Requirements" },
+  ],
   roles: [
     { value: null, text: "Please select a user role" },
     { value: "inactive", text: "Inactive" },
@@ -48,12 +68,12 @@ const schemaData = {
     { value: "org-25", text: "Office of the Premier" },
   ],
   attendancetypes: [
-    "Minister",
-    "Deputy Minister",
-    "Associate/Assistant Deputy Minister",
-    "Finalist",
-    "Finalist Guest",
-    "General Attendee",
+    { value: "minister", text: "Minister" },
+    { value: "deputyminister", text: "Deputy Minister" },
+    { value: "associateminister", text: "Associate/Assistant Deputy Minister" },
+    { value: "finalist", text: "Finalist" },
+    { value: "finalistguest", text: "Finalist Guest" },
+    { value: "generalattendee", text: "General Attendee" },
   ],
   dietaryoptions: [
     { value: "dairyfree", text: "Dairy-Free" },
