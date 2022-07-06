@@ -27,6 +27,7 @@ import DataTable from "primevue/datatable";
 import Column from "primevue/column";
 import ColumnGroup from "primevue/columngroup";
 import Row from "primevue/row";
+import Dialog from "primevue/dialog";
 
 const app = createApp(App);
 
@@ -54,5 +55,6 @@ app.component("DataTable", DataTable);
 app.component("Column", Column);
 app.component("ColumnGroup", ColumnGroup);
 app.component("Row", Row);
+app.component("Dialog", Dialog);
 
 app.mount("#app");

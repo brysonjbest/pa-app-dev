@@ -17,11 +17,11 @@ class TablesDataService {
   }
 
   deleteGuest(id) {
-    return api.delete(`/guests/${id}`);
+    return api.delete(`/guests/delete/${id}`);
   }
 
   updateGuest(id, data) {
-    return api.put(`/guests/${id}`, data);
+    return api.post(`/guests/${id}`, data);
   }
 
   getAllRegistrations() {

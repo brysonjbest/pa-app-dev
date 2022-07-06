@@ -14,6 +14,7 @@ const api = axios.create({
       : "http://localhost:3001/tables",
   headers: {
     "Content-Type": "application/json",
+    dataType: "json",
   },
   withCredentials: true,
 });

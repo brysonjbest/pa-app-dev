@@ -50,8 +50,12 @@ export const useGuestsStore = defineStore({
         dietary,
       });
     },
-    async updateGuestList(guid) {
-      this.guests[guid] = this.guest;
+    async updateGuest(id, guestData) {
+      await apiRoutes.updateGuest(id, guestData);
+    },
+
+    async deleteGuest(id) {
+      await apiRoutes.deleteGuest(id);
     },
 
     async registerGuest(guestData) {

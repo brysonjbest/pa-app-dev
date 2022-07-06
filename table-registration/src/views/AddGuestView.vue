@@ -10,6 +10,9 @@ import GuestList from "../components/GuestList.vue";
 const { guests } = storeToRefs(useGuestsStore());
 //const guestStore = useGuestsStore();
 const columns = ref(formServices.get("guestSelection") || []);
+
+const guestStore = useGuestsStore();
+//guestStore.fillGuests();
 // const guests = guestStore.fillGuests();
 </script>
 
