@@ -17,7 +17,7 @@ class TablesDataService {
   }
 
   deleteGuest(id) {
-    return api.delete(`/guests/delete/${id}`);
+    return api.post(`/guests/delete/${id}`);
   }
 
   updateGuest(id, data) {

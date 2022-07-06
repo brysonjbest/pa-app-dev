@@ -1,7 +1,11 @@
 <template>
   <div>
     <div>
-      <DataTable :value="guests" responsiveLayout="scroll">
+      <DataTable
+        :value="guests"
+        responsiveLayout="stack"
+        :key="dataTableRender"
+      >
         <Column
           v-for="col of columns"
           :field="col.field"
@@ -18,7 +22,7 @@
             <Button
               icon="pi pi-trash"
               class="p-button-rounded p-button-warning"
-              @click="deleteGuest(slotProps.data)"
+              @click="confirmDeleteGuest(slotProps.data)"
             />
           </template>
         </Column>
@@ -131,13 +135,42 @@
           />
         </template>
       </Dialog>
+      <Dialog
+        v-model:visible="deleteGuestDialog"
+        :style="{ width: '450px' }"
+        header="Confirm"
+        :modal="true"
+      >
+        <div class="confirmation-content">
+          <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+          <span v-if="guest"
+            >Are you sure you want to delete
+            <b>{{ guest.firstname }} {{ guest.lastname }}</b
+            >?</span
+          >
+        </div>
+        <template #footer>
+          <Button
+            label="No"
+            icon="pi pi-times"
+            class="p-button-text"
+            @click="deleteGuestDialog = false"
+          />
+          <Button
+            label="Yes"
+            icon="pi pi-check"
+            class="p-button-text"
+            @click="deleteGuest"
+          />
+        </template>
+      </Dialog>
     </div>
   </div>
 </template>
 
 <script>
 import formServices from "../services/settings.services";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../stores/guests";
 
@@ -149,9 +182,17 @@ export default {
     const attendancetypes = ref(formServices.get("attendancetypes") || []);
     const accessibility = ref(formServices.get("accessibilityoptions") || []);
     const dietary = ref(formServices.get("dietaryoptions") || []);
+    const dataTableRender = ref(0);
 
-    guestStore.fillGuests();
+    const loadLazyData = () => {
+      guestStore.fillGuests();
+    };
+
+    onMounted(() => {
+      loadLazyData();
+    });
     const { guests } = storeToRefs(useGuestsStore());
+
     const guest = ref({});
     const submitted = ref(false);
     const guestDialog = ref(false);
@@ -162,7 +203,7 @@ export default {
       guest.value = { ...prod };
       guestDialog.value = true;
     };
-    const deleteGuest = (prod) => {
+    const confirmDeleteGuest = (prod) => {
       guest.value = prod;
       deleteGuestDialog.value = true;
     };
@@ -175,21 +216,38 @@ export default {
     const saveGuest = async function (event) {
       event.preventDefault();
       submitted.value = true;
-      //const isFormCorrect = await this.v$.$validate();
-      //console.log(isFormCorrect);
 
       guestStore
         .updateGuest(guest.value["_id"], guest.value)
-        .then(guestStore.fillGuests())
+
         .then(() => {
           guestDialog.value = false;
           guest.value = {};
         })
+        .then(guestStore.fillGuests())
         .catch((error) => {
           console.log(error);
           // error.response.status Check status code
         })
         .finally(() => {
+          loadLazyData();
+        });
+    };
+
+    const deleteGuest = async function () {
+      guestStore
+        .deleteGuest(guest.value["_id"])
+
+        .then(() => {})
+        .then(guestStore.fillGuests())
+        .catch((error) => {
+          console.log(error);
+          // error.response.status Check status code
+        })
+        .finally(() => {
+          deleteGuestDialog.value = false;
+          guest.value = {};
+          loadLazyData();
           //Perform action in always
         });
     };
@@ -205,10 +263,13 @@ export default {
       submitted,
       guestDialog,
       deleteGuestDialog,
+      dataTableRender,
       editGuest,
+      confirmDeleteGuest,
       deleteGuest,
       hideDialog,
       saveGuest,
+      loadLazyData,
     };
   },
 };
