@@ -144,13 +144,14 @@
 import formServices from "@/services/settings.services";
 import useVuelidate from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
-import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useFinancialStore } from "../../stores/financial";
+import { useAuthUserStore } from "../../stores/users";
 
 export default {
   setup() {
     const register = useFinancialStore();
+    const userStore = useAuthUserStore();
     const { registration } = storeToRefs(useFinancialStore());
     const rules = {
       organization: { required },
@@ -202,6 +203,10 @@ export default {
       this.registration.stob = null;
       this.registration.project = null;
     };
+
+    const userGUID = userStore.getUser;
+    register.fill(userGUID.guid);
+
     return { registration, v$, organizations, onSubmit, onReset };
   },
 };

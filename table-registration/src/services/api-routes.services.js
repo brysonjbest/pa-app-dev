@@ -28,8 +28,8 @@ class TablesDataService {
     return api.get("/tables/registrations");
   }
 
-  getRegistration(id) {
-    return api.get(`/tables/registrations/${id}`);
+  getRegistration(guid) {
+    return api.get(`/tables/registrations/${guid}`);
   }
 
   createRegistration(data) {
@@ -37,10 +37,10 @@ class TablesDataService {
   }
 
   updateRegistration(id, data) {
-    return api.put(`/tables/registrations/${id}`, data);
+    return api.post(`/tables/registrations/${id}`, data);
   }
   deleteRegistration(id) {
-    return api.delete(`/tables/registrations/${id}`);
+    return api.post(`/tables/registrations/${id}`);
   }
   //   deleteAll() {
   //     return api.delete(`/registrations`);

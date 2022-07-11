@@ -78,7 +78,9 @@ const authenticate = async (to, from, next) => {
     to.name !== "page-not-found"
   )
     return next({ path: "/401" });
-  else next();
+  else {
+    next();
+  }
 };
 
 /**
