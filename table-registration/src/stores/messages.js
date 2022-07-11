@@ -1,0 +1,30 @@
+import { defineStore } from "pinia";
+
+export const useMessageStore = defineStore({
+  id: "messageStore",
+  state: () => {
+    return {
+      message: {
+        text: "",
+        type: "",
+        spinner: false,
+      },
+    };
+  },
+
+  getters: {
+    getMessage() {
+      console.log("testing message", this.message.text);
+      return this.message;
+    },
+  },
+  actions: {
+    setMessage(newValue) {
+      const { text = "", type = "", spinner = false } = newValue || {};
+      state.message = { text: text, type: type, spinner: spinner };
+    },
+    resetMessage() {
+      this.$reset();
+    },
+  },
+});
