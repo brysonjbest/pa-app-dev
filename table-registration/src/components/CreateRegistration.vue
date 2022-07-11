@@ -28,18 +28,26 @@ export default {
     const messages = useMessageStore();
 
     const { guid } = userStore.getUser;
-    financialStore
-      .createRegistration(guid)
-      .then(function (data) {
-        if (data) router.push(`/edit/${data.guid}`);
-      })
-      .catch((err) => {
-        console.error(err);
-        messages.setMessage({
-          text: "Registration could not be created. Please contact the site administrator for assistance",
-          type: "danger",
-        });
+    try {
+      financialStore.fill(guid).then((data) => {
+        if (data) {
+          router.push(`/edit/${guid}`);
+        }
       });
+    } catch {
+      financialStore
+        .createRegistration(guid)
+        .then(function (data) {
+          if (data) router.push(`/edit/${data.guid}`);
+        })
+        .catch((err) => {
+          console.error(err);
+          messages.setMessage({
+            text: "Registration could not be created. Please contact the site administrator for assistance",
+            type: "danger",
+          });
+        });
+    }
   },
 };
 </script>

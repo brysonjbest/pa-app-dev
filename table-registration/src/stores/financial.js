@@ -28,8 +28,9 @@ export const useFinancialStore = defineStore({
   },
   actions: {
     async fill(guid) {
-      this.registration = await apiRoutes.getRegistration(guid);
-      return this.registration;
+      const registrationData = await apiRoutes.getRegistration(guid);
+      this.registration = registrationData.data[0];
+      return registrationData;
     },
 
     async createRegistration(guid) {
