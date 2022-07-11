@@ -175,7 +175,10 @@ import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../stores/guests";
 
 export default {
-  setup() {
+  props: {
+    adminView: Boolean,
+  },
+  setup(props) {
     const guestStore = useGuestsStore();
     const columns = ref(formServices.get("guestSelection") || []);
     const organizations = ref(formServices.get("organizations") || []);
@@ -183,6 +186,11 @@ export default {
     const accessibility = ref(formServices.get("accessibilityoptions") || []);
     const dietary = ref(formServices.get("dietaryoptions") || []);
     const dataTableRender = ref(0);
+
+    const fillList = function (id) {
+      if (props.adminView) return fillGuests();
+      else return fillGuestsRegistration(id);
+    };
 
     const loadLazyData = () => {
       guestStore.fillGuests();
