@@ -2,23 +2,35 @@ import api from "./api.services";
 
 class UsersDataService {
   getAllUsers() {
-    return api.get("/users");
+    return api.get("/users/view");
   }
 
-  getGuest(id) {
-    return api.get(`/users/guests/${id}`);
+  getGuestByID(guid) {
+    return api.get(`/users/view/${guid}`);
+  }
+
+  login() {
+    return api.get("users/login");
+  }
+
+  logout() {
+    return api.get("users/logout");
+  }
+
+  activate(guid) {
+    return api.get(`users/activate/${guid}`);
   }
 
   getUserByRegistration(registrationID) {
     return api.get(`/users/${registrationID}`);
   }
 
-  createUser(data) {
-    return api.post("/users", data);
+  registerUser(data) {
+    return api.post("/register", data);
   }
 
   deleteUser(id) {
-    return api.post(`/users/delete/${id}`);
+    return api.get(`/users/delete/${id}`);
   }
 
   updateUser(id, data) {
