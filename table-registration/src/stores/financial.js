@@ -31,6 +31,12 @@ export const useFinancialStore = defineStore({
       this.registration = await apiRoutes.getRegistration(registrationId);
     },
 
+    async createRegistration(guid) {
+      const newRegistration = await apiRoutes.createRegistration({ guid });
+      this.registration = newRegistration.data;
+      return this.registration;
+    },
+
     async registerFinancialInformation(registrationData) {
       delete registrationData["guid"];
       const newRegistration = await apiRoutes.createRegistration(

@@ -9,6 +9,10 @@ class UsersDataService {
     return api.get(`/users/view/${guid}`);
   }
 
+  getUserInfo() {
+    return api.get(`users/info`);
+  }
+
   login() {
     return api.get("users/login");
   }

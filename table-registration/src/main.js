@@ -14,6 +14,7 @@ import DialogService from "primevue/dialogservice";
 import DynamicDialog from "primevue/dynamicdialog";
 import Sidebar from "primevue/sidebar";
 import Menu from "primevue/menu";
+import Message from "primevue/message";
 
 //Form Component imports
 import Checkbox from "primevue/checkbox";
@@ -44,6 +45,7 @@ app.component("ConfirmDialog", ConfirmDialog);
 app.component("DynamicDialog", DynamicDialog);
 app.component("Sidebar", Sidebar);
 app.component("Menu", Menu);
+app.component("Message", Message);
 
 app.component("Dropdown", Dropdown);
 app.component("Checkbox", Checkbox);

@@ -21,7 +21,7 @@ export const useMessageStore = defineStore({
   actions: {
     setMessage(newValue) {
       const { text = "", type = "", spinner = false } = newValue || {};
-      state.message = { text: text, type: type, spinner: spinner };
+      this.message = { text: text, type: type, spinner: spinner };
     },
     resetMessage() {
       this.$reset();
