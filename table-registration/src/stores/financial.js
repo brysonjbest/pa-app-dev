@@ -22,7 +22,6 @@ export const useFinancialStore = defineStore({
   },
   getters: {
     getId() {
-      console.log("testing getId", this.registration);
       return this.registration._id;
     },
   },

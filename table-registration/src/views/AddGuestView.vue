@@ -1,6 +1,6 @@
 <script setup>
 import InputGuest from "../components/inputs/InputGuest.vue";
-import TableList from "../components/TableList.vue";
+// import TableList from "../components/TableList.vue";
 import formServices from "../services/settings.services";
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
@@ -19,7 +19,6 @@ const guestStore = useGuestsStore();
 <template>
   <main>
     <InputGuest />
-    <TableList :columns="columns" :data="guests" />
-    <GuestList />
+    <GuestList :adminView="false" />
   </main>
 </template>

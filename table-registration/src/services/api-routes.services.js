@@ -8,8 +8,8 @@ class TablesDataService {
     return api.get(`/tables/guests/${id}`);
   }
 
-  getGuestByRegistration(registrationID) {
-    return api.get(`/tables/guests/${registrationID}`);
+  getGuestsByRegistration(registrationID) {
+    return api.get(`/tables/registrations/${registrationID}/guests`);
   }
 
   createGuest(data) {

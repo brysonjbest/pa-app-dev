@@ -173,6 +173,7 @@ import formServices from "../services/settings.services";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../stores/guests";
+import { useAuthUserStore } from "../stores/users";
 
 export default {
   props: {
@@ -186,14 +187,17 @@ export default {
     const accessibility = ref(formServices.get("accessibilityoptions") || []);
     const dietary = ref(formServices.get("dietaryoptions") || []);
     const dataTableRender = ref(0);
+    const userStore = useAuthUserStore();
 
     const fillList = function (id) {
-      if (props.adminView) return fillGuests();
-      else return fillGuestsRegistration(id);
+      const user = userStore.getUser;
+      console.log("this is user", user);
+      if (props.adminView) return guestStore.fillGuests();
+      else return guestStore.fillGuestsRegistration(user.guid);
     };
 
     const loadLazyData = () => {
-      guestStore.fillGuests();
+      fillList();
     };
 
     onMounted(() => {
@@ -232,7 +236,7 @@ export default {
           guestDialog.value = false;
           guest.value = {};
         })
-        .then(guestStore.fillGuests())
+        .then(fillList())
         .catch((error) => {
           console.log(error);
           // error.response.status Check status code
@@ -247,7 +251,7 @@ export default {
         .deleteGuest(guest.value["_id"])
 
         .then(() => {})
-        .then(guestStore.fillGuests())
+        .then(fillList())
         .catch((error) => {
           console.log(error);
           // error.response.status Check status code

@@ -144,7 +144,6 @@ export default {
           this.guest.dietary = [];
           this.guest.accessibility = [];
           this.$forceUpdate;
-          guestData.fillGuests();
         })
         .catch((error) => {
           console.log(error);

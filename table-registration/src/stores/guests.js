@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import apiRoutes from "../services/api-routes.services";
 import { useFinancialStore } from "./financial";
+import { useAuthUserStore } from "./users";
 
 export const useGuestsStore = defineStore({
   id: "guestsStore",
@@ -20,17 +21,31 @@ export const useGuestsStore = defineStore({
   },
   getters: {},
   actions: {
+    async fillGuestsRegistration(guid) {
+      //this.guests = await apiRoutes.getGuestByRegistration(registrationID);
+      this.guests = await (
+        await apiRoutes.getGuestsByRegistration(guid)
+      ).data.guests;
+    },
+
     async fillGuests() {
       //this.guests = await apiRoutes.getGuestByRegistration(registrationID);
       this.guests = await (await apiRoutes.getAllGuests()).data;
     },
+
     async addRegistrationData() {
       console.log("registrationdata add");
       const registrationData = useFinancialStore();
       this.guest.registration = await registrationData.getId;
     },
     async addGuestList() {
+      // const userData = useAuthUserStore();
+      // this.guest.registration = await userData.getId;
+      const registrationData = useFinancialStore();
+      this.guest.registration = await registrationData.getId;
+
       const {
+        registration = "",
         guid = "",
         firstname = "",
         lastname = "",
@@ -41,6 +56,7 @@ export const useGuestsStore = defineStore({
       } = this.guest || {};
 
       await this.guests.push({
+        registration,
         guid,
         firstname,
         lastname,
