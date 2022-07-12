@@ -11,7 +11,7 @@
           :options="organizations"
           optionLabel="text"
           optionValue="value"
-          placeholder="Select a Organization"
+          placeholder="Select an Organization"
         />
         <div v-if="v$.organization.$error">Organization field is required.</div>
       </div>
@@ -22,7 +22,7 @@
           id="branch"
           type="branch"
           aria-describedby="branch-help"
-          v-model="registration.branch"
+          v-model.trim="registration.branch"
         />
         <div v-if="v$.branch.$error">Branch is required.</div>
         <small id="branch-help">Enter your branch.</small>
@@ -34,7 +34,7 @@
           id="primarycontact"
           type="primarycontact"
           aria-describedby="primarycontact-help"
-          v-model="registration.primarycontact"
+          v-model.trim="registration.primarycontact"
         />
         <small id="primarycontact-help"
           >Enter the name of the Primary Contact for this registration.</small
@@ -46,7 +46,7 @@
           id="primaryemail"
           type="primaryemail"
           aria-describedby="primaryemail-help"
-          v-model="registration.primaryemail"
+          v-model.trim="registration.primaryemail"
         />
         <small id="primaryemail-help">Enter the Primary Contact's email.</small>
       </div>
@@ -56,7 +56,7 @@
           id="financialcontact"
           type="financialcontact"
           aria-describedby="financialcontact-help"
-          v-model="registration.financialcontact"
+          v-model.trim="registration.financialcontact"
         />
         <small id="financialcontact-help"
           >Enter the name of the Financial Contact for this registration.</small

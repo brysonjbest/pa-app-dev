@@ -1,6 +1,7 @@
 <script setup>
 import { useAuthUserStore } from "../stores/users";
 import GuestList from "../components/GuestList.vue";
+import RegistrationList from "../components/RegistrationList.vue";
 const userStore = useAuthUserStore();
 
 userStore.login();
@@ -19,5 +20,6 @@ const logout = function () {
       @click="logout"
     />
     <GuestList :adminView="true" />
+    <RegistrationList :adminView="true" />
   </main>
 </template>

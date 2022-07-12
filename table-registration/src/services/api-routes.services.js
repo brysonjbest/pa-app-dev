@@ -40,7 +40,7 @@ class TablesDataService {
     return api.post(`/tables/registrations/${id}`, data);
   }
   deleteRegistration(id) {
-    return api.post(`/tables/registrations/${id}`);
+    return api.post(`/tables/registrations/delete/${id}`);
   }
   //   deleteAll() {
   //     return api.delete(`/registrations`);

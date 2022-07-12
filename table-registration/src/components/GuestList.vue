@@ -178,6 +178,7 @@ import { useAuthUserStore } from "../stores/users";
 export default {
   props: {
     adminView: Boolean,
+    registrationID: String,
   },
   setup(props) {
     const guestStore = useGuestsStore();
@@ -189,11 +190,16 @@ export default {
     const dataTableRender = ref(0);
     const userStore = useAuthUserStore();
 
-    const fillList = function (id) {
+    const fillList = function () {
       const user = userStore.getUser;
-      console.log("this is user", user);
+      guestStore.$reset;
       if (props.adminView) return guestStore.fillGuests();
-      else return guestStore.fillGuestsRegistration(user.guid);
+      if (props.registrationID)
+        return guestStore.fillGuestsRegistration(registrationID);
+      else
+        return guestStore.fillGuestsRegistration(user.guid)
+          ? guestStore.fillGuestsRegistration(user.guid)
+          : [];
     };
 
     const loadLazyData = () => {

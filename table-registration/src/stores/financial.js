@@ -18,6 +18,7 @@ export const useFinancialStore = defineStore({
         stob: null,
         project: null,
       },
+      registrations: [],
     };
   },
   getters: {
@@ -29,7 +30,15 @@ export const useFinancialStore = defineStore({
     async fill(guid) {
       const registrationData = await apiRoutes.getRegistration(guid);
       this.registration = registrationData.data[0];
-      return registrationData;
+      return registrationData.data[0];
+    },
+
+    async fillAllRegistrations() {
+      this.registrations = await (await apiRoutes.getAllRegistrations()).data;
+    },
+
+    async deleteRegistration(id) {
+      await apiRoutes.deleteRegistration(id);
     },
 
     async createRegistration(guid) {
@@ -38,12 +47,13 @@ export const useFinancialStore = defineStore({
       return this.registration;
     },
 
-    async registerFinancialInformation(registrationData) {
-      const id = this.registration._id;
+    async registerFinancialInformation(registrationData, regID) {
+      const id = regID || this.registration._id;
       const newRegistration = await apiRoutes.updateRegistration(
         id,
         registrationData
       );
+      console.log(newRegistration, "this is newreg data");
       this.registration = newRegistration.data;
       return this.registration;
     },
