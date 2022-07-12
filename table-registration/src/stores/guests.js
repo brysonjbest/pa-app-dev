@@ -22,10 +22,11 @@ export const useGuestsStore = defineStore({
   getters: {},
   actions: {
     async fillGuestsRegistration(guid) {
-      //this.guests = await apiRoutes.getGuestByRegistration(registrationID);
-      this.guests = await (
+      console.log(await (await apiRoutes.getGuestsByRegistration(guid)).data);
+      const guestList = await (
         await apiRoutes.getGuestsByRegistration(guid)
-      ).data.guests;
+      ).data[0];
+      this.guests = guestList.guests;
     },
 
     async fillGuests() {
@@ -41,8 +42,8 @@ export const useGuestsStore = defineStore({
     async addGuestList() {
       // const userData = useAuthUserStore();
       // this.guest.registration = await userData.getId;
-      const registrationData = useFinancialStore();
-      this.guest.registration = await registrationData.getId;
+      // const registrationData = useFinancialStore();
+      // this.guest.registration = await registrationData.getId;
 
       const {
         registration = "",
@@ -76,7 +77,12 @@ export const useGuestsStore = defineStore({
 
     async registerGuest(guestData) {
       // await apiRoutes.createGuest(guestData);
+      const financialStore = useFinancialStore();
       const newGuest = await apiRoutes.createGuest(guestData);
+      const id = newGuest.data._id;
+      await financialStore.registerFinancialInformation({
+        $push: { guests: id },
+      });
       this.guest["guid"] = newGuest.data["guid"];
       return this.guest;
     },

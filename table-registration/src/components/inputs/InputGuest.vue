@@ -109,10 +109,12 @@ import { required } from "@vuelidate/validators";
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../../stores/guests";
+import { useFinancialStore } from "../../stores/financial";
 
 export default {
   setup() {
     const guestData = useGuestsStore();
+    const registrationData = useFinancialStore();
     const { guest } = storeToRefs(useGuestsStore());
     const rules = {
       organization: { required },
@@ -131,6 +133,7 @@ export default {
       event.preventDefault();
       const isFormCorrect = await this.v$.$validate();
       console.log(isFormCorrect);
+      this.guest.registration = registrationData.getId;
 
       guestData
         .registerGuest(this.guest)
