@@ -1,17 +1,45 @@
 <template>
   <div>
     <div>
-      <DataTable
-        :value="guests"
-        responsiveLayout="stack"
-        :key="dataTableRender"
-      >
+      <DataTable :value="guests" responsiveLayout="stack">
+        <Column field="organization" header="Organization" key="organization">
+          <template #body="{ data }">
+            {{ lookup("organizations", data.organization) }}
+          </template></Column
+        >
+        <Column field="firstname" header="First Name" key="firstname">
+          <template #body="{ data }">
+            {{ data.firstname }}
+          </template></Column
+        >
+        <Column field="lastname" header="Last Name" key="lastname">
+          <template #body="{ data }">
+            {{ data.lastname }}
+          </template></Column
+        >
         <Column
-          v-for="col of columns"
-          :field="col.field"
-          :header="col.text"
-          :key="col.field"
-        ></Column>
+          field="attendancetype"
+          header="Attendance Type"
+          key="attendancetype"
+        >
+          <template #body="{ data }">
+            {{ lookup("attendancetypes", data.attendancetype) }}
+          </template></Column
+        >
+        <Column
+          field="accessibility"
+          header="Accessibility Requirements"
+          key="accessibility"
+        >
+          <template #body="{ data }">
+            {{ lookupLoop("accessibilityoptions", data.accessibility) }}
+          </template></Column
+        >
+        <Column field="dietary" header="Dietary Requirements" key="dietary">
+          <template #body="{ data }">
+            {{ lookupLoop("dietaryoptions", data.dietary) }}
+          </template></Column
+        >
         <Column :exportable="false" style="min-width: 8rem">
           <template #body="slotProps">
             <Button
@@ -187,7 +215,6 @@ export default {
     const attendancetypes = ref(formServices.get("attendancetypes") || []);
     const accessibility = ref(formServices.get("accessibilityoptions") || []);
     const dietary = ref(formServices.get("dietaryoptions") || []);
-    const dataTableRender = ref(0);
     const userStore = useAuthUserStore();
 
     const fillList = function () {
@@ -209,6 +236,23 @@ export default {
     onMounted(() => {
       loadLazyData();
     });
+
+    const lookup = function (key, value) {
+      return formServices.lookup(key, value);
+    };
+
+    const lookupLoop = function (key, data) {
+      let list = "";
+      for (let each of data) {
+        if (list.length > 0) {
+          list += `, ${lookup(key, each)}`;
+        } else {
+          list = lookup(key, each);
+        }
+      }
+      return list;
+    };
+
     const { guests } = storeToRefs(useGuestsStore());
 
     const guest = ref({});
@@ -281,7 +325,8 @@ export default {
       submitted,
       guestDialog,
       deleteGuestDialog,
-      dataTableRender,
+      lookup,
+      lookupLoop,
       editGuest,
       confirmDeleteGuest,
       deleteGuest,

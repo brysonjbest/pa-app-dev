@@ -148,6 +148,7 @@ import { required, email } from "@vuelidate/validators";
 import { storeToRefs } from "pinia";
 import { useFinancialStore } from "../../stores/financial";
 import { useAuthUserStore } from "../../stores/users";
+import router from "../../router/index.js";
 
 export default {
   setup() {
@@ -186,6 +187,7 @@ export default {
           // error.response.status Check status code
         })
         .finally(() => {
+          router.push("/guest");
           //Perform action in always
         });
     };

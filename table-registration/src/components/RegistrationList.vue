@@ -6,8 +6,13 @@
         responsiveLayout="stack"
         :key="dataTableRender"
       >
+        <Column field="organization" header="Organization" key="organization">
+          <template #body="{ data }">
+            {{ lookup("organizations", data.organization) }}
+          </template></Column
+        >
         <Column
-          v-for="col of columns"
+          v-for="col of filter(columns)"
           :field="col.field"
           :header="col.text"
           :key="col.field"
@@ -275,6 +280,14 @@ export default {
     });
     const { registrations } = storeToRefs(useFinancialStore());
 
+    const lookup = function (key, value) {
+      return formServices.lookup(key, value);
+    };
+
+    const filter = function (data) {
+      return data.filter((item) => item.field !== "organization");
+    };
+
     const registration = ref({});
     const v$ = useVuelidate(rules, registration);
     const submitted = ref(false);
@@ -355,6 +368,8 @@ export default {
       registrationDialog,
       deleteRegistrationDialog,
       dataTableRender,
+      lookup,
+      filter,
       editRegistration,
       confirmDeleteRegistration,
       deleteRegistration,
