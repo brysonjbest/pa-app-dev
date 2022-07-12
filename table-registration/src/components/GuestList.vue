@@ -195,7 +195,7 @@ export default {
       guestStore.$reset;
       if (props.adminView) return guestStore.fillGuests();
       if (props.registrationID)
-        return guestStore.fillGuestsRegistration(registrationID);
+        return guestStore.fillGuestsRegistration(props.registrationID);
       else
         return guestStore.fillGuestsRegistration(user.guid)
           ? guestStore.fillGuestsRegistration(user.guid)

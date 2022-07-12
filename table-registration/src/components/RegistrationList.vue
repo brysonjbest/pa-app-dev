@@ -12,7 +12,7 @@
           :header="col.text"
           :key="col.field"
         ></Column>
-        <Column :exportable="false" style="min-width: 8rem">
+        <Column v-if="!detailsView" :exportable="false" style="min-width: 8rem">
           <template #body="slotProps">
             <Button
               icon="pi pi-pencil"
@@ -163,6 +163,7 @@
 
         <template #footer>
           <Button
+            v-if="!detailsView"
             label="Edit Guests"
             icon="pi pi-pencil"
             class="p-button-text"
@@ -224,10 +225,13 @@ import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
 import useVuelidate from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
+import router from "../router/index.js";
 
 export default {
   props: {
     adminView: Boolean,
+    detailsView: Boolean,
+    registrationID: String,
   },
   setup(props) {
     const financialStore = useFinancialStore();
@@ -235,6 +239,7 @@ export default {
     const organizations = ref(formServices.get("organizations") || []);
     const dataTableRender = ref(0);
     const userStore = useAuthUserStore();
+    const detailsView = props.detailsView;
 
     const rules = {
       organization: { required },
@@ -250,10 +255,15 @@ export default {
     };
 
     const fillList = function () {
+      financialStore.$reset;
       const user = userStore.getUser;
-      console.log("this is user", user);
       if (props.adminView) return financialStore.fillAllRegistrations();
-      return financialStore.fill(user.guid);
+      if (props.registrationID)
+        return financialStore.fill(props.registrationID);
+      else
+        return financialStore.fill(user.guid)
+          ? financialStore.fill(user.guid)
+          : [];
     };
 
     const loadLazyData = () => {
@@ -288,8 +298,8 @@ export default {
 
     const editRegistrationGuests = async function (event) {
       event.preventDefault();
-      console.log(registration, "this is current reg details");
-      //this.$router.push(`/edit/${registration}`)
+      console.log(registration.value.guid, "this is current reg details");
+      router.push(`/admin/edit/${registration.value.guid}`);
     };
 
     const saveRegistration = async function (event) {
@@ -340,6 +350,7 @@ export default {
       registrations,
       registration,
       submitted,
+      detailsView,
       v$,
       registrationDialog,
       deleteRegistrationDialog,

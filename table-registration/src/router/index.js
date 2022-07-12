@@ -163,10 +163,6 @@ const router = createRouter({
       component: () => import("../views/AboutView.vue"),
     },
     {
-      path: "/financial",
-      name: "financial",
-    },
-    {
       path: "/guest",
       name: "guest",
       component: () => import("../views/AddGuestView.vue"),
@@ -175,6 +171,7 @@ const router = createRouter({
       path: "/admin",
       name: "admin",
       component: () => import("../views/AdminView.vue"),
+      beforeEnter: authorizeAdmin,
     },
     {
       path: "/create/registration",
@@ -189,6 +186,14 @@ const router = createRouter({
       component: () => import("../views/RegistrationView.vue"),
       meta: getMeta("Register Financial Details"),
       beforeEnter: authorizeRegistrar,
+    },
+    {
+      path: "/admin/edit/:id",
+      name: "admin-registration-edit",
+      component: () => import("../views/RegistrationDetailsView.vue"),
+      props: true,
+      meta: getMeta("Edit Financial Details"),
+      beforeEnter: authorizeAdmin,
     },
     // {
     //   path: "/401",
