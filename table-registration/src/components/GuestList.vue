@@ -2,6 +2,20 @@
   <div>
     <div>
       <DataTable :value="guests" responsiveLayout="stack">
+        <Column
+          v-if="adminView"
+          field="registration"
+          header="Registration"
+          key="registration"
+        >
+          <template #body="{ data }">
+            <router-link
+              :to="`/admin/edit/${data.registration}`"
+              class="registration-link"
+              >{{ data.registration }}</router-link
+            >
+          </template></Column
+        >
         <Column field="organization" header="Organization" key="organization">
           <template #body="{ data }">
             {{ lookup("organizations", data.organization) }}
@@ -216,11 +230,12 @@ export default {
     const accessibility = ref(formServices.get("accessibilityoptions") || []);
     const dietary = ref(formServices.get("dietaryoptions") || []);
     const userStore = useAuthUserStore();
+    const adminView = props.adminView;
 
     const fillList = function () {
       const user = userStore.getUser;
       guestStore.$reset;
-      if (props.adminView) return guestStore.fillGuests();
+      if (adminView) return guestStore.fillGuests();
       if (props.registrationID)
         return guestStore.fillGuestsRegistration(props.registrationID);
       else
@@ -322,6 +337,7 @@ export default {
       dietary,
       guests,
       guest,
+      adminView,
       submitted,
       guestDialog,
       deleteGuestDialog,
