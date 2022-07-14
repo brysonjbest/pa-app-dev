@@ -134,7 +134,7 @@
       >
     </form>
     <!-- <card class="mt-3" header="Form Data Result"> -->
-    <pre class="m-0">{{ registration }}</pre>
+    <!-- <pre class="m-0">{{ registration }}</pre> -->
     <!-- </card> -->
   </div>
 </template>

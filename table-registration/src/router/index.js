@@ -202,18 +202,18 @@ const router = createRouter({
       meta: getMeta("Administration Guest View"),
       beforeEnter: authorizeAdmin,
     },
-    // {
-    //   path: "/401",
-    //   name: "unauthorized",
-    //   component: Unauthorized,
-    //   meta: getMeta("Unauthorized"),
-    // },
-    // {
-    //   path: "*",
-    //   name: "page-not-found",
-    //   component: NotFound,
-    //   meta: getMeta("Page Not Found"),
-    // },
+    {
+      path: "/401",
+      name: "unauthorized",
+      component: () => import("../views/401.vue"),
+      meta: getMeta("Unauthorized"),
+    },
+    {
+      path: "/:pathMatch(.*)*",
+      name: "page-not-found",
+      component: () => import("../views/404.vue"),
+      meta: getMeta("Page Not Found"),
+    },
   ],
 });
 
