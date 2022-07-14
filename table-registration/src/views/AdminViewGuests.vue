@@ -1,14 +1,8 @@
 <script setup>
 import { useAuthUserStore } from "../stores/users";
 import GuestList from "../components/GuestList.vue";
-import RegistrationList from "../components/RegistrationList.vue";
 import NavMenu from "../components/common/NavMenu.vue";
 const userStore = useAuthUserStore();
-
-const props = defineProps({ path: String });
-const path = props.path;
-
-console.log("this is path", props);
 
 const navItems = [
   {
@@ -39,6 +33,6 @@ const logout = function () {
       @click="logout"
     />
     <NavMenu :title="'Admin View'" :menuitems="navItems" />
-    <RegistrationList :adminView="true" />
+    <GuestList :adminView="true" />
   </main>
 </template>

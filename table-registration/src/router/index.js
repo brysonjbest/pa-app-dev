@@ -195,6 +195,20 @@ const router = createRouter({
       meta: getMeta("Edit Financial Details"),
       beforeEnter: authorizeAdmin,
     },
+    {
+      path: "/admin/guests",
+      name: "admin-guest-view",
+      component: () => import("../views/AdminViewGuests.vue"),
+      meta: getMeta("Administration Guest View"),
+      beforeEnter: authorizeAdmin,
+    },
+    // {
+    //   path: "/admin/guests",
+    //   name: "admin-guest-view",
+    //   component: () => import("../components/GuestList.vue"),
+    //   meta: getMeta("View Guests"),
+    //   beforeEnter: authorizeAdmin,
+    // },
     // {
     //   path: "/401",
     //   name: "unauthorized",

@@ -95,9 +95,6 @@
         >Reset</Button
       >
     </form>
-    <!-- <card class="mt-3" header="Form Data Result"> -->
-    <pre class="m-0">{{ guest }}</pre>
-    <!-- </card> -->
   </div>
 </template>
 
@@ -112,7 +109,10 @@ import { useGuestsStore } from "../../stores/guests";
 import { useFinancialStore } from "../../stores/financial";
 
 export default {
-  setup() {
+  props: {
+    registrationID: String,
+  },
+  setup(props) {
     const guestData = useGuestsStore();
     const registrationData = useFinancialStore();
     const { guest } = storeToRefs(useGuestsStore());
@@ -128,6 +128,10 @@ export default {
     const attendancetypes = ref(formServices.get("attendancetypes") || []);
     const accessibility = ref(formServices.get("accessibilityoptions") || []);
     const dietary = ref(formServices.get("dietaryoptions") || []);
+
+    if (props.registrationID) {
+      registrationData.fill(props.registrationID);
+    }
 
     const onSubmit = async function (event) {
       event.preventDefault();
@@ -183,4 +187,12 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+<style scoped>
+.checkbox-group {
+  display: flex;
+}
+
+.field-checkbox {
+  padding: 0px 0.5em;
+}
+</style>
