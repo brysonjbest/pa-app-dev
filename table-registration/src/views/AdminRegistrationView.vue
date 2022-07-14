@@ -1,24 +1,16 @@
 <script setup>
 import { useAuthUserStore } from "../stores/users";
-import GuestList from "../components/GuestList.vue";
 import RegistrationList from "../components/RegistrationList.vue";
 import NavMenu from "../components/common/NavMenu.vue";
 const userStore = useAuthUserStore();
 
-const props = defineProps({ path: String });
-const path = props.path;
-
-console.log("this is path", props);
-
 const navItems = [
   {
     label: "Registrations",
-    icon: "pi pi-fw pi-home",
     to: "/admin",
   },
   {
     label: "Guests",
-    icon: "pi pi-fw pi-home",
     to: "/admin/guests",
   },
 ];
@@ -38,7 +30,7 @@ const logout = function () {
       class="p-button-raised"
       @click="logout"
     />
-    <NavMenu :title="'Admin View'" :menuitems="navItems" />
+    <NavMenu :title="''" :menuitems="navItems" />
     <RegistrationList :adminView="true" />
   </main>
 </template>

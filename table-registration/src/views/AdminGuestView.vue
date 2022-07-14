@@ -7,12 +7,10 @@ const userStore = useAuthUserStore();
 const navItems = [
   {
     label: "Registrations",
-    icon: "pi pi-fw pi-home",
     to: "/admin",
   },
   {
     label: "Guests",
-    icon: "pi pi-fw pi-home",
     to: "/admin/guests",
   },
 ];
@@ -32,7 +30,7 @@ const logout = function () {
       class="p-button-raised"
       @click="logout"
     />
-    <NavMenu :title="'Admin View'" :menuitems="navItems" />
+    <NavMenu :title="''" :menuitems="navItems" />
     <GuestList :adminView="true" />
   </main>
 </template>

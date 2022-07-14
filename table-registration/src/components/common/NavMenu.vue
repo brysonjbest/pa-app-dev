@@ -3,7 +3,7 @@
     <div class="card">
       <h5>{{ title }}</h5>
       <TabMenu :model="items" :activeIndex="activeIndex" />
-      <router-view />
+      <RouterView />
     </div>
   </div>
 </template>

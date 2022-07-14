@@ -170,7 +170,7 @@ const router = createRouter({
     {
       path: "/admin",
       name: "admin",
-      component: () => import("../views/AdminView.vue"),
+      component: () => import("../views/AdminRegistrationView.vue"),
       beforeEnter: authorizeAdmin,
     },
     {
@@ -198,17 +198,10 @@ const router = createRouter({
     {
       path: "/admin/guests",
       name: "admin-guest-view",
-      component: () => import("../views/AdminViewGuests.vue"),
+      component: () => import("../views/AdminGuestView.vue"),
       meta: getMeta("Administration Guest View"),
       beforeEnter: authorizeAdmin,
     },
-    // {
-    //   path: "/admin/guests",
-    //   name: "admin-guest-view",
-    //   component: () => import("../components/GuestList.vue"),
-    //   meta: getMeta("View Guests"),
-    //   beforeEnter: authorizeAdmin,
-    // },
     // {
     //   path: "/401",
     //   name: "unauthorized",
