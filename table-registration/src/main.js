@@ -16,6 +16,7 @@ import Sidebar from "primevue/sidebar";
 import Menu from "primevue/menu";
 import Message from "primevue/message";
 import TabMenu from "primevue/tabmenu";
+import Menubar from "primevue/menubar";
 
 //Form Component imports
 import Checkbox from "primevue/checkbox";
@@ -48,6 +49,7 @@ app.component("Sidebar", Sidebar);
 app.component("Menu", Menu);
 app.component("Message", Message);
 app.component("TabMenu", TabMenu);
+app.component("Menubar", Menubar);
 
 app.component("Dropdown", Dropdown);
 app.component("Checkbox", Checkbox);

@@ -6,6 +6,7 @@
  */
 
 const schemaData = {
+  year: "2022",
   registrationSelection: [
     { field: "organization", text: "Organization" },
     { field: "branch", text: "Branch" },

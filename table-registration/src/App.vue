@@ -1,16 +1,75 @@
-<script setup>
-import { RouterLink, RouterView } from "vue-router";
+<script>
+import { ref } from "vue";
+import { useAuthUserStore } from "./stores/users";
+
+export default {
+  setup() {
+    const userStore = useAuthUserStore();
+    const user = userStore.getUser || null;
+    const username = user.username;
+    const menu = ref();
+
+    const siteNav = ref([
+      {
+        label: "Home",
+        to: "/",
+      },
+      {
+        label: "About",
+        url: "https://premiersawards.gww.gov.bc.ca/",
+      },
+      {
+        label: "Account",
+        items: [
+          {
+            label: "Create Account",
+            to: "/register/",
+            visible: () => !userStore.isAuthenticated,
+          },
+          {
+            label: "Login",
+            to: "/login/",
+            visible: () => !userStore.isAuthenticated,
+          },
+          {
+            label: "My Registration",
+            to: "/create/registration/",
+            visible: () => userStore.isAuthenticated,
+          },
+          {
+            label: "Manage Users",
+            to: "/",
+            visible: () => userStore.isSuperAdmin,
+          },
+          {
+            label: "View Registrations",
+            to: "/admin/",
+            visible: () => userStore.isAdmin,
+          },
+          {
+            label: "View Guests",
+            to: "/admin/guests",
+            visible: () => userStore.isAdmin,
+          },
+        ],
+      },
+    ]);
+
+    return { siteNav, username, menu };
+  },
+};
 </script>
 
 <template>
   <header>
-    <div class="wrapper">
-      <nav>
-        <RouterLink to="/">Home</RouterLink>
-        <RouterLink to="/about">About</RouterLink>
-        <RouterLink to="/guest">Guest</RouterLink>
-        <RouterLink to="/admin">Admin</RouterLink>
-      </nav>
+    <div>
+      <Menubar id="navbar" :model="siteNav">
+        <template #start>
+          <router-link to="/" id="page-title"
+            >Premier's Awards Event Registration
+          </router-link>
+        </template>
+      </Menubar>
     </div>
   </header>
 
@@ -19,14 +78,27 @@ import { RouterLink, RouterView } from "vue-router";
 
 <style>
 /* @import "@/assets/base.css"; */
-@import "primevue/resources/themes/nova/theme.css";
 @import "primevue/resources/primevue.min.css";
 @import "primeicons/primeicons.css";
 
+/* Theme Choices: */
+
+/* @import "primevue/resources/themes/nova/theme.css"; */
+
+/* @import "primevue/resources/themes/nova-alt/theme.css"; */
+
+/* @import "primevue/resources/themes/nova-accent/theme.css"; */
+
+/* @import "primevue/resources/themes/nova-vue/theme.css"; */
+
+@import "primevue/resources/themes/rhea/theme.css";
+
+/* @import "primevue/resources/themes/lara-light-teal/theme.css"; */
+
 #app {
-  max-width: 1280px;
+  /* max-width: 1280px; */
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 2rem; */
 
   font-weight: normal;
 }
@@ -36,6 +108,14 @@ header {
   max-height: 100vh;
 }
 
+#navbar {
+  position: sticky;
+  color: white !important;
+  background-color: #343a40;
+  top: 0;
+}
+
+/*
 .logo {
   display: block;
   margin: 0 auto 2rem;
@@ -115,5 +195,5 @@ nav a:first-of-type {
     padding: 1rem 0;
     margin-top: 1rem;
   }
-}
+} */
 </style>
