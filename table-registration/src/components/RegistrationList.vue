@@ -29,7 +29,7 @@
         :rowsPerPageOptions="[10, 20, 50]"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
       >
-        <template #header>
+        <template v-if="adminView" #header>
           <div style="text-align: left">
             <Button
               icon="pi pi-external-link"
