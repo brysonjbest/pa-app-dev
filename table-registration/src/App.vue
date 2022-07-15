@@ -19,37 +19,46 @@ export default {
         url: "https://premiersawards.gww.gov.bc.ca/",
       },
       {
-        label: "Account",
+        label: () => userStore.getUser.username || "Account",
+        // label: username || "Account",
+        class: "dropdown-account",
+        icon: "pi pi-user",
         items: [
           {
             label: "Create Account",
             to: "/register/",
             visible: () => !userStore.isAuthenticated,
+            class: "dropdown-account-item",
           },
           {
             label: "Login",
             to: "/login/",
             visible: () => !userStore.isAuthenticated,
+            class: "dropdown-account-item",
           },
           {
             label: "My Registration",
             to: "/create/registration/",
             visible: () => userStore.isAuthenticated,
+            class: "dropdown-account-item",
           },
           {
             label: "Manage Users",
             to: "/",
             visible: () => userStore.isSuperAdmin,
+            class: "dropdown-account-item",
           },
           {
             label: "View Registrations",
             to: "/admin/",
             visible: () => userStore.isAdmin,
+            class: "dropdown-account-item",
           },
           {
             label: "View Guests",
             to: "/admin/guests",
             visible: () => userStore.isAdmin,
+            class: "dropdown-account-item",
           },
         ],
       },
@@ -113,6 +122,26 @@ header {
   color: white !important;
   background-color: #343a40;
   top: 0;
+}
+
+#page-title {
+  color: white !important;
+  z-index: 9999 !important;
+}
+
+.p-menuitem-text {
+  color: white !important;
+}
+
+.dropdown-account {
+  position: absolute !important;
+  right: 10px;
+  z-index: 9999 !important;
+}
+
+.dropdown-account-item .p-menuitem-text {
+  color: #343a40 !important;
+  z-index: 9999 !important;
 }
 
 /*
