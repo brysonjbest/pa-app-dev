@@ -76,7 +76,7 @@ export const useAuthUserStore = defineStore({
     async getUserById(guid) {
       const message = useMessageStore();
       message.resetMessage();
-      return await UsersDataService.getGuestByID(guid).then((response) => {
+      return await UsersDataService.getUserByID(guid).then((response) => {
         const { data = {} } = response || {};
         const {
           _id = null,

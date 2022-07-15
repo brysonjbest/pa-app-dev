@@ -1,59 +1,208 @@
 <template>
   <div>
     <div>
-      <DataTable :value="guests" responsiveLayout="stack">
+      <DataTable
+        :value="guests"
+        responsiveLayout="stack"
+        :paginator="adminView"
+        :rows="10"
+        ref="dt"
+        stripedRows
+        v-model:filters="filters"
+        filterDisplay="menu"
+        :globalFilterFields="[
+          'firstname',
+          'lastname',
+          'attendancetype',
+          'accessibility',
+          'dietary',
+          'registration',
+        ]"
+        :loading="loading"
+        showGridlines
+        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+        :rowsPerPageOptions="[10, 20, 50]"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+      >
+        <template #header>
+          <div style="text-align: left">
+            <Button
+              icon="pi pi-external-link"
+              label="Export"
+              @click="exportCSV($event)"
+            />
+            <Button
+              type="button"
+              icon="pi pi-filter-slash"
+              label="Clear"
+              class="p-button-outlined"
+              @click="clearFilters()"
+            />
+            <span class="p-input-icon-left">
+              <i class="pi pi-search" />
+              <InputText
+                v-model="filters['global'].value"
+                placeholder="Keyword Search"
+              />
+            </span>
+          </div>
+        </template>
+        <template #empty> No guests found. </template>
+        <template #loading> Loading guest data. Please wait. </template>
         <Column
           v-if="adminView"
           field="registration"
           header="Registration"
           key="registration"
+          :sortable="true"
         >
           <template #body="{ data }">
             <router-link
               :to="`/admin/edit/${data.registration}`"
               class="registration-link"
               >{{ data.registration }}</router-link
-            >
-          </template></Column
+            > </template
+          ><template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by registration"
+            /> </template
+        ></Column>
+        <Column
+          field="organization"
+          header="Organization"
+          key="organization"
+          :sortable="true"
         >
-        <Column field="organization" header="Organization" key="organization">
           <template #body="{ data }">
-            {{ lookup("organizations", data.organization) }}
-          </template></Column
+            {{ lookup("organizations", data.organization) }} </template
+          ><template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by organization"
+            /> </template
+        ></Column>
+        <Column
+          field="firstname"
+          header="First Name"
+          key="firstname"
+          :sortable="true"
         >
-        <Column field="firstname" header="First Name" key="firstname">
-          <template #body="{ data }">
-            {{ data.firstname }}
-          </template></Column
+          <template #body="{ data }"> {{ data.firstname }} </template
+          ><template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by First Name"
+            /> </template
+        ></Column>
+        <Column
+          field="lastname"
+          header="Last Name"
+          key="lastname"
+          :sortable="true"
         >
-        <Column field="lastname" header="Last Name" key="lastname">
-          <template #body="{ data }">
-            {{ data.lastname }}
-          </template></Column
-        >
+          <template #body="{ data }"> {{ data.lastname }} </template
+          ><template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by Last Name"
+            /> </template
+        ></Column>
         <Column
           field="attendancetype"
           header="Attendance Type"
           key="attendancetype"
+          :sortable="true"
         >
           <template #body="{ data }">
-            {{ lookup("attendancetypes", data.attendancetype) }}
-          </template></Column
-        >
+            {{ lookup("attendancetypes", data.attendancetype) }} </template
+          ><template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by Attendance Type"
+            /> </template
+        ></Column>
         <Column
           field="accessibility"
           header="Accessibility Requirements"
           key="accessibility"
+          :sortable="true"
         >
           <template #body="{ data }">
-            {{ lookupLoop("accessibilityoptions", data.accessibility) }}
-          </template></Column
+            {{
+              lookupLoop("accessibilityoptions", data.accessibility)
+            }} </template
+          ><template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by Accessibility Options"
+            /> </template
+        ></Column>
+        <Column
+          field="dietary"
+          header="Dietary Requirements"
+          key="dietary"
+          :sortable="true"
         >
-        <Column field="dietary" header="Dietary Requirements" key="dietary">
           <template #body="{ data }">
-            {{ lookupLoop("dietaryoptions", data.dietary) }}
-          </template></Column
+            {{ lookupLoop("dietaryoptions", data.dietary) }} </template
+          ><template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by Dietary Requirements"
+            /> </template
+        ></Column>
+        <Column
+          v-if="adminView"
+          field="createdAt"
+          header="Created:"
+          key="createdAt"
+          :sortable="true"
         >
+          <template #body="{ data }">
+            {{ formatDate(data.createdAt) }},<br />{{
+              formatTime(data.createdAt)
+            }} </template
+          ><template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by Date Created"
+            /> </template
+        ></Column>
+        <Column
+          v-if="adminView"
+          field="updatedAt"
+          header="Updated:"
+          key="updatedAt"
+          :sortable="true"
+        >
+          <template #body="{ data }">
+            {{ formatDate(data.updatedAt) }},<br />
+            {{ formatTime(data.updatedAt) }} </template
+          ><template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by Date Updated"
+            /> </template
+        ></Column>
         <Column :exportable="false" style="min-width: 8rem">
           <template #body="slotProps">
             <Button
@@ -216,6 +365,7 @@ import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../stores/guests";
 import { useAuthUserStore } from "../stores/users";
+import { FilterMatchMode, FilterOperator } from "primevue/api";
 
 export default {
   props: {
@@ -230,13 +380,114 @@ export default {
     const accessibility = ref(formServices.get("accessibilityoptions") || []);
     const dietary = ref(formServices.get("dietaryoptions") || []);
     const userStore = useAuthUserStore();
-    const adminView = props.adminView;
-    const registrationID = props.registrationID;
+    const dt = ref();
+    // const adminView = props.adminView;
+    // const registrationID = props.registrationID;
+    const { adminView, registrationID } = props;
+
+    const filters = ref({
+      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+
+      organization: {
+        operator: FilterOperator.OR,
+        constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+      },
+      firstname: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      lastname: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      attendancetype: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      accessibility: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      dietary: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      createdAt: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      updatedAt: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+    });
+
+    const clearFilters = () => {
+      initFilters();
+    };
+    const initFilters = () => {
+      filters.value = {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+
+        organization: {
+          operator: FilterOperator.OR,
+          constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+        },
+        firstname: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+        lastname: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+        attendancetype: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+        accessibility: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+        dietary: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+        createdAt: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+        updatedAt: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+      };
+    };
+
+    const loading = ref(true);
+
+    const exportCSV = () => {
+      dt.value.exportCSV();
+    };
 
     const fillList = function () {
       const user = userStore.getUser;
       guestStore.$reset;
-      console.log("this is guest store", guestStore);
+      loading.value = false;
       if (adminView) return guestStore.fillGuests();
       if (registrationID)
         return guestStore.fillGuestsRegistration(registrationID);
@@ -256,6 +507,25 @@ export default {
 
     const lookup = function (key, value) {
       return formServices.lookup(key, value);
+    };
+
+    const formatDate = (value) => {
+      const date = new Date(value);
+      return date.toLocaleDateString("en-US", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+    };
+
+    const formatTime = (value) => {
+      const date = new Date(value);
+
+      return date.toLocaleTimeString("en-US", {
+        hour12: true,
+        hour: "2-digit",
+        minute: "2-digit",
+      });
     };
 
     const lookupLoop = function (key, data) {
@@ -333,6 +603,11 @@ export default {
 
     return {
       columns,
+      dt,
+      filters,
+      loading,
+      exportCSV,
+      clearFilters,
       organizations,
       attendancetypes,
       accessibility,
@@ -343,6 +618,8 @@ export default {
       submitted,
       guestDialog,
       deleteGuestDialog,
+      formatDate,
+      formatTime,
       lookup,
       lookupLoop,
       editGuest,

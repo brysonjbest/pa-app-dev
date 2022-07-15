@@ -5,7 +5,7 @@ class UsersDataService {
     return api.get("/users/view");
   }
 
-  getGuestByID(guid) {
+  getUserByID(guid) {
     return api.get(`/users/view/${guid}`);
   }
 

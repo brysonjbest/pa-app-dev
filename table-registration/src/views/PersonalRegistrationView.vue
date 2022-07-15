@@ -43,7 +43,6 @@ const hideDialog = () => {
 
     <Dialog
       v-model:visible="addGuestDialog"
-      :style="{ width: '450px' }"
       header="Registration Details"
       :modal="true"
       class="p-fluid"

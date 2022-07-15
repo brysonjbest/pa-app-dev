@@ -188,9 +188,9 @@ export default {
 };
 </script>
 <style scoped>
-.checkbox-group {
+/* .checkbox-group {
   display: flex;
-}
+} */
 
 .field-checkbox {
   padding: 0px 0.5em;

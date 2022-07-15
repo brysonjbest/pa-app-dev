@@ -5,17 +5,136 @@
         :value="registrations"
         responsiveLayout="stack"
         :key="dataTableRender"
+        :paginator="adminView"
+        :rows="10"
+        ref="dt"
+        stripedRows
+        v-model:filters="filters"
+        filterDisplay="menu"
+        :globalFilterFields="[
+          'organization',
+          'branch',
+          'primarycontact',
+          'primaryemail',
+          'financialcontact',
+          'clientministry',
+          'resp',
+          'serviceline',
+          'project',
+          'guid',
+        ]"
+        :loading="loading"
+        showGridlines
+        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+        :rowsPerPageOptions="[10, 20, 50]"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
       >
-        <Column field="organization" header="Organization" key="organization">
+        <template #header>
+          <div style="text-align: left">
+            <Button
+              icon="pi pi-external-link"
+              label="Export"
+              @click="exportCSV($event)"
+            />
+            <Button
+              type="button"
+              icon="pi pi-filter-slash"
+              label="Clear"
+              class="p-button-outlined"
+              @click="clearFilters()"
+            />
+            <span class="p-input-icon-left">
+              <i class="pi pi-search" />
+              <InputText
+                v-model="filters['global'].value"
+                placeholder="Keyword Search"
+              />
+            </span>
+          </div>
+        </template>
+        <template #empty> No registrations found. </template>
+        <template #loading> Loading registration data. Please wait. </template>
+        <Column
+          v-if="adminView"
+          field="guid"
+          header="ID#"
+          key="guid"
+          :sortable="true"
+        >
           <template #body="{ data }">
-            {{ lookup("organizations", data.organization) }}
+            {{ data.guid }}
           </template></Column
         >
+        <Column
+          field="organization"
+          header="Organization"
+          key="organization"
+          :sortable="true"
+        >
+          <template #body="{ data }">
+            {{ lookup("organizations", data.organization) }}
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by organization"
+            /> </template
+        ></Column>
         <Column
           v-for="col of filter(columns)"
           :field="col.field"
           :header="col.text"
           :key="col.field"
+          :sortable="true"
+        >
+          <template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="`Search by ${col.field}`"
+            /> </template
+        ></Column>
+        <Column
+          v-if="adminView"
+          field="createdAt"
+          header="Created:"
+          key="createdAt"
+          :sortable="true"
+        >
+          <template #body="{ data }">
+            {{ formatDate(data.createdAt) }},<br />{{
+              formatTime(data.createdAt)
+            }}
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by Date Created"
+            /> </template
+        ></Column>
+        <Column
+          v-if="adminView"
+          field="updatedAt"
+          header="Updated:"
+          key="updatedAt"
+          :sortable="true"
+        >
+          <template #body="{ data }">
+            {{ formatDate(data.updatedAt) }},<br />
+            {{ formatTime(data.updatedAt) }}
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by Date Updated"
+            /> </template
         ></Column>
         <Column v-if="!detailsView" :exportable="false" style="min-width: 8rem">
           <template #body="slotProps">
@@ -231,6 +350,7 @@ import { useFinancialStore } from "../stores/financial";
 import useVuelidate from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
 import router from "../router/index.js";
+import { FilterMatchMode, FilterOperator } from "primevue/api";
 
 export default {
   props: {
@@ -244,8 +364,127 @@ export default {
     const organizations = ref(formServices.get("organizations") || []);
     const dataTableRender = ref(0);
     const userStore = useAuthUserStore();
-    const detailsView = props.detailsView;
-    const registrationID = props.registrationID;
+    const { detailsView, adminView, registrationID } = props;
+    const dt = ref();
+    // const detailsView = props.detailsView;
+    // const adminView = props.adminView;
+    // const registrationID = props.registrationID;
+
+    const filters = ref({
+      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+
+      organization: {
+        operator: FilterOperator.OR,
+        constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+      },
+      branch: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      primarycontact: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      financialcontact: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      primaryemail: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      clientministry: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      respcode: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      serviceline: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      stob: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+      project: {
+        operator: FilterOperator.AND,
+        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
+      },
+    });
+
+    const clearFilters = () => {
+      initFilters();
+    };
+
+    const initFilters = () => {
+      filters.value = {
+        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+
+        organization: {
+          operator: FilterOperator.OR,
+          constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+        },
+        branch: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+        primarycontact: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+        financialcontact: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+        primaryemail: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+        clientministry: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+        respcode: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+        serviceline: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+        stob: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+        project: {
+          operator: FilterOperator.AND,
+          constraints: [
+            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
+          ],
+        },
+      };
+    };
+
+    const loading = ref(true);
 
     const rules = {
       organization: { required },
@@ -263,6 +502,7 @@ export default {
     const fillList = async function () {
       const user = userStore.getUser;
       financialStore.$reset;
+      loading.value = false;
       if (props.adminView) return await financialStore.fillAllRegistrations();
       if (registrationID) return await financialStore.fill(registrationID);
       else
@@ -282,6 +522,29 @@ export default {
 
     const lookup = function (key, value) {
       return formServices.lookup(key, value);
+    };
+
+    const exportCSV = () => {
+      dt.value.exportCSV();
+    };
+
+    const formatDate = (value) => {
+      const date = new Date(value);
+      return date.toLocaleDateString("en-US", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+    };
+
+    const formatTime = (value) => {
+      const date = new Date(value);
+
+      return date.toLocaleTimeString("en-US", {
+        hour12: true,
+        hour: "2-digit",
+        minute: "2-digit",
+      });
     };
 
     const filter = function (data) {
@@ -364,10 +627,18 @@ export default {
       registration,
       submitted,
       detailsView,
+      adminView,
       v$,
       registrationDialog,
       deleteRegistrationDialog,
       dataTableRender,
+      filters,
+      loading,
+      dt,
+      clearFilters,
+      exportCSV,
+      formatDate,
+      formatTime,
       lookup,
       filter,
       editRegistration,
