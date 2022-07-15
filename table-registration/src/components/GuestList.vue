@@ -231,13 +231,15 @@ export default {
     const dietary = ref(formServices.get("dietaryoptions") || []);
     const userStore = useAuthUserStore();
     const adminView = props.adminView;
+    const registrationID = props.registrationID;
 
     const fillList = function () {
       const user = userStore.getUser;
       guestStore.$reset;
+      console.log("this is guest store", guestStore);
       if (adminView) return guestStore.fillGuests();
-      if (props.registrationID)
-        return guestStore.fillGuestsRegistration(props.registrationID);
+      if (registrationID)
+        return guestStore.fillGuestsRegistration(registrationID);
       else
         return guestStore.fillGuestsRegistration(user.guid)
           ? guestStore.fillGuestsRegistration(user.guid)

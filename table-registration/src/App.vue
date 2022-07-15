@@ -15,6 +15,10 @@ export default {
         to: "/",
       },
       {
+        label: "Test",
+        to: "/test",
+      },
+      {
         label: "About",
         url: "https://premiersawards.gww.gov.bc.ca/",
       },
@@ -64,6 +68,8 @@ export default {
       },
     ]);
 
+    userStore.login();
+
     return { siteNav, username, menu };
   },
 };
@@ -89,6 +95,7 @@ export default {
 /* @import "@/assets/base.css"; */
 @import "primevue/resources/primevue.min.css";
 @import "primeicons/primeicons.css";
+@import "/node_modules/primeflex/primeflex.css";
 
 /* Theme Choices: */
 

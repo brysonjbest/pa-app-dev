@@ -22,11 +22,10 @@ export const useGuestsStore = defineStore({
   getters: {},
   actions: {
     async fillGuestsRegistration(guid) {
-      console.log(await (await apiRoutes.getGuestsByRegistration(guid)).data);
       const guestList = await (
         await apiRoutes.getGuestsByRegistration(guid)
       ).data[0];
-      this.guests = guestList.guests;
+      this.guests = guestList.guests || [];
     },
 
     async fillGuests() {

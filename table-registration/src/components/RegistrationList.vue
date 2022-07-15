@@ -245,6 +245,7 @@ export default {
     const dataTableRender = ref(0);
     const userStore = useAuthUserStore();
     const detailsView = props.detailsView;
+    const registrationID = props.registrationID;
 
     const rules = {
       organization: { required },
@@ -259,14 +260,13 @@ export default {
       project: { required },
     };
 
-    const fillList = function () {
-      financialStore.$reset;
+    const fillList = async function () {
       const user = userStore.getUser;
-      if (props.adminView) return financialStore.fillAllRegistrations();
-      if (props.registrationID)
-        return financialStore.fill(props.registrationID);
+      financialStore.$reset;
+      if (props.adminView) return await financialStore.fillAllRegistrations();
+      if (registrationID) return await financialStore.fill(registrationID);
       else
-        return financialStore.fill(user.guid)
+        return (await financialStore.fill(user.guid))
           ? financialStore.fill(user.guid)
           : [];
     };

@@ -187,7 +187,7 @@ export default {
           // error.response.status Check status code
         })
         .finally(() => {
-          router.push("/guest");
+          router.push("/create/registration/");
           //Perform action in always
         });
     };

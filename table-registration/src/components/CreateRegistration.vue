@@ -59,7 +59,9 @@ export default {
         if (data) router.push(`/edit/${data.guid}`);
       })
       .catch(() => {
-        financialStore.fill(guid).then(() => router.push(`/edit/${guid}`));
+        financialStore
+          .fill(guid)
+          .then(() => router.push(`/registration/${guid}`));
       })
       .catch((err) => {
         console.error(err);

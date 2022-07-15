@@ -5,10 +5,11 @@
       <template #title> Premier's Awards Event Registration </template></Card
     >
 
-    <div v-if="isRegistrar">
+    <div v-if="() => isRegistrar">
       <Card>
         <template #content
-          >You are logged in as <b>{{ user.username }}</b></template
+          >You are logged in as
+          <b>{{ userStore.getUser.username }}</b></template
         >
       </Card>
     </div>
@@ -22,7 +23,7 @@
       </router-link>
     </div>
 
-    <div v-if="isRegistrar">
+    <div v-if="() => isRegistrar">
       <div>
         <Card title="Event Registration">
           <template #title>
@@ -30,7 +31,7 @@
           </template>
           <template #content>
             <router-link to="/create/registration/">
-              <Button block variant="info"> Start Registration </Button>
+              <Button block variant="info"> Register </Button>
             </router-link></template
           ></Card
         >

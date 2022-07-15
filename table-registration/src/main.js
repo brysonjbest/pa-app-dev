@@ -24,6 +24,7 @@ import Dropdown from "primevue/dropdown";
 import InputMask from "primevue/inputmask";
 import InputNumber from "primevue/inputnumber";
 import InputText from "primevue/inputtext";
+import Steps from "primevue/steps";
 
 //DataTable Component Imports
 import DataTable from "primevue/datatable";
@@ -56,6 +57,7 @@ app.component("Checkbox", Checkbox);
 app.component("InputMask", InputMask);
 app.component("InputNumber", InputNumber);
 app.component("InputText", InputText);
+app.component("Steps", Steps);
 
 app.component("DataTable", DataTable);
 app.component("Column", Column);

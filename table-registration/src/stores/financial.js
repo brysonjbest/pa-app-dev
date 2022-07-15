@@ -25,11 +25,22 @@ export const useFinancialStore = defineStore({
     getId() {
       return this.registration._id;
     },
+    getGuid() {
+      return this.registration.guid;
+    },
   },
   actions: {
     async fill(guid) {
       const registrationData = await apiRoutes.getRegistration(guid);
       this.registration = registrationData.data[0];
+      this.registrations = [registrationData.data[0]];
+      return registrationData.data[0];
+    },
+
+    async fillID(id) {
+      const registrationData = await apiRoutes.getRegistrationByID(id);
+      this.registration = registrationData.data[0];
+      this.registrations = [registrationData.data[0]];
       return registrationData.data[0];
     },
 
@@ -53,7 +64,6 @@ export const useFinancialStore = defineStore({
         id,
         registrationData
       );
-      console.log(newRegistration, "this is newreg data");
       this.registration = newRegistration.data;
       return this.registration;
     },
