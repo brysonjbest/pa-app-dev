@@ -17,6 +17,7 @@ import Menu from "primevue/menu";
 import Message from "primevue/message";
 import TabMenu from "primevue/tabmenu";
 import Menubar from "primevue/menubar";
+import Badge from "primevue/badge";
 
 //Form Component imports
 import Checkbox from "primevue/checkbox";
@@ -51,6 +52,7 @@ app.component("Menu", Menu);
 app.component("Message", Message);
 app.component("TabMenu", TabMenu);
 app.component("Menubar", Menubar);
+app.component("Badge", Badge);
 
 app.component("Dropdown", Dropdown);
 app.component("Checkbox", Checkbox);

@@ -38,13 +38,21 @@
               class="p-button-outlined"
               @click="clearFilters()"
             />
-            <span class="p-input-icon-left">
+            <span v-if="adminView" class="p-input-icon-left">
               <i class="pi pi-search" />
               <InputText
                 v-model="filters['global'].value"
                 placeholder="Keyword Search"
               />
             </span>
+            <Button
+              type="button"
+              label="Total Guests"
+              icon="pi pi-users"
+              class="p-button-warning"
+              :badge="guestCount()"
+              badgeClass="p-badge-danger"
+            />
           </div>
         </template>
         <template #empty> No guests found. </template>
@@ -384,6 +392,9 @@ export default {
     // const adminView = props.adminView;
     // const registrationID = props.registrationID;
     const { adminView, registrationID } = props;
+    const guestCount = function () {
+      return String(guestStore.getGuestsCount);
+    };
 
     const filters = ref({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -602,6 +613,7 @@ export default {
     };
 
     return {
+      guestCount,
       columns,
       dt,
       filters,

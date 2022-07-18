@@ -1,8 +1,11 @@
 <script setup>
 import { useAuthUserStore } from "../stores/users";
+import { useFinancialStore } from "../stores/financial";
+import { ref } from "vue";
 import RegistrationList from "../components/RegistrationList.vue";
 import NavMenu from "../components/common/NavMenu.vue";
 const userStore = useAuthUserStore();
+const financialStore = useFinancialStore();
 
 const navItems = [
   {
@@ -15,21 +18,40 @@ const navItems = [
   },
 ];
 
-userStore.login();
-
-const logout = function () {
-  userStore.logout();
+const tableInfoDialog = ref(false);
+const tableCountAll = () => {
+  return String(financialStore.getTotalTableCount);
 };
+
+//Dialog controls
+
+const tableInfo = (prod) => {
+  tableInfoDialog.value = true;
+};
+
+userStore.login();
 </script>
 
 <template>
   <main>
     <Button
-      label="Logout"
-      type="logout"
-      class="p-button-raised"
-      @click="logout"
+      label="Table Count"
+      type="button"
+      icon="pi pi-ticket"
+      class="p-button-warning"
+      :badge="tableCountAll()"
+      @click="tableInfo()"
+      badgeClass="p-badge-danger"
     />
+
+    <Dialog
+      v-model:visible="tableInfoDialog"
+      header="Table Information"
+      :modal="true"
+      class="p-fluid"
+      >Current approximate table count across all registrations:
+      {{ tableCountAll() }}
+    </Dialog>
     <NavMenu :title="''" :menuitems="navItems" />
     <RegistrationList :adminView="true" />
   </main>

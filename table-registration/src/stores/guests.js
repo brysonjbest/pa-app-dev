@@ -19,7 +19,11 @@ export const useGuestsStore = defineStore({
       guests: [],
     };
   },
-  getters: {},
+  getters: {
+    getGuestsCount() {
+      return this.guests.length;
+    },
+  },
   actions: {
     async fillGuestsRegistration(guid) {
       const guestList = await (
@@ -71,7 +75,12 @@ export const useGuestsStore = defineStore({
     },
 
     async deleteGuest(id) {
-      await apiRoutes.deleteGuest(id);
+      const financialStore = useFinancialStore();
+      await apiRoutes.deleteGuest(id).then(() => {
+        financialStore.registerFinancialInformation({
+          $pull: { guests: id },
+        });
+      });
     },
 
     async registerGuest(guestData) {

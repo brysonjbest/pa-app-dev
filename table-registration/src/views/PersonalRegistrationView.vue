@@ -18,11 +18,20 @@ const financialStore = useFinancialStore();
 // const registration = props.id.toUpperCase() === props.id ? props.id : financialStore.getGuid;
 financialStore.fill(registration);
 
+const tableCount = () => {
+  return String(financialStore.getTableCount);
+};
+
 const addGuestDialog = ref(false);
+const tableInfoDialog = ref(false);
 
 //Dialog controls
 const addGuest = (prod) => {
   addGuestDialog.value = true;
+};
+
+const tableInfo = (prod) => {
+  tableInfoDialog.value = true;
 };
 
 const hideDialog = () => {
@@ -40,10 +49,26 @@ const hideDialog = () => {
       class="p-button-rounded p-button-success mr-2"
       @click="addGuest()"
     />
+    <Button
+      type="button"
+      label="Tables"
+      icon="pi pi-ticket"
+      class="p-button-warning"
+      :badge="tableCount()"
+      @click="tableInfo()"
+      badgeClass="p-badge-danger"
+    />
+    <Dialog
+      v-model:visible="tableInfoDialog"
+      header="Table Information"
+      :modal="true"
+      class="p-fluid"
+      >Warning regarding table charges. Current table count: {{ tableCount() }}
+    </Dialog>
 
     <Dialog
       v-model:visible="addGuestDialog"
-      header="Registration Details"
+      header="Add a new Guest"
       :modal="true"
       class="p-fluid"
       ><InputGuest :registrationID="registration"

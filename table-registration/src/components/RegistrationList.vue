@@ -62,7 +62,9 @@
           :sortable="true"
         >
           <template #body="{ data }">
-            {{ data.guid }}
+            <router-link :to="`/admin/edit/${data.guid}`">{{
+              data.registrar
+            }}</router-link>
           </template></Column
         >
         <Column

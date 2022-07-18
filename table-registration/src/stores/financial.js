@@ -7,6 +7,7 @@ export const useFinancialStore = defineStore({
     return {
       registration: {
         guid: "",
+        registrar: "",
         organization: "",
         branch: "",
         primarycontact: "",
@@ -17,6 +18,7 @@ export const useFinancialStore = defineStore({
         serviceline: null,
         stob: null,
         project: null,
+        guests: [],
       },
       registrations: [],
     };
@@ -27,6 +29,26 @@ export const useFinancialStore = defineStore({
     },
     getGuid() {
       return this.registration.guid;
+    },
+    getTableCount() {
+      const guestCount = this.registration.guests.length;
+      let tableCount = 0;
+      if (guestCount % 10 <= 5 && guestCount % 10 != 0) tableCount += 0.5;
+      if (guestCount % 10 > 5) tableCount += 1;
+      if (guestCount / 10 >= 1) tableCount += Math.floor(guestCount / 10);
+      return tableCount;
+    },
+
+    getTotalTableCount() {
+      let totalTables = 0;
+      this.registrations.forEach((element) => {
+        const guestCount = element.guests.length;
+        if (guestCount % 10 <= 5 && guestCount % 10 != 0) totalTables += 0.5;
+        if (guestCount % 10 > 5) totalTables += 1;
+        if (guestCount / 10 >= 1) totalTables += Math.floor(guestCount / 10);
+      });
+      console.log(totalTables, "total");
+      return totalTables;
     },
   },
   actions: {
@@ -50,6 +72,10 @@ export const useFinancialStore = defineStore({
 
     async deleteRegistration(id) {
       await apiRoutes.deleteRegistration(id);
+    },
+
+    async removeRegistrationGuest(id, data) {
+      await apiRoutes.updateRegistration(id, data);
     },
 
     async createRegistration(guid) {

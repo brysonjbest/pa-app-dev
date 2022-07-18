@@ -175,6 +175,7 @@ export default {
       event.preventDefault();
       const isFormCorrect = await this.v$.$validate();
       console.log(isFormCorrect);
+      if (!isFormCorrect) return;
       register
         .registerFinancialInformation(this.registration)
         .then((res) => {
@@ -208,6 +209,7 @@ export default {
     };
 
     const userGUID = userStore.getUser;
+    this.registration.registrar = userGUID.username;
     register.fill(userGUID.guid);
 
     return { registration, v$, organizations, onSubmit, onReset };
