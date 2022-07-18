@@ -217,12 +217,12 @@ const router = createRouter({
       beforeEnter: authorizeAdmin,
     },
 
-    // {
-    //   path: "/register",
-    //   name: "admin-user-register",
-    //   component: EditUser,
-    //   meta: getMeta("Registrar Registration"),
-    // },
+    {
+      path: "/register",
+      name: "admin-user-register",
+      component: () => import("../views/NewUser.vue"),
+      meta: getMeta("Registrar Sign-Up"),
+    },
     // {
     //   path: "/admin/user/edit/:guid",
     //   name: "admin-user-edit",
