@@ -17,6 +17,7 @@ export const useAuthUserStore = defineStore({
         email: "",
         role: "",
       },
+      users: [],
     };
   },
   getters: {
@@ -105,6 +106,7 @@ export const useAuthUserStore = defineStore({
       });
     },
 
+    /*
     async getUsers() {
       const message = useMessageStore();
       message.resetMessage();
@@ -137,6 +139,15 @@ export const useAuthUserStore = defineStore({
           };
         });
       });
+    },
+    */
+
+    async getUsers() {
+      this.users = await (await UsersDataService.getAllUsers()).data;
+    },
+
+    async updateUser(id, userData) {
+      await UsersDataService.updateUser(id, userData);
     },
 
     async activateUser(guid) {

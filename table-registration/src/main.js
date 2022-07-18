@@ -18,6 +18,7 @@ import Message from "primevue/message";
 import TabMenu from "primevue/tabmenu";
 import Menubar from "primevue/menubar";
 import Badge from "primevue/badge";
+import ProgressSpinner from "primevue/progressspinner";
 
 //Form Component imports
 import Checkbox from "primevue/checkbox";
@@ -38,7 +39,7 @@ const app = createApp(App);
 
 app.use(createPinia());
 app.use(router);
-app.use(PrimeVue);
+app.use(PrimeVue, { ripple: true });
 app.use(ConfirmationService);
 app.use(DialogService);
 
@@ -53,6 +54,7 @@ app.component("Message", Message);
 app.component("TabMenu", TabMenu);
 app.component("Menubar", Menubar);
 app.component("Badge", Badge);
+app.component("Spinner", ProgressSpinner);
 
 app.component("Dropdown", Dropdown);
 app.component("Checkbox", Checkbox);

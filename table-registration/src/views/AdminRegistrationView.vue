@@ -2,6 +2,7 @@
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
 import { ref } from "vue";
+import PageHeader from "../components/common/PageHeader.vue";
 import RegistrationList from "../components/RegistrationList.vue";
 import NavMenu from "../components/common/NavMenu.vue";
 const userStore = useAuthUserStore();
@@ -34,6 +35,7 @@ userStore.login();
 
 <template>
   <main>
+    <PageHeader header="All Registrations" content="Manage PA Registrations" />
     <Button
       label="Table Count"
       type="button"

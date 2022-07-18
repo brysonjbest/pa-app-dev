@@ -2,6 +2,7 @@
 import { useAuthUserStore } from "../stores/users";
 import { useGuestsStore } from "../stores/guests";
 import { ref } from "vue";
+import PageHeader from "../components/common/PageHeader.vue";
 import GuestList from "../components/GuestList.vue";
 import NavMenu from "../components/common/NavMenu.vue";
 const userStore = useAuthUserStore();
@@ -34,6 +35,7 @@ userStore.login();
 
 <template>
   <main>
+    <PageHeader header="All Guests" content="Manage PA Guests" />
     <Button
       label="Guest Count"
       type="button"

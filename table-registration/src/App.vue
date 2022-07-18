@@ -48,8 +48,8 @@ export default {
           },
           {
             label: "Manage Users",
-            to: "/",
-            visible: () => userStore.isSuperAdmin,
+            to: "/admin/user/list",
+            visible: () => userStore.isAdmin,
             class: "dropdown-account-item",
           },
           {

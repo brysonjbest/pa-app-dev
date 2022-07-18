@@ -158,11 +158,6 @@ const router = createRouter({
       component: HomeView,
     },
     {
-      path: "/guest",
-      name: "guest",
-      component: () => import("../views/AddGuestView.vue"),
-    },
-    {
       path: "/admin",
       name: "admin",
       component: () => import("../views/AdminRegistrationView.vue"),
@@ -213,6 +208,43 @@ const router = createRouter({
       meta: getMeta("Test"),
       beforeEnter: authorizeRegistrar,
     },
+
+    {
+      path: "/admin/user/list",
+      name: "admin-user-list",
+      component: () => import("../views/ManageUsers.vue"),
+      meta: getMeta("Manage Users"),
+      beforeEnter: authorizeAdmin,
+    },
+
+    // {
+    //   path: "/register",
+    //   name: "admin-user-register",
+    //   component: EditUser,
+    //   meta: getMeta("Registrar Registration"),
+    // },
+    // {
+    //   path: "/admin/user/edit/:guid",
+    //   name: "admin-user-edit",
+    //   component: () => import("../views/ManageUsers.vue"),
+    //   meta: getMeta("Edit User Data"),
+    //   beforeEnter: authorizeAdmin,
+    // },
+    // {
+    //   path: "/admin/user/assign/:guid",
+    //   name: "admin-user-assign",
+    //   component: AssignUser,
+    //   meta: getMeta("Assign User Role"),
+    //   beforeEnter: authorizeSuperAdmin,
+    // },
+
+    // {
+    //   path: "/admin/user/delete/:guid",
+    //   name: "admin-user-delete",
+    //   component: DeleteUser,
+    //   meta: getMeta("Delete User"),
+    //   beforeEnter: authorizeAdmin,
+    // },
 
     {
       path: "/401",

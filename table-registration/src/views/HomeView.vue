@@ -1,10 +1,6 @@
 <template>
   <main>
-    <Card
-      ><template #header> Welcome </template>
-      <template #title> Premier's Awards Event Registration </template></Card
-    >
-
+    <PageHeader header="Welcome" title="Premier's Awards Event Registration" />
     <div v-if="() => isRegistrar">
       <Card>
         <template #content
@@ -45,6 +41,7 @@ import { useAuthUserStore } from "../stores/users";
 import { ref } from "vue";
 import router from "../router/index.js";
 import settings from "../services/settings.services";
+import PageHeader from "../components/common/PageHeader.vue";
 
 const userStore = useAuthUserStore();
 const isLoggedIn = userStore.isAuthenticated;

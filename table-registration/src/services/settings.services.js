@@ -28,14 +28,17 @@ const schemaData = {
     { field: "dietary", text: "Dietary Requirements" },
   ],
   roles: [
-    { value: null, text: "Please select a user role" },
     { value: "inactive", text: "Inactive" },
     { value: "registrar", text: "Registrar" },
+    { value: "nominator", text: "Nominator" },
     { value: "administrator", text: "Administrator" },
     { value: "super-administrator", text: "Super-Administrator" },
   ],
   organizations: [
-    { value: null, text: "Please select an eligible Ministry or organization" },
+    {
+      value: null,
+      text: "Please select an eligible Ministry or organization",
+    },
     { value: "org-1", text: "Advanced Education and Skills Training" },
     { value: "org-2", text: "Agriculture, Food and Fisheries" },
     { value: "org-3", text: "Attorney General & Housing" },

@@ -38,7 +38,7 @@ class UsersDataService {
   }
 
   updateUser(id, data) {
-    return api.post(`/users/${id}`, data);
+    return api.post(`/users/update/${id}`, data);
   }
 
   findBy(name) {
