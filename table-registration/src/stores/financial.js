@@ -30,6 +30,9 @@ export const useFinancialStore = defineStore({
     getGuid() {
       return this.registration.guid;
     },
+    getRegistrar() {
+      return this.registration.registrar;
+    },
     getTableCount() {
       const guestCount = this.registration.guests.length;
       let tableCount = 0;
@@ -47,7 +50,6 @@ export const useFinancialStore = defineStore({
         if (guestCount % 10 > 5) totalTables += 1;
         if (guestCount / 10 >= 1) totalTables += Math.floor(guestCount / 10);
       });
-      console.log(totalTables, "total");
       return totalTables;
     },
   },

@@ -46,6 +46,7 @@
               />
             </span>
             <Button
+              v-if="!adminView"
               type="button"
               label="Total Guests"
               icon="pi pi-users"

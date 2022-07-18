@@ -22,6 +22,10 @@ const tableCount = () => {
   return String(financialStore.getTableCount);
 };
 
+const getRegistrar = () => {
+  return financialStore.getRegistrar;
+};
+
 const addGuestDialog = ref(false);
 const tableInfoDialog = ref(false);
 
@@ -41,7 +45,8 @@ const hideDialog = () => {
 
 <template>
   <main>
-    <h1>Registration # {{ registration }}</h1>
+    <h1>Registrar {{ getRegistrar() }}</h1>
+    <h2>Registration # {{ registration }}</h2>
     <RegistrationList :registrationID="registration" :detailsView="false" />
     <Button
       label="Add Guests"
