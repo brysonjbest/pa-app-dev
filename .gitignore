@@ -104,3 +104,4 @@ dist
 .tern-port
 
 .DS_Store
+app/table_registration/views/favicon copy.ico
