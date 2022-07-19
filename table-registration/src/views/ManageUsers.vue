@@ -183,6 +183,15 @@
             class="p-button-rounded p-button-success mr-2"
             @click="editUser(slotProps.data)"
           />
+          <!-- <Button
+            v-if="
+              slotProps.data.role !== 'super-administrator' &&
+              userStore.getUser.role === 'super-administrator'
+            "
+            icon="pi pi-trash"
+            class="p-button-rounded p-button-warning"
+            @click="confirmDeleteRegistration(slotProps.data)"
+          /> -->
           <router-link to="/user/update">
             <Button
               v-if="selfAssignment(slotProps.data.guid)"
@@ -236,6 +245,34 @@
           icon="pi pi-check"
           class="p-button-text"
           @click="saveUser"
+        />
+      </template>
+    </Dialog>
+    <Dialog
+      v-model:visible="deleteUserDialog"
+      :style="{ width: '450px' }"
+      header="Confirm"
+      :modal="true"
+    >
+      <div class="confirmation-content">
+        <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
+        <span v-if="registration"
+          >Are you sure you want to delete user <b>{{ user.username }}</b> for
+          contact {{ user.firstname }} {{ user.lastname }}?</span
+        >
+      </div>
+      <template #footer>
+        <Button
+          label="No"
+          icon="pi pi-times"
+          class="p-button-text"
+          @click="deleteUserDialog = false"
+        />
+        <Button
+          label="Yes"
+          icon="pi pi-check"
+          class="p-button-text"
+          @click="deleteUser"
         />
       </template>
     </Dialog>
@@ -401,11 +438,17 @@ export default {
     const user = ref({});
     const submitted = ref(false);
     const userDialog = ref(false);
+    const deleteUserDialog = ref(false);
 
     //Dialog controls
     const editUser = (prod) => {
       user.value = { ...prod };
       userDialog.value = true;
+    };
+
+    const confirmDeleteGuest = (prod) => {
+      user.value = { ...prod };
+      deleteUserDialog.value = true;
     };
 
     const hideDialog = () => {
@@ -419,6 +462,23 @@ export default {
 
       userStore
         .updateUser(user.value["guid"], user.value)
+        .then(() => {
+          userDialog.value = false;
+          user.value = {};
+        })
+        .then(load())
+        .catch((error) => {
+          console.log(error);
+          // error.response.status Check status code
+        })
+        .finally(() => {
+          load();
+        });
+    };
+
+    const deleteUser = async function () {
+      userStore
+        .removeUser(user.value["guid"])
         .then(() => {
           userDialog.value = false;
           user.value = {};
@@ -450,11 +510,13 @@ export default {
       userDialog,
       editUser,
       saveUser,
+      deleteUser,
       user,
       roles,
       adminRoles,
       submitted,
       hideDialog,
+      deleteUserDialog,
     };
   },
   components: { PageHeader },
