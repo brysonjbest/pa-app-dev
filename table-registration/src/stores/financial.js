@@ -61,6 +61,12 @@ export const useFinancialStore = defineStore({
       return registrationData.data[0];
     },
 
+    async fillOnlyRegistration(guid) {
+      const registrationData = await apiRoutes.getRegistration(guid);
+      this.registration = registrationData.data[0];
+      return registrationData.data[0];
+    },
+
     async fillID(id) {
       const registrationData = await apiRoutes.getRegistrationByID(id);
       this.registration = registrationData.data[0];

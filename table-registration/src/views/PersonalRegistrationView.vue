@@ -3,6 +3,7 @@ import GuestList from "../components/GuestList.vue";
 import RegistrationList from "../components/RegistrationList.vue";
 import InputFinancial from "../components/inputs/InputFinancial.vue";
 import InputGuest from "../components/inputs/InputGuest.vue";
+import PageHeader from "../components/common/PageHeader.vue";
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
 import { storeToRefs } from "pinia";
@@ -15,7 +16,6 @@ const userStore = useAuthUserStore();
 userStore.login();
 const financialStore = useFinancialStore();
 
-// const registration = props.id.toUpperCase() === props.id ? props.id : financialStore.getGuid;
 financialStore.fill(registration);
 
 const tableCount = () => {
@@ -25,6 +25,8 @@ const tableCount = () => {
 const getRegistrar = () => {
   return financialStore.getRegistrar;
 };
+
+const registrarName = getRegistrar();
 
 const addGuestDialog = ref(false);
 const tableInfoDialog = ref(false);
@@ -45,8 +47,11 @@ const hideDialog = () => {
 
 <template>
   <main>
-    <h1>Registrar {{ getRegistrar() }}</h1>
-    <h2>Registration # {{ registration }}</h2>
+    <Card
+      ><template #header> Submitted by {{ getRegistrar() }} </template>
+      <template #title> Registration # {{ registration }} </template>
+    </Card>
+
     <RegistrationList :registrationID="registration" :detailsView="false" />
     <Button
       label="Add Guests"

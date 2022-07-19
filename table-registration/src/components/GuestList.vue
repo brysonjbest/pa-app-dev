@@ -390,8 +390,6 @@ export default {
     const dietary = ref(formServices.get("dietaryoptions") || []);
     const userStore = useAuthUserStore();
     const dt = ref();
-    // const adminView = props.adminView;
-    // const registrationID = props.registrationID;
     const { adminView, registrationID } = props;
     const guestCount = function () {
       return String(guestStore.getGuestsCount);
