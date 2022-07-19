@@ -116,6 +116,24 @@
         ></Column>
         <Column
           v-if="adminView"
+          field="tables"
+          header="Table Count:"
+          key="tables"
+          :sortable="true"
+        >
+          <template #body="{ data }">
+            {{ tableCount(data.guests.length) }}
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by Date Created"
+            /> </template
+        ></Column>
+        <Column
+          v-if="adminView"
           field="updatedAt"
           header="Updated:"
           key="updatedAt"
@@ -290,6 +308,14 @@ export default {
       return data.filter((item) => item.field !== "organization");
     };
 
+    const tableCount = function (data) {
+      let tableCount = 0;
+      if (data % 10 <= 5 && data % 10 != 0) tableCount += 0.5;
+      if (data % 10 > 5) tableCount += 1;
+      if (data / 10 >= 1) tableCount += Math.floor(data / 10);
+      return tableCount;
+    };
+
     //Dialog Controls
 
     const registration = ref({});
@@ -356,6 +382,7 @@ export default {
       deleteRegistration,
       hideDialog,
       loadLazyData,
+      tableCount,
     };
   },
   components: { InputFinancial },
