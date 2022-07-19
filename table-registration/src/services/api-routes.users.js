@@ -30,7 +30,7 @@ class UsersDataService {
   }
 
   registerUser(data) {
-    return api.post("/register", data);
+    return api.post("users/register", data);
   }
 
   deleteUser(id) {

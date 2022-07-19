@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Message show v-if="user && isRegistered" variant="info">
+    <Message show v-if="user && isRegistered" variant="info" :closable="false">
       <p v-if="user.role === 'inactive'">
         Your registration is currently under review. Please check back regularly
         for updates.
@@ -10,97 +10,99 @@
         >.
       </p>
     </Message>
-
-    <form v-if="user && !isRegistered">
-      <Card bg-variant="light" class="mb-3">
-        <InputText
-          id="input-user-register-username"
-          :disabled="true"
-          :value="user.username"
-        >
-        </InputText>
-
-        <InputText
-          id="input-user-register-firstname"
-          v-model="user.firstname"
-          placeholder="Enter user's given name"
-        >
-        </InputText>
-
-        <InputText
-          id="input-user-register-lastname"
-          v-model="user.lastname"
-          placeholder="Enter user's last name"
-        />
-
-        <InputText
-          type="email"
-          id="input-user-register-email"
-          v-model="user.email"
-          placeholder="Enter user's email"
-        >
-        </InputText>
-
-        <Button
-          v-if="mode === 'edit'"
-          @click="update"
-          :disabled="!validation"
-          class="m-2"
-          type="button"
-          variant="info"
-          >Update</Button
-        >
-        <Button
-          v-else
-          @click="register"
-          :disabled="!validation"
-          class="m-2"
-          type="button"
-          variant="info"
-          >Register</Button
-        >
-        <!-- <Button
-          v-if="mode === 'edit'"
-          class="m-2"
-          type="button"
-          @click="reroute('/admin/user/list')"
-          >Return to Manage Users</Button
-        > -->
-      </Card>
-    </form>
-    <!-- <b-navbar fixed="bottom" align="right">
-      <b-alert
-        v-if="message.text"
-        show="5"
-        fade
-        dismissible
-        :variant="message.type"
-        @dismissed="message = { text: '', type: '' }"
-      >
+    <Message
+      show
+      v-if="activeMessage"
+      :variant="message.type"
+      :life="5000"
+      :sticky="false"
+    >
+      <p>
         {{ message.text }}
-      </b-alert>
-    </b-navbar> -->
+      </p>
+    </Message>
+
+    <Card v-if="user && (!isRegistered || edit)">
+      <template #content>
+        <form>
+          <InputText
+            id="input-user-register-username"
+            :disabled="true"
+            :value="user.username"
+          >
+          </InputText>
+
+          <InputText
+            id="input-user-register-firstname"
+            v-model="user.firstname"
+            placeholder="Enter user's given name"
+          >
+          </InputText>
+
+          <InputText
+            id="input-user-register-lastname"
+            v-model="user.lastname"
+            placeholder="Enter user's last name"
+          />
+
+          <InputText
+            type="email"
+            id="input-user-register-email"
+            v-model="user.email"
+            placeholder="Enter user's email"
+          >
+          </InputText>
+          <Button
+            v-if="edit"
+            @click="update"
+            :disabled="!validation"
+            class="m-2"
+            type="button"
+            variant="info"
+            >Update</Button
+          >
+
+          <Button
+            v-else
+            @click="register"
+            :disabled="!validation"
+            class="m-2"
+            type="button"
+            variant="info"
+            >Register</Button
+          >
+        </form>
+      </template>
+    </Card>
   </div>
 </template>
 
 <script>
 import { useAuthUserStore } from "../stores/users";
 import { storeToRefs } from "pinia";
+import { ref } from "vue";
 import useVuelidate from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
 import { useMessageStore } from "../stores/messages";
 import apiRoutesUsers from "../services/api-routes.users";
 
 export default {
-  setup() {
+  props: {
+    edit: Boolean,
+  },
+  setup(props) {
     const userStore = useAuthUserStore();
     const messageStore = useMessageStore();
+    const { message } = storeToRefs(useMessageStore());
+    const activeMessage = ref(false);
     const { user } = storeToRefs(useAuthUserStore());
     const rules = {
       firstname: { required },
       lastname: { required },
       email: { required, email },
     };
+
+    const edit = props.edit || false;
 
     const v$ = useVuelidate(rules, user);
 
@@ -113,122 +115,70 @@ export default {
       return this.mode === "register" && !!currentUser.role;
     };
 
-    const mode = function () {
-      return this.$route.name === "admin-user-edit" ? "edit" : "register";
-    };
-
     const register = async function () {
       try {
+        activeMessage.value = true;
         messageStore.setMessage({
           text: "Registering user...",
           type: "info",
           spinner: true,
         });
         // handle data submission
-        const response = await apiRoutesUsers.registerUser(this.user);
-        const { data = null } = response || {};
-        this.user = data || this.user;
+        const response = await apiRoutesUsers.registerUser(user.value);
         messageStore.setMessage({
           text: "Successfully registered user!",
           type: "success",
         });
       } catch (err) {
         console.error(err);
+        activeMessage.value = true;
         messageStore.setMessage({
           text: "User could not be registered.",
-          type: "danger",
+          type: "error",
+        });
+      }
+    };
+
+    const update = async function () {
+      try {
+        activeMessage.value = true;
+        messageStore.setMessage({
+          text: "Updating user...",
+          type: "info",
+          spinner: true,
+        });
+
+        // handle data submission
+        const response = await apiRoutesUsers.updateUser(
+          user.value.guid,
+          user.value
+        );
+        messageStore.setMessage({
+          text: "Successfully updated user!",
+          type: "success",
+        });
+      } catch (err) {
+        console.error(err);
+        activeMessage.value = true;
+        messageStore.setMessage({
+          text: "User could not be updated.",
+          type: "error",
         });
       }
     };
 
     return {
       user,
+      message,
       rules,
-      mode,
+      edit,
       v$,
       isRegistered,
       validation,
       register,
+      update,
+      activeMessage,
     };
   },
 };
-
-/*
-  methods: {
-    async reroute(uri) {
-      await this.$router.push(uri);
-    },
-    async register() {
-      try {
-        await this.$store.dispatch("setMessage", {
-          text: "Registering user...",
-          type: "info",
-          spinner: true,
-        });
-        // handle data submission
-        const response = await api.post(`users/register`, this.user);
-        const { data = null } = response || {};
-        this.user = data || this.user;
-        await this.$store.dispatch("setMessage", {
-          text: "Successfully registered user!",
-          type: "success",
-        });
-      } catch (err) {
-        console.error(err);
-        await this.$store.dispatch("handleError", {
-          text: "User could not be registered.",
-          type: "danger",
-        });
-      }
-    },
-    async update() {
-      try {
-        await this.$store.dispatch("setMessage", {
-          text: "Updating user data...",
-          type: "info",
-          spinner: true,
-        });
-        // handle data submission
-        await api.post(`users/update/${this.user.guid}`, this.user);
-        await this.$store.dispatch("setMessage", {
-          text: "Successfully updated user data!",
-          type: "success",
-        });
-      } catch (err) {
-        console.error(err);
-        await this.$store.dispatch("handleError", {
-          text: "User data could not be updated.",
-          type: "danger",
-        });
-      }
-    },
-  },
-  async beforeCreate() {
-    try {
-      await this.$store.dispatch("setMessage", {
-        text: "Loading user data...",
-        type: "info",
-        spinner: true,
-      });
-      if (this.$route.name === "admin-user-edit" && this.$route.params.guid) {
-        // load requested user data
-        this.user = await this.$store.dispatch(
-          "getUserById",
-          this.$route.params.guid
-        );
-      } else {
-        await this.$store.dispatch("login");
-        this.user = await this.$store.getters.getUser;
-      }
-      await this.$store.dispatch("resetMessage");
-    } catch (err) {
-      console.error(err);
-      await this.$store.dispatch("handleError", {
-        text: "User data failed to load.",
-        type: "danger",
-      });
-    }
-  },
-};
-*/
 </script>

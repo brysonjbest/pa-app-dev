@@ -172,18 +172,23 @@
             placeholder="Search by Date Updated"
           /> </template
       ></Column>
-      <Column
-        :exportable="false"
-        style="min-width: 8rem"
-        header="Edit User Role:"
-      >
+      <Column :exportable="false" style="min-width: 8rem" header="Edit User:">
         <template #body="slotProps">
           <Button
-            v-if="slotProps.data.role !== 'super-administrator'"
+            v-if="
+              slotProps.data.role !== 'super-administrator' &&
+              slotProps.data.role !== userStore.getUser.role
+            "
             icon="pi pi-pencil"
             class="p-button-rounded p-button-success mr-2"
             @click="editUser(slotProps.data)"
           />
+          <router-link to="/user/update">
+            <Button
+              v-if="selfAssignment(slotProps.data.guid)"
+              icon="pi pi-pencil"
+              class="p-button-rounded p-button-success mr-2"
+          /></router-link>
         </template>
       </Column>
     </DataTable>
@@ -431,6 +436,7 @@ export default {
     load();
     return {
       users,
+      userStore,
       loading,
       isAdmin,
       isSuperAdmin,

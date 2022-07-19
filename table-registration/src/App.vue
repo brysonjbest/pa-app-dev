@@ -47,6 +47,12 @@ export default {
             class: "dropdown-account-item",
           },
           {
+            label: "Update Profile",
+            to: "/user/update/",
+            visible: () => userStore.isAuthenticated,
+            class: "dropdown-account-item",
+          },
+          {
             label: "Manage Users",
             to: "/admin/user/list",
             visible: () => userStore.isAdmin,

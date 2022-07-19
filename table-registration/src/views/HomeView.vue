@@ -11,11 +11,16 @@
     </div>
     <div v-else>
       <p>
-        This event registration tool is restricted to authorized registrars. To
-        request access, please register.
+        This event registration tool is restricted to authorized registrars.
+        Please contact your organization's representative to request attendance.
+        If you are your organization's representative and wish to register a
+        group for attendance, please create an account at the link below.
       </p>
       <router-link to="/register/">
-        <Button block variant="info"> Register as an Event Registrar </Button>
+        <Button block variant="info">
+          Create a profile to register attendees for the Premier's Awards
+          {{ year }} Event.
+        </Button>
       </router-link>
     </div>
 

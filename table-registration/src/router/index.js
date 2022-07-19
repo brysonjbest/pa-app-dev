@@ -223,6 +223,15 @@ const router = createRouter({
       component: () => import("../views/NewUser.vue"),
       meta: getMeta("Registrar Sign-Up"),
     },
+
+    {
+      path: "/user/:update",
+      name: "update-user-information",
+      component: () => import("../views/NewUser.vue"),
+      meta: getMeta("Registrar Sign-Up"),
+      props: true,
+      beforeEnter: authorizeRegistrar,
+    },
     // {
     //   path: "/admin/user/edit/:guid",
     //   name: "admin-user-edit",
