@@ -14,7 +14,7 @@ const schemaData = {
     { field: "primarycontact", text: "Primary Contact" },
     { field: "primaryemail", text: "Primary Contact's Email" },
     { field: "financialcontact", text: "Financial Contact" },
-    { field: "clientministry", text: "Client/Ministry Code" },
+    { field: "clientministry", text: "Client / Ministry Code" },
     { field: "respcode", text: "RESP Code" },
     { field: "serviceline", text: "Service Line" },
     { field: "stob", text: "STOB" },

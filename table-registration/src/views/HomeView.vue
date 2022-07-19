@@ -1,6 +1,9 @@
 <template>
   <main>
-    <PageHeader header="Welcome" title="Premier's Awards Event Registration" />
+    <PageHeader
+      title="Welcome"
+      subtitle="Premier's Awards Event Registration"
+    />
     <div v-if="() => isRegistrar">
       <Card>
         <template #content

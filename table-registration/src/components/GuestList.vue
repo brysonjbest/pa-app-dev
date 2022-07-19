@@ -2,6 +2,7 @@
   <div>
     <div>
       <DataTable
+        class="p-datatable-sm"
         :value="guests"
         responsiveLayout="stack"
         :paginator="adminView"
@@ -63,7 +64,7 @@
           field="registration"
           header="Registration"
           key="registration"
-          :sortable="true"
+          class="guid"
         >
           <template #body="{ data }">
             <router-link
@@ -79,12 +80,7 @@
               placeholder="Search by registration"
             /> </template
         ></Column>
-        <Column
-          field="organization"
-          header="Organization"
-          key="organization"
-          :sortable="true"
-        >
+        <Column field="organization" header="Organization" key="organization">
           <template #body="{ data }">
             {{ lookup("organizations", data.organization) }} </template
           ><template #filter="{ filterModel }">
@@ -95,12 +91,7 @@
               placeholder="Search by organization"
             /> </template
         ></Column>
-        <Column
-          field="firstname"
-          header="First Name"
-          key="firstname"
-          :sortable="true"
-        >
+        <Column field="firstname" header="First Name" key="firstname">
           <template #body="{ data }"> {{ data.firstname }} </template
           ><template #filter="{ filterModel }">
             <InputText
@@ -110,12 +101,7 @@
               placeholder="Search by First Name"
             /> </template
         ></Column>
-        <Column
-          field="lastname"
-          header="Last Name"
-          key="lastname"
-          :sortable="true"
-        >
+        <Column field="lastname" header="Last Name" key="lastname">
           <template #body="{ data }"> {{ data.lastname }} </template
           ><template #filter="{ filterModel }">
             <InputText
@@ -129,7 +115,6 @@
           field="attendancetype"
           header="Attendance Type"
           key="attendancetype"
-          :sortable="true"
         >
           <template #body="{ data }">
             {{ lookup("attendancetypes", data.attendancetype) }} </template
@@ -145,7 +130,6 @@
           field="accessibility"
           header="Accessibility Requirements"
           key="accessibility"
-          :sortable="true"
         >
           <template #body="{ data }">
             {{
@@ -159,12 +143,7 @@
               placeholder="Search by Accessibility Options"
             /> </template
         ></Column>
-        <Column
-          field="dietary"
-          header="Dietary Requirements"
-          key="dietary"
-          :sortable="true"
-        >
+        <Column field="dietary" header="Dietary Requirements" key="dietary">
           <template #body="{ data }">
             {{ lookupLoop("dietaryoptions", data.dietary) }} </template
           ><template #filter="{ filterModel }">
@@ -643,3 +622,17 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+.p-datatable-sm tr td {
+  font-size: 16px;
+  padding: 0.3rem;
+}
+
+.guid {
+  line-break: anywhere;
+}
+.p-datatable-wrapper {
+  line-height: 1rem;
+}
+</style>

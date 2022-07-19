@@ -1,6 +1,9 @@
 <template>
   <div v-if="isAdmin">
-    <PageHeader header="Manage Users" title="Manage User Access and Accounts" />
+    <PageHeader
+      title="Manage Users"
+      subtitle="Manage User Access and Accounts"
+    />
     <Card v-if="loading">
       <Row class="vh-50 text-center" align-v="center">
         <Column id="spinner"><Spinner label="Loading..."></Spinner></Column>
@@ -8,6 +11,7 @@
     </Card>
 
     <DataTable
+      class="p-datatable-sm"
       :value="users"
       responsiveLayout="stack"
       :rows="10"
@@ -55,7 +59,7 @@
       <template #empty> No users found. </template>
       <template #loading> Loading guest data. Please wait. </template>
 
-      <Column field="guid" header="guid" key="guid" :sortable="true">
+      <Column field="guid" header="guid" key="guid" class="guid">
         <template #body="{ data }"> {{ data.guid }} </template
         ><template #filter="{ filterModel }">
           <InputText
@@ -66,12 +70,7 @@
           /> </template
       ></Column>
 
-      <Column
-        field="username"
-        header="Username"
-        key="username"
-        :sortable="true"
-      >
+      <Column field="username" header="Username" key="username">
         <template #body="{ data }"> {{ data.username }} </template
         ><template #filter="{ filterModel }">
           <InputText
@@ -82,12 +81,7 @@
           /> </template
       ></Column>
 
-      <Column
-        field="firstname"
-        header="First Name"
-        key="firstname"
-        :sortable="true"
-      >
+      <Column field="firstname" header="First Name" key="firstname">
         <template #body="{ data }"> {{ data.firstname }} </template
         ><template #filter="{ filterModel }">
           <InputText
@@ -98,12 +92,7 @@
           /> </template
       ></Column>
 
-      <Column
-        field="lastname"
-        header="Last Name"
-        key="lastname"
-        :sortable="true"
-      >
+      <Column field="lastname" header="Last Name" key="lastname">
         <template #body="{ data }"> {{ data.lastname }} </template
         ><template #filter="{ filterModel }">
           <InputText
@@ -114,7 +103,7 @@
           /> </template
       ></Column>
 
-      <Column field="email" header="Email" key="email" :sortable="true">
+      <Column field="email" header="Email" key="email">
         <template #body="{ data }"> {{ data.email }} </template
         ><template #filter="{ filterModel }">
           <InputText
@@ -125,7 +114,7 @@
           /> </template
       ></Column>
 
-      <Column field="role" header="Role" key="role" :sortable="true">
+      <Column field="role" header="Role" key="role">
         <template #body="{ data }"> {{ lookup("roles", data.role) }} </template
         ><template #filter="{ filterModel }">
           <InputText
@@ -496,6 +485,7 @@ export default {
     load();
     return {
       users,
+      dt,
       userStore,
       loading,
       isAdmin,
@@ -522,3 +512,5 @@ export default {
   components: { PageHeader },
 };
 </script>
+
+<style scoped></style>

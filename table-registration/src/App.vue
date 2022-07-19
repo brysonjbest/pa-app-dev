@@ -15,10 +15,6 @@ export default {
         to: "/",
       },
       {
-        label: "Test",
-        to: "/test",
-      },
-      {
         label: "About",
         url: "https://premiersawards.gww.gov.bc.ca/",
       },
@@ -105,7 +101,7 @@ export default {
 
 /* Theme Choices: */
 
-/* @import "primevue/resources/themes/nova/theme.css"; */
+@import "primevue/resources/themes/nova/theme.css";
 
 /* @import "primevue/resources/themes/nova-alt/theme.css"; */
 
@@ -113,21 +109,34 @@ export default {
 
 /* @import "primevue/resources/themes/nova-vue/theme.css"; */
 
-@import "primevue/resources/themes/rhea/theme.css";
+/* @import "primevue/resources/themes/rhea/theme.css"; */
 
 /* @import "primevue/resources/themes/lara-light-teal/theme.css"; */
+html {
+  font-size: 16px;
+}
+
+main {
+  margin-top: 80px;
+  padding-bottom: 300px;
+}
+#app {
+  font-family: "Avenir", Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: #2c3e50;
+}
 
 #app {
   /* max-width: 1280px; */
   margin: 0 auto;
   /* padding: 2rem; */
-
-  font-weight: normal;
 }
 
 header {
   line-height: 1.5;
   max-height: 100vh;
+  margin: -9px;
 }
 
 #navbar {
@@ -140,6 +149,15 @@ header {
 #page-title {
   color: white !important;
   z-index: 9999 !important;
+  display: inline-block;
+  padding-top: 0.3125rem;
+  padding-bottom: 0.3125rem;
+  margin-right: 1rem;
+  font-size: 1.25rem;
+  line-height: inherit;
+  white-space: nowrap;
+  text-decoration: none;
+  background-color: transparent;
 }
 
 .p-menuitem-text {
@@ -150,92 +168,21 @@ header {
   position: absolute !important;
   right: 10px;
   z-index: 9999 !important;
+  background-color: #116fbf;
+}
+
+.dropdown-account:hover {
+  color: #343a40 !important;
+  background-color: #116fbf;
+}
+
+.p-submenu-list {
+  right: 0px;
+  z-index: 9999 !important;
 }
 
 .dropdown-account-item .p-menuitem-text {
   color: #343a40 !important;
   z-index: 9999 !important;
 }
-
-/*
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
-a,
-.green {
-  text-decoration: none;
-  color: hsla(160, 100%, 37%, 1);
-  transition: 0.4s;
-}
-
-@media (hover: hover) {
-  a:hover {
-    background-color: hsla(160, 100%, 37%, 0.2);
-  }
-}
-
-nav {
-  width: 100%;
-  font-size: 12px;
-  text-align: center;
-  margin-top: 2rem;
-}
-
-nav a.router-link-exact-active {
-  color: var(--color-text);
-}
-
-nav a.router-link-exact-active:hover {
-  background-color: transparent;
-}
-
-nav a {
-  display: inline-block;
-  padding: 0 1rem;
-  border-left: 1px solid var(--color-border);
-}
-
-nav a:first-of-type {
-  border: 0;
-}
-
-@media (min-width: 1024px) {
-  body {
-    display: flex;
-    place-items: center;
-  }
-
-  #app {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    padding: 0 2rem;
-  }
-
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  nav {
-    text-align: left;
-    margin-left: -1rem;
-    font-size: 1rem;
-
-    padding: 1rem 0;
-    margin-top: 1rem;
-  }
-} */
 </style>

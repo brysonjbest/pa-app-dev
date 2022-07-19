@@ -2,6 +2,7 @@
   <div>
     <div>
       <DataTable
+        class="p-datatable-sm"
         :value="registrations"
         responsiveLayout="stack"
         :key="dataTableRender"
@@ -59,7 +60,7 @@
           field="guid"
           header="ID#"
           key="guid"
-          :sortable="true"
+          class="guid"
         >
           <template #body="{ data }">
             <router-link :to="`/admin/edit/${data.guid}`">{{
@@ -67,12 +68,7 @@
             }}</router-link>
           </template></Column
         >
-        <Column
-          field="organization"
-          header="Organization"
-          key="organization"
-          :sortable="true"
-        >
+        <Column field="organization" header="Organization" key="organization">
           <template #body="{ data }">
             {{ lookup("organizations", data.organization) }}
           </template>
@@ -89,7 +85,6 @@
           :field="col.field"
           :header="col.text"
           :key="col.field"
-          :sortable="true"
         >
           <template #filter="{ filterModel }">
             <InputText

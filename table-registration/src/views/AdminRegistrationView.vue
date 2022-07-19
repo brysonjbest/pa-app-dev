@@ -35,7 +35,7 @@ userStore.login();
 
 <template>
   <main>
-    <PageHeader header="All Registrations" content="Manage PA Registrations" />
+    <PageHeader title="All Registrations" subtitle="Manage PA Registrations" />
     <Button
       label="Table Count"
       type="button"

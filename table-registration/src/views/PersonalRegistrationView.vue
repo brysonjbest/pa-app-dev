@@ -47,11 +47,9 @@ const hideDialog = () => {
 
 <template>
   <main>
-    <Card
-      ><template #header> Submitted by {{ getRegistrar() }} </template>
-      <template #title> Registration # {{ registration }} </template>
-    </Card>
-
+    <PageHeader :title="`Registration # ${registration} `"
+      >Submitted by {{ getRegistrar() }}</PageHeader
+    >
     <RegistrationList :registrationID="registration" :detailsView="false" />
     <Button
       label="Add Guests"

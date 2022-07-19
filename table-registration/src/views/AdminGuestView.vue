@@ -35,7 +35,7 @@ userStore.login();
 
 <template>
   <main>
-    <PageHeader header="All Guests" content="Manage PA Guests" />
+    <PageHeader title="All Guests" subtitle="Manage PA Guests" />
     <Button
       label="Guest Count"
       type="button"
