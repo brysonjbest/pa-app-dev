@@ -59,7 +59,13 @@
       <template #empty> No users found. </template>
       <template #loading> Loading guest data. Please wait. </template>
 
-      <Column field="guid" header="guid" key="guid" class="guid">
+      <Column
+        v-if="userStore.getUser.role === 'super-administrator'"
+        field="guid"
+        header="guid"
+        key="guid"
+        class="guid"
+      >
         <template #body="{ data }"> {{ data.guid }} </template
         ><template #filter="{ filterModel }">
           <InputText
@@ -330,94 +336,14 @@ export default {
         minute: "2-digit",
       });
     };
-    const filters = ref({
-      global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-      guid: {
-        operator: FilterOperator.OR,
-        constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
-      },
-      username: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      firstname: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      lastname: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      email: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      role: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      createdAt: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-      updatedAt: {
-        operator: FilterOperator.AND,
-        constraints: [{ value: null, matchMode: FilterMatchMode.STARTS_WITH }],
-      },
-    });
+
+    //User Filters
+    const filters = ref(formServices.get("userFilters") || {});
     const clearFilters = () => {
       initFilters();
     };
     const initFilters = () => {
-      filters.value = {
-        global: { value: null, matchMode: FilterMatchMode.CONTAINS },
-        guid: {
-          operator: FilterOperator.OR,
-          constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
-        },
-        username: {
-          operator: FilterOperator.AND,
-          constraints: [
-            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-          ],
-        },
-        firstname: {
-          operator: FilterOperator.AND,
-          constraints: [
-            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-          ],
-        },
-        lastname: {
-          operator: FilterOperator.AND,
-          constraints: [
-            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-          ],
-        },
-        email: {
-          operator: FilterOperator.AND,
-          constraints: [
-            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-          ],
-        },
-        role: {
-          operator: FilterOperator.AND,
-          constraints: [
-            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-          ],
-        },
-        createdAt: {
-          operator: FilterOperator.AND,
-          constraints: [
-            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-          ],
-        },
-        updatedAt: {
-          operator: FilterOperator.AND,
-          constraints: [
-            { value: null, matchMode: FilterMatchMode.STARTS_WITH },
-          ],
-        },
-      };
+      filters.value = formServices.get("userFilters") || {};
     };
 
     const exportCSV = () => {
