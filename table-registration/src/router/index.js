@@ -182,6 +182,7 @@ const router = createRouter({
       path: "/edit/:id",
       name: "financial-registration-edit",
       component: () => import("../views/RegistrationView.vue"),
+      props: true,
       meta: getMeta("Register Financial Details"),
       beforeEnter: authorizeRegistrar,
     },

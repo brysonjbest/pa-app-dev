@@ -229,10 +229,15 @@ export default {
       const isFormCorrect = await this.v$.$validate();
       if (!isFormCorrect) return;
 
+      const userGUID = userStore.getUser.username;
+      console.log(userGUID);
+
       //attaches the creator's username to the registration
-      this.registration.registrar = this.registration.registrar
-        ? this.registration.registrar
-        : userGUID.username;
+      this.registration.registrar =
+        this.registration.registrar !== null ||
+        this.registration.registrar.length !== 0
+          ? this.registration.registrar
+          : userGUID.username;
 
       register
         .registerFinancialInformation(this.registration)

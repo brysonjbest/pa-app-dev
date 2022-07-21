@@ -14,12 +14,12 @@ export const useMessageStore = defineStore({
 
   getters: {
     getMessage() {
-      console.log("testing message", this.message.text);
       return this.message;
     },
   },
   actions: {
     setMessage(newValue) {
+      //   console.log(newValue, "this is newvalue");
       const { text = "", type = "", spinner = false } = newValue || {};
       this.message = { text: text, type: type, spinner: spinner };
     },

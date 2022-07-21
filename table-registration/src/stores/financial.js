@@ -58,10 +58,14 @@ export const useFinancialStore = defineStore({
   },
   actions: {
     async fill(guid) {
-      const registrationData = await apiRoutes.getRegistration(guid);
-      this.registration = registrationData.data[0];
-      this.registrations = [registrationData.data[0]];
-      return registrationData.data[0];
+      try {
+        const registrationData = await apiRoutes.getRegistration(guid);
+        this.registration = registrationData.data[0];
+        this.registrations = [registrationData.data[0]];
+        return registrationData.data[0];
+      } catch (error) {
+        return error;
+      }
     },
 
     async fillOnlyRegistration(guid) {
@@ -89,8 +93,13 @@ export const useFinancialStore = defineStore({
       await apiRoutes.updateRegistration(id, data);
     },
 
-    async createRegistration(guid) {
-      const newRegistration = await apiRoutes.createRegistration({ guid });
+    async createRegistration(guid, username, firstname, lastname, email) {
+      const newRegistration = await apiRoutes.createRegistration({
+        guid,
+        registrar: username,
+        primarycontact: `${firstname} ${lastname}`,
+        primaryemail: email,
+      });
       this.registration = newRegistration.data;
       return this.registration;
     },
