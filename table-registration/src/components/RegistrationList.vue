@@ -91,8 +91,45 @@
               type="text"
               v-model="filterModel.value"
               class="p-column-filter"
-              placeholder="`Search by ${col.field}`"
+              :placeholder="`Search by ${col.field}`"
             /> </template
+        ></Column>
+        <Column
+          v-if="adminView"
+          field="tables"
+          header="Table Count:"
+          key="tables"
+          :sortable="true"
+        >
+          <template #body="{ data }">
+            {{ tableCount(data.guests.length) }}
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by Number of Tables"
+            /> </template
+        ></Column>
+        <Column
+          v-if="adminView"
+          field="submitted"
+          header="Submitted?"
+          key="submitted"
+        >
+          <template #body="{ data }">
+            <i
+              class="pi pi-check-circle"
+              :class="{
+                'true-icon pi-check-circle': data.submitted,
+                'false-icon pi-times-circle': !data.submitted,
+              }"
+              style="font-size: 2rem"
+            ></i>
+          </template>
+          <template #filter="{ filterModel }">
+            <TriStateCheckbox v-model="filterModel.value" /> </template
         ></Column>
         <Column
           v-if="adminView"
@@ -114,24 +151,7 @@
               placeholder="Search by Date Created"
             /> </template
         ></Column>
-        <Column
-          v-if="adminView"
-          field="tables"
-          header="Table Count:"
-          key="tables"
-          :sortable="true"
-        >
-          <template #body="{ data }">
-            {{ tableCount(data.guests.length) }}
-          </template>
-          <template #filter="{ filterModel }">
-            <InputText
-              type="text"
-              v-model="filterModel.value"
-              class="p-column-filter"
-              placeholder="Search by Date Created"
-            /> </template
-        ></Column>
+
         <Column
           v-if="adminView"
           field="updatedAt"
@@ -154,11 +174,13 @@
         <Column v-if="!detailsView" :exportable="false" style="min-width: 8rem">
           <template #body="slotProps">
             <Button
+              v-if="!slotProps.data.submitted"
               icon="pi pi-pencil"
               class="p-button-rounded p-button-success mr-2"
               @click="editRegistration(slotProps.data)"
             />
             <Button
+              v-if="!slotProps.data.submitted"
               icon="pi pi-trash"
               class="p-button-rounded p-button-warning"
               @click="confirmDeleteRegistration(slotProps.data)"
@@ -267,13 +289,16 @@ export default {
     };
 
     const loadLazyData = () => {
-      console.log("this is data load");
       fillList();
     };
 
     onMounted(() => {
       loadLazyData();
     });
+
+    const isSubmitted = function () {
+      return financialStore.getRegistration.submitted;
+    };
 
     //Helper Functions
 
@@ -362,6 +387,7 @@ export default {
       organizations,
       registrations,
       registration,
+      isSubmitted,
       submitted,
       detailsView,
       adminView,

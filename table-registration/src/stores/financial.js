@@ -19,11 +19,15 @@ export const useFinancialStore = defineStore({
         stob: null,
         project: null,
         guests: [],
+        submitted: false,
       },
       registrations: [],
     };
   },
   getters: {
+    getRegistration() {
+      return this.registration;
+    },
     getId() {
       return this.registration._id;
     },
@@ -32,6 +36,9 @@ export const useFinancialStore = defineStore({
     },
     getRegistrar() {
       return this.registration.registrar;
+    },
+    getGuestCount() {
+      return this.registration.guests.length;
     },
     getTableCount() {
       const guestCount = this.registration.guests.length;
@@ -55,10 +62,14 @@ export const useFinancialStore = defineStore({
   },
   actions: {
     async fill(guid) {
-      const registrationData = await apiRoutes.getRegistration(guid);
-      this.registration = registrationData.data[0];
-      this.registrations = [registrationData.data[0]];
-      return registrationData.data[0];
+      try {
+        const registrationData = await apiRoutes.getRegistration(guid);
+        this.registration = registrationData.data[0];
+        this.registrations = [registrationData.data[0]];
+        return registrationData.data[0];
+      } catch (error) {
+        return error;
+      }
     },
 
     async fillOnlyRegistration(guid) {
@@ -86,8 +97,14 @@ export const useFinancialStore = defineStore({
       await apiRoutes.updateRegistration(id, data);
     },
 
-    async createRegistration(guid) {
-      const newRegistration = await apiRoutes.createRegistration({ guid });
+    async createRegistration(guid, username, firstname, lastname, email) {
+      const newRegistration = await apiRoutes.createRegistration({
+        guid,
+        registrar: username,
+        primarycontact: `${firstname} ${lastname}`,
+        primaryemail: email,
+        submitted: false,
+      });
       this.registration = newRegistration.data;
       return this.registration;
     },

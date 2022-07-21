@@ -46,15 +46,6 @@
                 placeholder="Keyword Search"
               />
             </span>
-            <Button
-              v-if="!adminView"
-              type="button"
-              label="Total Guests"
-              icon="pi pi-users"
-              class="p-button-warning"
-              :badge="guestCount()"
-              badgeClass="p-badge-danger"
-            />
           </div>
         </template>
         <template #empty> No guests found. </template>
@@ -191,7 +182,11 @@
               placeholder="Search by Date Updated"
             /> </template
         ></Column>
-        <Column :exportable="false" style="min-width: 8rem">
+        <Column
+          v-if="!isSubmitted() || adminView"
+          :exportable="false"
+          style="min-width: 8rem"
+        >
           <template #body="slotProps">
             <Button
               icon="pi pi-pencil"
@@ -215,36 +210,10 @@
         :modal="true"
         class="p-fluid"
       >
-        <div class="field-text">
-          <label for="firstname">First Name</label>
-          <InputText
-            id="firstname"
-            v-model.trim="guest.firstname"
-            required="true"
-            autofocus
-            :class="{ 'p-invalid': submitted && !guest.firstname }"
-          />
-          <small class="p-error" v-if="submitted && !guest.firstname"
-            >First Name is required.</small
-          >
-        </div>
-        <div class="field-text">
-          <label for="lastname">Last Name</label>
-          <InputText
-            id="lastname"
-            v-model.trim="guest.lastname"
-            required="true"
-            autofocus
-            :class="{ 'p-invalid': submitted && !guest.lastname }"
-          />
-          <small class="p-error" v-if="submitted && !guest.lastname"
-            >Last Name is required.</small
-          >
-        </div>
-
         <div class="dropdown">
           <label for="organization">Organization:</label>
           <Dropdown
+            v-bind:class="{ 'p-invalid': v$.organization.$error }"
             id="organization"
             v-model="guest.organization"
             :options="organizations"
@@ -252,14 +221,45 @@
             optionValue="value"
             placeholder="Select a Organization"
           />
-          <small class="p-error" v-if="submitted && !guest.organization"
-            >Organization is required.</small
+          <small
+            v-if="v$.organization.$error"
+            class="p-error"
+            id="organization-help"
+            >Please select your organization.</small
+          >
+        </div>
+
+        <div class="field-text">
+          <label for="firstname">First Name</label>
+          <InputText
+            v-bind:class="{ 'p-invalid': v$.firstname.$error }"
+            id="firstname"
+            v-model.trim="guest.firstname"
+            required="true"
+            autofocus
+          />
+          <small v-if="v$.firstname.$error" class="p-error" id="firstname-help"
+            >Please enter guest's first name.</small
+          >
+        </div>
+        <div class="field-text">
+          <label for="lastname">Last Name</label>
+          <InputText
+            v-bind:class="{ 'p-invalid': v$.lastname.$error }"
+            id="lastname"
+            v-model.trim="guest.lastname"
+            required="true"
+            autofocus
+          />
+          <small v-if="v$.lastname.$error" class="p-error" id="lastname-help"
+            >Please enter guest's last name.</small
           >
         </div>
 
         <div class="dropdown">
           <label for="attendancetype">Attendance Type:</label>
           <Dropdown
+            v-bind:class="{ 'p-invalid': v$.attendancetype.$error }"
             id="attendancetype"
             v-model="guest.attendancetype"
             :options="attendancetypes"
@@ -267,6 +267,12 @@
             optionValue="value"
             placeholder="Select the type of attendance for this guest"
           />
+          <small
+            v-if="v$.attendancetype.$error"
+            class="p-error"
+            id="attendancetype-help"
+            >Please select the attendance type for this guest.</small
+          >
         </div>
 
         <div class="checkbox-group">
@@ -349,10 +355,13 @@
 
 <script>
 import formServices from "../services/settings.services";
+import useVuelidate from "@vuelidate/core";
+import { required } from "@vuelidate/validators";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../stores/guests";
 import { useAuthUserStore } from "../stores/users";
+import { useFinancialStore } from "../stores/financial";
 import { FilterMatchMode, FilterOperator } from "primevue/api";
 
 export default {
@@ -362,6 +371,7 @@ export default {
   },
   setup(props) {
     const guestStore = useGuestsStore();
+    const { guests } = storeToRefs(useGuestsStore());
     const columns = ref(formServices.get("guestSelection") || []);
     const organizations = ref(formServices.get("organizations") || []);
     const attendancetypes = ref(formServices.get("attendancetypes") || []);
@@ -369,27 +379,11 @@ export default {
     const dietary = ref(formServices.get("dietaryoptions") || []);
     const userStore = useAuthUserStore();
     const dt = ref();
-    const { adminView, registrationID } = props;
-    const guestCount = function () {
-      return String(guestStore.getGuestsCount);
-    };
-
-    const filters = ref(formServices.get("guestFilters") || {});
-
-    const clearFilters = () => {
-      initFilters();
-    };
-
-    const initFilters = () => {
-      filters.value = formServices.get("guestFilters") || {};
-    };
-
     const loading = ref(true);
+    const { adminView, registrationID } = props;
+    const financialStore = useFinancialStore();
 
-    const exportCSV = () => {
-      dt.value.exportCSV();
-    };
-
+    //Conditionally Fill DataList
     const fillList = function () {
       const user = userStore.getUser;
       guestStore.$reset;
@@ -410,6 +404,26 @@ export default {
     onMounted(() => {
       loadLazyData();
     });
+
+    const isSubmitted = function () {
+      return financialStore.getRegistration.submitted;
+    };
+
+    //Sorting Filters for DataList
+
+    const filters = ref(formServices.get("guestFilters") || {});
+    const clearFilters = () => {
+      initFilters();
+    };
+    const initFilters = () => {
+      filters.value = formServices.get("guestFilters") || {};
+    };
+
+    //Helper Functions
+
+    const exportCSV = () => {
+      dt.value.exportCSV();
+    };
 
     const lookup = function (key, value) {
       return formServices.lookup(key, value);
@@ -446,14 +460,19 @@ export default {
       return list;
     };
 
-    const { guests } = storeToRefs(useGuestsStore());
-
+    //Dialog controls
     const guest = ref({});
+    const rules = {
+      organization: { required },
+      firstname: { required },
+      lastname: { required },
+      attendancetype: { required },
+    };
+    const v$ = useVuelidate(rules, guest);
     const submitted = ref(false);
     const guestDialog = ref(false);
     const deleteGuestDialog = ref(false);
 
-    //Dialog controls
     const editGuest = (prod) => {
       guest.value = { ...prod };
       guestDialog.value = true;
@@ -471,6 +490,8 @@ export default {
     const saveGuest = async function (event) {
       event.preventDefault();
       submitted.value = true;
+      const isFormCorrect = await v$.value.$validate();
+      if (!isFormCorrect) return;
 
       guestStore
         .updateGuest(guest.value["_id"], guest.value)
@@ -491,7 +512,7 @@ export default {
 
     const deleteGuest = async function () {
       guestStore
-        .deleteGuest(guest.value["_id"])
+        .deleteGuest(guest.value["_id"], guest.value["registration"])
 
         .then(() => {})
         .then(fillList())
@@ -508,11 +529,12 @@ export default {
     };
 
     return {
-      guestCount,
       columns,
+      v$,
       dt,
       filters,
       loading,
+      isSubmitted,
       exportCSV,
       clearFilters,
       organizations,

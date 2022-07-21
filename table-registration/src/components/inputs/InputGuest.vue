@@ -6,6 +6,7 @@
       <div class="dropdown">
         <label for="organization">Organization:</label>
         <Dropdown
+          v-bind:class="{ 'p-invalid': v$.organization.$error }"
           id="organization"
           v-model="guest.organization"
           :options="organizations"
@@ -13,38 +14,48 @@
           optionValue="value"
           placeholder="Select a Organization"
         />
-        <div v-if="v$.organization.$error">Organization field is required.</div>
+        <small
+          v-if="v$.organization.$error"
+          class="p-error"
+          id="organization-help"
+          >Please select your organization.</small
+        >
       </div>
 
       <div class="text-field">
         <label for="firstname">First Name:</label>
         <InputText
+          v-bind:class="{ 'p-invalid': v$.firstname.$error }"
           id="firstname"
           type="firstname"
           aria-describedby="firstname-help"
           v-model="guest.firstname"
           placeholder="First Name"
         />
-        <div v-if="v$.firstname.$error">First name of guest is required.</div>
-        <small id="firstname-help">Enter guest's first name.</small>
+        <small v-if="v$.firstname.$error" class="p-error" id="firstname-help"
+          >Please enter guest's first name.</small
+        >
       </div>
 
       <div class="text-field">
         <label for="lastname">Last Name:</label>
         <InputText
+          v-bind:class="{ 'p-invalid': v$.lastname.$error }"
           id="lastname"
           type="lastname"
           aria-describedby="lastname-help"
           v-model="guest.lastname"
           placeholder="Last Name"
         />
-        <div v-if="v$.lastname.$error">Last name of guest is required.</div>
-        <small id="lastname-help">Enter guest's last name.</small>
+        <small v-if="v$.lastname.$error" class="p-error" id="lastname-help"
+          >Please enter guest's last name.</small
+        >
       </div>
 
       <div class="dropdown">
         <label for="attendancetype">Attendance Type:</label>
         <Dropdown
+          v-bind:class="{ 'p-invalid': v$.attendancetype.$error }"
           id="attendancetype"
           v-model="guest.attendancetype"
           :options="attendancetypes"
@@ -52,7 +63,12 @@
           optionValue="value"
           placeholder="Select the type of attendance for this guest"
         />
-        <div v-if="v$.attendancetype.$error">Attendance type is required.</div>
+        <small
+          v-if="v$.attendancetype.$error"
+          class="p-error"
+          id="attendancetype-help"
+          >Please select the attendance type for this guest.</small
+        >
       </div>
 
       <div class="checkbox-group">
@@ -136,7 +152,7 @@ export default {
     const onSubmit = async function (event) {
       event.preventDefault();
       const isFormCorrect = await this.v$.$validate();
-      console.log(isFormCorrect);
+      if (!isFormCorrect) return;
       this.guest.registration = registrationData.getId;
 
       guestData
