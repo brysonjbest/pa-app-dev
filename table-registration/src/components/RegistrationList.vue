@@ -91,7 +91,25 @@
               type="text"
               v-model="filterModel.value"
               class="p-column-filter"
-              placeholder="`Search by ${col.field}`"
+              :placeholder="`Search by ${col.field}`"
+            /> </template
+        ></Column>
+        <Column
+          v-if="adminView"
+          field="tables"
+          header="Table Count:"
+          key="tables"
+          :sortable="true"
+        >
+          <template #body="{ data }">
+            {{ tableCount(data.guests.length) }}
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by Number of Tables"
             /> </template
         ></Column>
         <Column
@@ -102,19 +120,16 @@
         >
           <template #body="{ data }">
             <i
-              v-if="data.submitted"
               class="pi pi-check-circle"
+              :class="{
+                'true-icon pi-check-circle': data.submitted,
+                'false-icon pi-times-circle': !data.submitted,
+              }"
               style="font-size: 2rem"
             ></i>
-            <i v-else class="pi pi-times-circle" style="font-size: 2rem"></i>
           </template>
           <template #filter="{ filterModel }">
-            <InputText
-              type="text"
-              v-model="filterModel.value"
-              class="p-column-filter"
-              placeholder="Search by Submission Status"
-            /> </template
+            <TriStateCheckbox v-model="filterModel.value" /> </template
         ></Column>
         <Column
           v-if="adminView"
@@ -136,24 +151,7 @@
               placeholder="Search by Date Created"
             /> </template
         ></Column>
-        <Column
-          v-if="adminView"
-          field="tables"
-          header="Table Count:"
-          key="tables"
-          :sortable="true"
-        >
-          <template #body="{ data }">
-            {{ tableCount(data.guests.length) }}
-          </template>
-          <template #filter="{ filterModel }">
-            <InputText
-              type="text"
-              v-model="filterModel.value"
-              class="p-column-filter"
-              placeholder="Search by Date Created"
-            /> </template
-        ></Column>
+
         <Column
           v-if="adminView"
           field="updatedAt"
