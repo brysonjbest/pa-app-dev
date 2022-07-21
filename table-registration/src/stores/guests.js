@@ -74,12 +74,15 @@ export const useGuestsStore = defineStore({
       await apiRoutes.updateGuest(id, guestData);
     },
 
-    async deleteGuest(id) {
+    async deleteGuest(id, registrationID) {
       const financialStore = useFinancialStore();
       await apiRoutes.deleteGuest(id).then(() => {
-        financialStore.registerFinancialInformation({
-          $pull: { guests: id },
-        });
+        financialStore.registerFinancialInformation(
+          {
+            $pull: { guests: id },
+          },
+          registrationID
+        );
       });
     },
 

@@ -267,7 +267,6 @@ export default {
     };
 
     const loadLazyData = () => {
-      console.log("this is data load");
       fillList();
     };
 
