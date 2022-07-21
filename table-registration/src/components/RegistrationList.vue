@@ -171,18 +171,16 @@
               placeholder="Search by Date Updated"
             /> </template
         ></Column>
-        <Column
-          v-if="!detailsView && !isSubmitted()"
-          :exportable="false"
-          style="min-width: 8rem"
-        >
+        <Column v-if="!detailsView" :exportable="false" style="min-width: 8rem">
           <template #body="slotProps">
             <Button
+              v-if="!slotProps.data.submitted"
               icon="pi pi-pencil"
               class="p-button-rounded p-button-success mr-2"
               @click="editRegistration(slotProps.data)"
             />
             <Button
+              v-if="!slotProps.data.submitted"
               icon="pi pi-trash"
               class="p-button-rounded p-button-warning"
               @click="confirmDeleteRegistration(slotProps.data)"

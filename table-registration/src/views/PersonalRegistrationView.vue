@@ -40,10 +40,12 @@ const isAdmin = () => {
 
 const toggleRegistration = async () => {
   let submitStatus = isSubmitted() ? false : true;
-  financialStore.registerFinancialInformation({
-    submitted: submitStatus,
-    registration,
-  });
+  financialStore
+    .registerFinancialInformation({
+      submitted: submitStatus,
+      registration,
+    })
+    .then(() => financialStore.fill(registration));
 };
 
 const registrarName = getRegistrar();
