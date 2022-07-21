@@ -46,15 +46,6 @@
                 placeholder="Keyword Search"
               />
             </span>
-            <Button
-              v-if="!adminView"
-              type="button"
-              label="Total Guests"
-              icon="pi pi-users"
-              class="p-button-warning"
-              :badge="guestCount()"
-              badgeClass="p-badge-danger"
-            />
           </div>
         </template>
         <template #empty> No guests found. </template>
@@ -370,9 +361,6 @@ export default {
     const userStore = useAuthUserStore();
     const dt = ref();
     const { adminView, registrationID } = props;
-    const guestCount = function () {
-      return String(guestStore.getGuestsCount);
-    };
 
     const filters = ref(formServices.get("guestFilters") || {});
 
@@ -508,7 +496,6 @@ export default {
     };
 
     return {
-      guestCount,
       columns,
       dt,
       filters,

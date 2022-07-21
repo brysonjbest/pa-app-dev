@@ -22,6 +22,10 @@ const tableCount = () => {
   return String(financialStore.getTableCount);
 };
 
+const guestCount = () => {
+  return String(financialStore.getGuestCount);
+};
+
 const getRegistrar = () => {
   return financialStore.getRegistrar;
 };
@@ -30,6 +34,7 @@ const registrarName = getRegistrar();
 
 const addGuestDialog = ref(false);
 const tableInfoDialog = ref(false);
+const guestInfoDialog = ref(false);
 
 //Dialog controls
 const addGuest = (prod) => {
@@ -38,6 +43,10 @@ const addGuest = (prod) => {
 
 const tableInfo = (prod) => {
   tableInfoDialog.value = true;
+};
+
+const guestInfo = (prod) => {
+  guestInfoDialog.value = true;
 };
 
 const hideDialog = () => {
@@ -59,6 +68,15 @@ const hideDialog = () => {
     />
     <Button
       type="button"
+      label="Total Guests"
+      icon="pi pi-users"
+      class="p-button-warning"
+      :badge="guestCount()"
+      @click="guestInfo()"
+      badgeClass="p-badge-danger"
+    />
+    <Button
+      type="button"
       label="Tables"
       icon="pi pi-ticket"
       class="p-button-warning"
@@ -71,7 +89,17 @@ const hideDialog = () => {
       header="Table Information"
       :modal="true"
       class="p-fluid"
-      >Warning regarding table charges. Current table count: {{ tableCount() }}
+      >Warning regarding table charges. Please be aware that half tables may not
+      be able to be accomodated, and you may be charged the full table amount.
+      Current table count: {{ tableCount() }}
+    </Dialog>
+
+    <Dialog
+      v-model:visible="guestInfoDialog"
+      header="Guest Information"
+      :modal="true"
+      class="p-fluid"
+      >Total Number of Guests: {{ guestCount() }}.
     </Dialog>
 
     <Dialog

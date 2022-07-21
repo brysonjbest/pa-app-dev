@@ -33,6 +33,9 @@ export const useFinancialStore = defineStore({
     getRegistrar() {
       return this.registration.registrar;
     },
+    getGuestCount() {
+      return this.registration.guests.length;
+    },
     getTableCount() {
       const guestCount = this.registration.guests.length;
       let tableCount = 0;

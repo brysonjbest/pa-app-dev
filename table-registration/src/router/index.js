@@ -202,14 +202,6 @@ const router = createRouter({
     },
 
     {
-      path: "/test",
-      name: "test-path",
-      component: HomeView,
-      meta: getMeta("Test"),
-      beforeEnter: authorizeRegistrar,
-    },
-
-    {
       path: "/admin/user/list",
       name: "admin-user-list",
       component: () => import("../views/ManageUsers.vue"),
@@ -232,28 +224,6 @@ const router = createRouter({
       props: true,
       beforeEnter: authorizeRegistrar,
     },
-    // {
-    //   path: "/admin/user/edit/:guid",
-    //   name: "admin-user-edit",
-    //   component: () => import("../views/ManageUsers.vue"),
-    //   meta: getMeta("Edit User Data"),
-    //   beforeEnter: authorizeAdmin,
-    // },
-    // {
-    //   path: "/admin/user/assign/:guid",
-    //   name: "admin-user-assign",
-    //   component: AssignUser,
-    //   meta: getMeta("Assign User Role"),
-    //   beforeEnter: authorizeSuperAdmin,
-    // },
-
-    // {
-    //   path: "/admin/user/delete/:guid",
-    //   name: "admin-user-delete",
-    //   component: DeleteUser,
-    //   meta: getMeta("Delete User"),
-    //   beforeEnter: authorizeAdmin,
-    // },
 
     {
       path: "/401",
