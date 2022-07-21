@@ -5,6 +5,7 @@
       <div class="dropdown">
         <label for="organization">Organization:</label>
         <Dropdown
+          v-bind:class="{ 'p-invalid': v$.organization.$error }"
           id="organization"
           v-model="registration.organization"
           :options="organizations"
@@ -23,6 +24,7 @@
       <div class="text-field">
         <label for="branch">Branch:</label>
         <InputText
+          v-bind:class="{ 'p-invalid': v$.branch.$error }"
           id="branch"
           type="branch"
           aria-describedby="branch-help"
@@ -36,6 +38,7 @@
       <div class="text-field">
         <label for="primarycontact">Primary Contact:</label>
         <InputText
+          v-bind:class="{ 'p-invalid': v$.primarycontact.$error }"
           id="primarycontact"
           type="primarycontact"
           aria-describedby="primarycontact-help"
@@ -52,6 +55,7 @@
       <div class="text-field">
         <label for="primaryemail">Primary Contact Email:</label>
         <InputText
+          v-bind:class="{ 'p-invalid': v$.primaryemail.$error }"
           id="primaryemail"
           type="primaryemail"
           aria-describedby="primaryemail-help"
@@ -67,6 +71,7 @@
       <div class="text-field">
         <label for="financialcontact">Financial Contact:</label>
         <InputText
+          v-bind:class="{ 'p-invalid': v$.financialcontact.$error }"
           id="financialcontact"
           type="financialcontact"
           aria-describedby="financialcontact-help"
@@ -83,6 +88,7 @@
       <div class="number-field">
         <label for="clientministry">Client/Ministry Number:</label>
         <InputNumber
+          v-bind:class="{ 'p-invalid': v$.clientministry.$error }"
           id="clientministry"
           v-model="registration.clientministry"
           :min="100"
@@ -101,6 +107,7 @@
       <div class="number-field">
         <label for="respcode">RESP Code:</label>
         <InputNumber
+          v-bind:class="{ 'p-invalid': v$.respcode.$error }"
           id="respcode"
           v-model="registration.respcode"
           :min="10000"
@@ -116,6 +123,7 @@
       <div class="number-field">
         <label for="serviceline">Service Line:</label>
         <InputNumber
+          v-bind:class="{ 'p-invalid': v$.serviceline.$error }"
           id="serviceline"
           v-model="registration.serviceline"
           :min="10000"
@@ -134,6 +142,7 @@
       <div class="number-field">
         <label for="stob">STOB:</label>
         <InputNumber
+          v-bind:class="{ 'p-invalid': v$.stob.$error }"
           id="stob"
           v-model="registration.stob"
           :min="1000"
@@ -149,6 +158,7 @@
       <div class="number-field">
         <label for="project">Project:</label>
         <InputNumber
+          v-bind:class="{ 'p-invalid': v$.project.$error }"
           id="project"
           v-model="registration.project"
           :min="1000000"
