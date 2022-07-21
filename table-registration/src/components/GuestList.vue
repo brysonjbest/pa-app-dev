@@ -182,7 +182,11 @@
               placeholder="Search by Date Updated"
             /> </template
         ></Column>
-        <Column :exportable="false" style="min-width: 8rem">
+        <Column
+          v-if="!isSubmitted() || adminView"
+          :exportable="false"
+          style="min-width: 8rem"
+        >
           <template #body="slotProps">
             <Button
               icon="pi pi-pencil"
@@ -357,6 +361,7 @@ import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../stores/guests";
 import { useAuthUserStore } from "../stores/users";
+import { useFinancialStore } from "../stores/financial";
 import { FilterMatchMode, FilterOperator } from "primevue/api";
 
 export default {
@@ -376,6 +381,7 @@ export default {
     const dt = ref();
     const loading = ref(true);
     const { adminView, registrationID } = props;
+    const financialStore = useFinancialStore();
 
     //Conditionally Fill DataList
     const fillList = function () {
@@ -398,6 +404,10 @@ export default {
     onMounted(() => {
       loadLazyData();
     });
+
+    const isSubmitted = function () {
+      return financialStore.getRegistration.submitted;
+    };
 
     //Sorting Filters for DataList
 
@@ -524,6 +534,7 @@ export default {
       dt,
       filters,
       loading,
+      isSubmitted,
       exportCSV,
       clearFilters,
       organizations,

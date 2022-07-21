@@ -19,11 +19,15 @@ export const useFinancialStore = defineStore({
         stob: null,
         project: null,
         guests: [],
+        submitted: false,
       },
       registrations: [],
     };
   },
   getters: {
+    getRegistration() {
+      return this.registration;
+    },
     getId() {
       return this.registration._id;
     },
@@ -99,6 +103,7 @@ export const useFinancialStore = defineStore({
         registrar: username,
         primarycontact: `${firstname} ${lastname}`,
         primaryemail: email,
+        submitted: false,
       });
       this.registration = newRegistration.data;
       return this.registration;

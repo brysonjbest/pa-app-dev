@@ -30,6 +30,22 @@ const getRegistrar = () => {
   return financialStore.getRegistrar;
 };
 
+const isSubmitted = () => {
+  return financialStore.getRegistration.submitted;
+};
+
+const isAdmin = () => {
+  return userStore.isAdmin;
+};
+
+const toggleRegistration = async () => {
+  let submitStatus = isSubmitted() ? false : true;
+  financialStore.registerFinancialInformation({
+    submitted: submitStatus,
+    registration,
+  });
+};
+
 const registrarName = getRegistrar();
 
 const addGuestDialog = ref(false);
@@ -61,6 +77,7 @@ const hideDialog = () => {
     >
     <RegistrationList :registrationID="registration" :detailsView="false" />
     <Button
+      v-if="!isSubmitted()"
       label="Add Guests"
       icon="pi pi-pencil"
       class="p-button-rounded p-button-success mr-2"
@@ -82,6 +99,24 @@ const hideDialog = () => {
       class="p-button-warning"
       :badge="tableCount()"
       @click="tableInfo()"
+      badgeClass="p-badge-danger"
+    />
+    <Button
+      v-if="!isSubmitted()"
+      type="button"
+      label="Submit Registration"
+      icon="pi pi-ticket"
+      class="p-button-warning"
+      @click="toggleRegistration()"
+      badgeClass="p-badge-danger"
+    />
+    <Button
+      v-if="isSubmitted() && isAdmin()"
+      type="button"
+      label="Unsubmit Registration"
+      icon="pi pi-ticket"
+      class="p-button-warning"
+      @click="toggleRegistration()"
       badgeClass="p-badge-danger"
     />
     <Dialog

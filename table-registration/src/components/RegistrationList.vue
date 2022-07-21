@@ -96,6 +96,28 @@
         ></Column>
         <Column
           v-if="adminView"
+          field="submitted"
+          header="Submitted?"
+          key="submitted"
+        >
+          <template #body="{ data }">
+            <i
+              v-if="data.submitted"
+              class="pi pi-check-circle"
+              style="font-size: 2rem"
+            ></i>
+            <i v-else class="pi pi-times-circle" style="font-size: 2rem"></i>
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              placeholder="Search by Submission Status"
+            /> </template
+        ></Column>
+        <Column
+          v-if="adminView"
           field="createdAt"
           header="Created:"
           key="createdAt"
@@ -151,7 +173,11 @@
               placeholder="Search by Date Updated"
             /> </template
         ></Column>
-        <Column v-if="!detailsView" :exportable="false" style="min-width: 8rem">
+        <Column
+          v-if="!detailsView && !isSubmitted()"
+          :exportable="false"
+          style="min-width: 8rem"
+        >
           <template #body="slotProps">
             <Button
               icon="pi pi-pencil"
@@ -274,6 +300,10 @@ export default {
       loadLazyData();
     });
 
+    const isSubmitted = function () {
+      return financialStore.getRegistration.submitted;
+    };
+
     //Helper Functions
 
     const lookup = function (key, value) {
@@ -361,6 +391,7 @@ export default {
       organizations,
       registrations,
       registration,
+      isSubmitted,
       submitted,
       detailsView,
       adminView,

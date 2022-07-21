@@ -56,6 +56,9 @@ const RegistrationSchema = new Schema(
     project: {
       type: Number,
     },
+    submitted: {
+      type: Boolean,
+    },
   },
   { timestamps: true }
 );
