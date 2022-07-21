@@ -340,6 +340,8 @@
 
 <script>
 import formServices from "../services/settings.services";
+import useVuelidate from "@vuelidate/core";
+import { required } from "@vuelidate/validators";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../stores/guests";
@@ -361,6 +363,12 @@ export default {
     const userStore = useAuthUserStore();
     const dt = ref();
     const { adminView, registrationID } = props;
+    const rules = {
+      organization: { required },
+      firstname: { required },
+      lastname: { required },
+      attendancetype: { required },
+    };
 
     const filters = ref(formServices.get("guestFilters") || {});
 
@@ -437,6 +445,7 @@ export default {
     const { guests } = storeToRefs(useGuestsStore());
 
     const guest = ref({});
+    const v$ = useVuelidate(rules, guest);
     const submitted = ref(false);
     const guestDialog = ref(false);
     const deleteGuestDialog = ref(false);
@@ -459,6 +468,8 @@ export default {
     const saveGuest = async function (event) {
       event.preventDefault();
       submitted.value = true;
+      const isFormCorrect = await v$.value.$validate();
+      if (!isFormCorrect) return;
 
       guestStore
         .updateGuest(guest.value["_id"], guest.value)
@@ -497,6 +508,7 @@ export default {
 
     return {
       columns,
+      v$,
       dt,
       filters,
       loading,
