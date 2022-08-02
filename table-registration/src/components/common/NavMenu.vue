@@ -1,3 +1,4 @@
+<!-- Navbar common component -->
 <template>
   <div>
     <div class="card">
