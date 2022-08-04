@@ -75,6 +75,29 @@
           <template #body="{ data }">
             {{ lookup("organizations", data.organization) }} </template
           ><template #filter="{ filterModel }">
+            <Dropdown
+              v-model="filterModel.value"
+              :options="organizations"
+              :filter="true"
+              optionLabel="text"
+              placeholder="Any"
+              class="p-column-filter"
+              :showClear="true"
+            >
+              <template #value="slotProps">
+                <div v-if="slotProps.value">
+                  <div>{{ lookup("organizations", slotProps.value) }}</div>
+                </div>
+                <span v-else>
+                  {{ slotProps.placeholder }}
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="item">
+                  <div>{{ lookup("organizations", slotProps.option) }}</div>
+                </div>
+              </template>
+            </Dropdown>
             <InputText
               type="text"
               v-model="filterModel.value"
@@ -362,7 +385,6 @@ import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../stores/guests";
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
-import { FilterMatchMode, FilterOperator } from "primevue/api";
 
 export default {
   props: {
@@ -373,7 +395,9 @@ export default {
     const guestStore = useGuestsStore();
     const { guests } = storeToRefs(useGuestsStore());
     const columns = ref(formServices.get("guestSelection") || []);
-    const organizations = ref(formServices.get("organizations") || []);
+    const organizations = ref(
+      (formServices.get("organizations") || []).map((each) => each.value)
+    );
     const attendancetypes = ref(formServices.get("attendancetypes") || []);
     const accessibility = ref(formServices.get("accessibilityoptions") || []);
     const dietary = ref(formServices.get("dietaryoptions") || []);
