@@ -68,18 +68,41 @@
             }}</router-link>
           </template></Column
         >
-        <Column field="organization" header="Organization" key="organization">
+        <Column
+          field="organization"
+          filterField="organization"
+          header="Organization"
+          key="organization"
+        >
           <template #body="{ data }">
             {{ lookup("organizations", data.organization) }}
           </template>
           <template #filter="{ filterModel }">
-            <InputText
-              type="text"
+            <Dropdown
               v-model="filterModel.value"
+              :options="organizations"
+              :filter="true"
+              optionLabel="text"
+              placeholder="Any"
               class="p-column-filter"
-              placeholder="Search by organization"
-            /> </template
-        ></Column>
+              :showClear="true"
+            >
+              <template #value="slotProps">
+                <div v-if="slotProps.value">
+                  <div>{{ lookup("organizations", slotProps.value) }}</div>
+                </div>
+                <span v-else>
+                  {{ slotProps.placeholder }}
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="item">
+                  <div>{{ lookup("organizations", slotProps.option) }}</div>
+                </div>
+              </template>
+            </Dropdown>
+          </template></Column
+        >
         <Column
           v-for="col of filter(columns)"
           :field="col.field"
@@ -97,26 +120,40 @@
         <Column
           v-if="adminView"
           field="tables"
+          dataType="numeric"
+          filterField="tables"
           header="Table Count:"
           key="tables"
           :sortable="true"
         >
           <template #body="{ data }">
-            {{ tableCount(data.guests.length) }}
+            <span>{{ tableCount(data.guests.length) }}</span>
           </template>
           <template #filter="{ filterModel }">
             <InputText
               type="text"
               v-model="filterModel.value"
               class="p-column-filter"
-              placeholder="Search by Number of Tables"
-            /> </template
+              placeholder="Search by Number of Tables" />
+
+            <InputNumber
+              v-model="filterModel.value"
+              id="horizontal"
+              showButtons
+              buttonLayout="horizontal"
+              :step="0.5"
+              decrementButtonClass="p-button-danger"
+              incrementButtonClass="p-button-success"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+              mode="decimal" /></template
         ></Column>
         <Column
           v-if="adminView"
           field="submitted"
           header="Submitted?"
           key="submitted"
+          dataType="boolean"
         >
           <template #body="{ data }">
             <i
@@ -255,7 +292,9 @@ export default {
     const financialStore = useFinancialStore();
     const { registrations } = storeToRefs(useFinancialStore());
     const columns = ref(formServices.get("registrationSelection") || []);
-    const organizations = ref(formServices.get("organizations") || []);
+    const organizations = ref(
+      (formServices.get("organizations") || []).map((each) => each.value)
+    );
     const dataTableRender = ref(0);
     const userStore = useAuthUserStore();
     const detailsView = props.detailsView || false;

@@ -141,12 +141,9 @@ const schemaData = {
     },
     tables: {
       operator: FilterOperator.AND,
-      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
-    },
-    submitted: {
-      operator: FilterOperator.AND,
       constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
     },
+    submitted: { value: null, matchMode: FilterMatchMode.EQUALS },
     createdAt: {
       operator: FilterOperator.AND,
       constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
