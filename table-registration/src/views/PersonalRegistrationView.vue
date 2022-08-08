@@ -118,7 +118,7 @@ export default {
       badgeClass="p-badge-danger"
     />
     <PrimeButton
-      v-if="!isSubmitted()"
+      v-if="!isSubmitted() && (guestCount() >= 5 || isAdmin())"
       type="button"
       label="Submit Registration"
       icon="pi pi-ticket"
