@@ -78,7 +78,6 @@
             <Dropdown
               v-model="filterModel.value"
               :options="organizations"
-              :filter="true"
               optionLabel="text"
               placeholder="Any"
               class="p-column-filter"
@@ -128,13 +127,34 @@
           <template #body="{ data }">
             {{ lookup("attendancetypes", data.attendancetype) }} </template
           ><template #filter="{ filterModel }">
-            <InputText
-              type="text"
+            <Dropdown
               v-model="filterModel.value"
+              :options="attendancetypes"
+              optionLabel="text"
+              placeholder="Any"
               class="p-column-filter"
-              placeholder="Search by Attendance Type"
-            /> </template
-        ></Column>
+              :showClear="true"
+            >
+              <template #value="slotProps">
+                <div v-if="slotProps.value">
+                  <div>
+                    {{ lookup("attendancetypes", slotProps.value) }}
+                  </div>
+                </div>
+                <span v-else>
+                  {{ slotProps.placeholder }}
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="item">
+                  <div>
+                    {{ lookup("attendancetypes", slotProps.option) }}
+                  </div>
+                </div>
+              </template>
+            </Dropdown>
+          </template></Column
+        >
         <Column
           field="accessibility"
           header="Accessibility Requirements"
@@ -145,24 +165,66 @@
               lookupLoop("accessibilityoptions", data.accessibility)
             }} </template
           ><template #filter="{ filterModel }">
-            <InputText
-              type="text"
+            <Dropdown
               v-model="filterModel.value"
+              :options="accessibility"
+              optionLabel="text"
+              placeholder="Any"
               class="p-column-filter"
-              placeholder="Search by Accessibility Options"
-            /> </template
-        ></Column>
+              :showClear="true"
+            >
+              <template #value="slotProps">
+                <div v-if="slotProps.value">
+                  <div>
+                    {{ lookup("accessibilityoptions", slotProps.value) }}
+                  </div>
+                </div>
+                <span v-else>
+                  {{ slotProps.placeholder }}
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="item">
+                  <div>
+                    {{ lookup("accessibilityoptions", slotProps.option) }}
+                  </div>
+                </div>
+              </template>
+            </Dropdown>
+          </template></Column
+        >
         <Column field="dietary" header="Dietary Requirements" key="dietary">
           <template #body="{ data }">
             {{ lookupLoop("dietaryoptions", data.dietary) }} </template
           ><template #filter="{ filterModel }">
-            <InputText
-              type="text"
+            <Dropdown
               v-model="filterModel.value"
+              :options="dietary"
+              optionLabel="text"
+              placeholder="Any"
               class="p-column-filter"
-              placeholder="Search by Dietary Requirements"
-            /> </template
-        ></Column>
+              :showClear="true"
+            >
+              <template #value="slotProps">
+                <div v-if="slotProps.value">
+                  <div>
+                    {{ lookup("dietaryoptions", slotProps.value) }}
+                  </div>
+                </div>
+                <span v-else>
+                  {{ slotProps.placeholder }}
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="item">
+                  <div>
+                    {{ lookup("dietaryoptions", slotProps.option) }}
+                  </div>
+                </div>
+              </template>
+            </Dropdown>
+          </template></Column
+        >
         <Column
           v-if="adminView"
           field="createdAt"
@@ -393,9 +455,15 @@ export default {
     const organizations = ref(
       (formServices.get("organizations") || []).map((each) => each.value)
     );
-    const attendancetypes = ref(formServices.get("attendancetypes") || []);
-    const accessibility = ref(formServices.get("accessibilityoptions") || []);
-    const dietary = ref(formServices.get("dietaryoptions") || []);
+    const attendancetypes = ref(
+      (formServices.get("attendancetypes") || []).map((each) => each.value)
+    );
+    const accessibility = ref(
+      (formServices.get("accessibilityoptions") || []).map((each) => each.value)
+    );
+    const dietary = ref(
+      (formServices.get("dietaryoptions") || []).map((each) => each.value)
+    );
     const userStore = useAuthUserStore();
     const dt = ref();
     const loading = ref(true);

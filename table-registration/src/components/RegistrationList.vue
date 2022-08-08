@@ -81,7 +81,6 @@
             <Dropdown
               v-model="filterModel.value"
               :options="organizations"
-              :filter="true"
               optionLabel="text"
               placeholder="Any"
               class="p-column-filter"
