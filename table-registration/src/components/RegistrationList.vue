@@ -118,15 +118,26 @@
         ></Column>
         <Column
           v-if="adminView"
-          field="tables"
+          field="guestCount"
           dataType="numeric"
-          filterField="tables"
-          header="Table Count:"
-          key="tables"
+          header="Guest Count:"
+          key="guestCount"
           :sortable="true"
         >
           <template #body="{ data }">
-            <span>{{ Number(tableCount(data.guests.length)) }}</span>
+            <span>{{ data.guestCount }}</span>
+          </template>
+          <template #filter="{ filterModel }">
+            <InputNumber
+              v-model="filterModel.value"
+              showButtons
+              buttonLayout="horizontal"
+              :step="1"
+              decrementButtonClass="p-button-danger"
+              incrementButtonClass="p-button-success"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+            />
           </template>
         </Column>
         <Column
@@ -312,6 +323,7 @@ export default {
         registrations.value.forEach((registration) => {
           registration.createdAt = new Date(registration.createdAt);
           registration.updatedAt = new Date(registration.updatedAt);
+          registration.guestCount = Number(registration.guests.length);
         });
       });
     };
