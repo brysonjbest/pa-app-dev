@@ -1,6 +1,13 @@
 <template>
   <div>
-    <div>
+    <Spinner v-if="loading" />
+    <Message
+      v-else-if="message"
+      :severity="messageText.severity"
+      :closable="false"
+      >{{ messageText.text }}</Message
+    >
+    <div v-else>
       <DataTable
         class="p-datatable-sm"
         :value="registrations"
@@ -242,8 +249,10 @@
           <span v-if="registration"
             >Are you sure you want to delete registration #
             <b>{{ registration.guid }}</b> for contact
-            {{ registration.primarycontact }}? This will delete all associated
-            guests.</span
+            {{ registration.primarycontact }}?<br />
+            This will delete all associated guests.<br /><b
+              >This action cannot be undone.</b
+            ></span
           >
         </div>
         <template #footer>
@@ -272,6 +281,7 @@ import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
+import router from "../router";
 
 export default {
   props: {
@@ -293,6 +303,9 @@ export default {
     const registrationID = props.registrationID || null;
     const dt = ref();
 
+    let message = ref(false);
+    const messageText = ref({ severity: null, text: "" });
+
     //Define filters for table sorting and searching
     const filters = ref(formServices.get("registrationFilters") || {});
     const clearFilters = () => {
@@ -302,20 +315,33 @@ export default {
       filters.value = formServices.get("registrationFilters") || {};
     };
 
-    const loading = ref(true);
+    const loading = ref(false);
 
     //Fill registration table with appropriate data based on props
     const fillList = async function () {
       const user = userStore.getUser;
       financialStore.$reset;
-      loading.value = false;
-      if (props.adminView) return await financialStore.fillAllRegistrations();
-      if (props.registrationID)
-        return await financialStore.fill(props.registrationID);
-      else
-        return (await financialStore.fill(user.guid))
-          ? financialStore.fill(user.guid)
-          : [];
+      loading.value = true;
+      try {
+        if (props.adminView) return await financialStore.fillAllRegistrations();
+        if (props.registrationID)
+          return await financialStore.fill(props.registrationID);
+        else
+          return (await financialStore.fill(user.guid))
+            ? financialStore.fill(user.guid)
+            : [];
+      } catch (error) {
+        loading.value = false;
+        console.warn(error);
+        message.value = true;
+        messageText.value = {
+          severity: "error",
+          text: "Could not fetch registrations.",
+        };
+      } finally {
+        loading.value = false;
+        setTimeout(() => (message.value = false), 1500);
+      }
     };
 
     const loadLazyData = () => {
@@ -401,21 +427,37 @@ export default {
     //Registration Information Controls
 
     const deleteRegistration = async function () {
-      financialStore
-        .deleteRegistration(registration.value["_id"])
+      loading.value = true;
+      try {
+        financialStore
+          .deleteRegistration(registration.value["_id"])
+          .then(fillList())
+          .then(() => {
+            loading.value = false;
+            message.value = true;
+            messageText.value = {
+              severity: "success",
+              text: "Successfully deleted registration and all connected guests.",
+            };
+          });
+      } catch (error) {
+        loading.value = false;
+        console.warn(error);
+        message.value = true;
+        messageText.value = {
+          severity: "error",
+          text: "Could not delete registration.",
+        };
+      } finally {
+        deleteRegistrationDialog.value = false;
 
-        .then(() => {})
-        .then(fillList())
-        .catch((error) => {
-          console.log(error);
-          // error.response.status Check status code
-        })
-        .finally(() => {
-          deleteRegistrationDialog.value = false;
-          registration.value = {};
-          loadLazyData();
-          //Perform action in always
+        await new Promise((resolve) => setTimeout(resolve, 1500)).then(() => {
+          message.value = false;
+          if (props.registrationID) router.push("/admin");
+          else if (!props.adminView) router.push("/");
+          else fillList();
         });
+      }
     };
 
     return {
@@ -432,6 +474,8 @@ export default {
       dataTableRender,
       filters,
       loading,
+      message,
+      messageText,
       dt,
       clearFilters,
       exportCSV,

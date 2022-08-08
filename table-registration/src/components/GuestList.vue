@@ -1,6 +1,13 @@
 <template>
   <div>
-    <div>
+    <Spinner v-if="loading" />
+    <Message
+      v-else-if="message"
+      :severity="messageText.severity"
+      :closable="false"
+      >{{ messageText.text }}</Message
+    >
+    <div v-else>
       <DataTable
         class="p-datatable-sm"
         :value="guests"
@@ -442,6 +449,7 @@ import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../stores/guests";
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
+import router from "../router";
 
 export default {
   props: {
@@ -472,7 +480,9 @@ export default {
 
     const userStore = useAuthUserStore();
     const dt = ref();
-    const loading = ref(true);
+    const loading = ref(false);
+    let message = ref(false);
+    const messageText = ref({ severity: null, text: "" });
     const { adminView, registrationID } = props;
     const financialStore = useFinancialStore();
 
@@ -480,14 +490,27 @@ export default {
     const fillList = async function () {
       const user = userStore.getUser;
       guestStore.$reset;
-      loading.value = false;
-      if (adminView) return await guestStore.fillGuests();
-      if (registrationID)
-        return await guestStore.fillGuestsRegistration(registrationID);
-      else
-        return (await guestStore.fillGuestsRegistration(user.guid))
-          ? guestStore.fillGuestsRegistration(user.guid)
-          : [];
+      loading.value = true;
+      try {
+        if (adminView) return await guestStore.fillGuests();
+        if (registrationID)
+          return await guestStore.fillGuestsRegistration(registrationID);
+        else
+          return (await guestStore.fillGuestsRegistration(user.guid))
+            ? guestStore.fillGuestsRegistration(user.guid)
+            : [];
+      } catch (error) {
+        loading.value = false;
+        console.warn(error);
+        message.value = true;
+        messageText.value = {
+          severity: "error",
+          text: "Could not fetch registrations.",
+        };
+      } finally {
+        loading.value = false;
+        setTimeout(() => (message.value = false), 1500);
+      }
     };
 
     const loadLazyData = () => {
@@ -609,21 +632,35 @@ export default {
     };
 
     const deleteGuest = async function () {
-      guestStore
-        .deleteGuest(guest.value["_id"], guest.value["registration"])
-
-        .then(() => {})
-        .then(fillList())
-        .catch((error) => {
-          console.log(error);
-          // error.response.status Check status code
-        })
-        .finally(() => {
-          deleteGuestDialog.value = false;
-          guest.value = {};
-          loadLazyData();
-          //Perform action in always
+      loading.value = true;
+      try {
+        guestStore
+          .deleteGuest(guest.value["_id"], guest.value["registration"])
+          .then(fillList())
+          .then(() => {
+            loading.value = false;
+            message.value = true;
+            messageText.value = {
+              severity: "success",
+              text: "Successfully deleted guest.",
+            };
+          });
+      } catch (error) {
+        console.log(error);
+        loading.value = false;
+        console.warn(error);
+        message.value = true;
+        messageText.value = {
+          severity: "error",
+          text: "Could not delete guest.",
+        };
+      } finally {
+        deleteGuestDialog.value = false;
+        await new Promise((resolve) => setTimeout(resolve, 1500)).then(() => {
+          message.value = false;
+          fillList();
         });
+      }
     };
 
     return {
@@ -632,6 +669,8 @@ export default {
       dt,
       filters,
       loading,
+      message,
+      messageText,
       isSubmitted,
       exportCSV,
       clearFilters,
