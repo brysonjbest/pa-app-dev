@@ -1,11 +1,11 @@
 <template>
   <div>
-    <Spinner v-if="loading" />
-    <Message
+    <ProgressSpinner v-if="loading" />
+    <PrimeMessage
       v-else-if="message"
       :severity="messageText.severity"
       :closable="false"
-      >{{ messageText.text }}</Message
+      >{{ messageText.text }}</PrimeMessage
     >
     <div v-else>
       <DataTable
@@ -39,12 +39,12 @@
       >
         <template v-if="adminView" #header>
           <div style="text-align: left">
-            <Button
+            <PrimeButton
               icon="pi pi-external-link"
               label="Export"
               @click="exportCSV($event)"
             />
-            <Button
+            <PrimeButton
               type="button"
               icon="pi pi-filter-slash"
               label="Clear"
@@ -62,7 +62,7 @@
         </template>
         <template #empty> No registrations found. </template>
         <template #loading> Loading registration data. Please wait. </template>
-        <Column
+        <PrimeColumn
           v-if="adminView"
           field="guid"
           header="ID#"
@@ -73,9 +73,9 @@
             <router-link :to="`/admin/edit/${data.guid}`">{{
               data.registrar
             }}</router-link>
-          </template></Column
+          </template></PrimeColumn
         >
-        <Column
+        <PrimeColumn
           field="organization"
           filterField="organization"
           header="Organization"
@@ -85,7 +85,7 @@
             {{ lookup("organizations", data.organization) }}
           </template>
           <template #filter="{ filterModel }">
-            <Dropdown
+            <DropDown
               v-model="filterModel.value"
               :options="organizations"
               optionLabel="text"
@@ -106,10 +106,10 @@
                   <div>{{ lookup("organizations", slotProps.option) }}</div>
                 </div>
               </template>
-            </Dropdown>
-          </template></Column
+            </DropDown>
+          </template></PrimeColumn
         >
-        <Column
+        <PrimeColumn
           v-for="col of filter(columns)"
           :field="col.field"
           :header="col.text"
@@ -122,8 +122,8 @@
               class="p-column-filter"
               :placeholder="`Search by ${col.field}`"
             /> </template
-        ></Column>
-        <Column
+        ></PrimeColumn>
+        <PrimeColumn
           v-if="adminView"
           field="guestCount"
           dataType="numeric"
@@ -146,8 +146,8 @@
               decrementButtonIcon="pi pi-minus"
             />
           </template>
-        </Column>
-        <Column
+        </PrimeColumn>
+        <PrimeColumn
           v-if="adminView"
           field="submitted"
           header="Submitted?"
@@ -166,8 +166,8 @@
           </template>
           <template #filter="{ filterModel }">
             <TriStateCheckbox v-model="filterModel.value" /> </template
-        ></Column>
-        <Column
+        ></PrimeColumn>
+        <PrimeColumn
           v-if="adminView"
           field="createdAt"
           header="Created:"
@@ -181,14 +181,14 @@
             }}
           </template>
           <template #filter="{ filterModel }">
-            <Calendar
+            <PrimeCalendar
               v-model="filterModel.value"
               dateFormat="mm/dd/yy"
               placeholder="mm/dd/yyyy"
             /> </template
-        ></Column>
+        ></PrimeColumn>
 
-        <Column
+        <PrimeColumn
           v-if="adminView"
           field="updatedAt"
           header="Updated:"
@@ -201,32 +201,36 @@
             {{ formatTime(data.updatedAt) }}
           </template>
           <template #filter="{ filterModel }">
-            <Calendar
+            <PrimeCalendar
               v-model="filterModel.value"
               dateFormat="mm/dd/yy"
               placeholder="mm/dd/yyyy"
             /> </template
-        ></Column>
-        <Column v-if="!detailsView" :exportable="false" style="min-width: 8rem">
+        ></PrimeColumn>
+        <PrimeColumn
+          v-if="!detailsView"
+          :exportable="false"
+          style="min-width: 8rem"
+        >
           <template #body="slotProps">
-            <Button
+            <PrimeButton
               v-if="!slotProps.data.submitted"
               icon="pi pi-pencil"
               class="p-button-rounded p-button-success mr-2"
               @click="editRegistration(slotProps.data)"
             />
-            <Button
+            <PrimeButton
               v-if="!slotProps.data.submitted"
               icon="pi pi-trash"
               class="p-button-rounded p-button-warning"
               @click="confirmDeleteRegistration(slotProps.data)"
             />
           </template>
-        </Column>
+        </PrimeColumn>
       </DataTable>
     </div>
     <div>
-      <Dialog
+      <PrimeDialog
         v-model:visible="registrationDialog"
         :style="{ width: '450px' }"
         header="Registration Details"
@@ -237,8 +241,8 @@
           :registrationID="registration.guid"
           :adminView="adminView"
           :detailsView="detailsView"
-      /></Dialog>
-      <Dialog
+      /></PrimeDialog>
+      <PrimeDialog
         v-model:visible="deleteRegistrationDialog"
         :style="{ width: '450px' }"
         header="Confirm"
@@ -256,20 +260,20 @@
           >
         </div>
         <template #footer>
-          <Button
+          <PrimeButton
             label="No"
             icon="pi pi-times"
             class="p-button-text"
             @click="deleteRegistrationDialog = false"
           />
-          <Button
+          <PrimeButton
             label="Yes"
             icon="pi pi-check"
             class="p-button-text"
             @click="deleteRegistration"
           />
         </template>
-      </Dialog>
+      </PrimeDialog>
     </div>
   </div>
 </template>
@@ -298,9 +302,8 @@ export default {
     );
     const dataTableRender = ref(0);
     const userStore = useAuthUserStore();
-    const detailsView = props.detailsView || false;
-    const adminView = props.adminView || false;
-    const registrationID = props.registrationID || null;
+    //const detailsView = props.detailsView || false;
+    //const adminView = props.adminView || false;
     const dt = ref();
 
     let message = ref(false);
@@ -403,7 +406,7 @@ export default {
       return tableCount;
     };
 
-    //Dialog Controls
+    //PrimeDialog Controls
 
     const registration = ref({});
     const submitted = ref(false);
@@ -467,8 +470,6 @@ export default {
       registration,
       isSubmitted,
       submitted,
-      detailsView,
-      adminView,
       registrationDialog,
       deleteRegistrationDialog,
       dataTableRender,

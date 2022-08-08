@@ -2,17 +2,17 @@
 <!-- Provides initial registration of financial details -->
 <template>
   <div>
-    <Spinner v-if="loading" />
-    <Message
+    <ProgressSpinner v-if="loading" />
+    <PrimeMessage
       v-else-if="message"
       :severity="messageText.severity"
       :closable="false"
-      >{{ messageText.text }}</Message
+      >{{ messageText.text }}</PrimeMessage
     >
     <form v-else @submit="onSubmit" @reset="onReset">
       <div class="dropdown">
         <label for="organization">Organization:</label>
-        <Dropdown
+        <DropDown
           v-bind:class="{ 'p-invalid': v$.organization.$error }"
           id="organization"
           v-model="guest.organization"
@@ -61,7 +61,7 @@
 
       <div class="dropdown">
         <label for="attendancetype">Attendance Type:</label>
-        <Dropdown
+        <DropDown
           v-bind:class="{ 'p-invalid': v$.attendancetype.$error }"
           id="attendancetype"
           v-model="guest.attendancetype"
@@ -85,7 +85,7 @@
           :key="each.key"
           class="field-checkbox"
         >
-          <Checkbox
+          <CheckBox
             :id="each.key"
             name="each"
             :value="each.value"
@@ -98,7 +98,7 @@
       <div class="checkbox-group">
         <label for="dietary">Dietary Requirements:</label>
         <div v-for="each of dietary" :key="each.key" class="field-checkbox">
-          <Checkbox
+          <CheckBox
             :id="each.key"
             name="each"
             :value="each.value"
@@ -108,14 +108,14 @@
         </div>
       </div>
 
-      <Button type="submit" label="primary" class="p-button-raised"
-        >Add Guest</Button
+      <PrimeButton type="submit" label="primary" class="p-button-raised"
+        >Add Guest</PrimeButton
       >
-      <Button
+      <PrimeButton
         type="reset"
         label="danger"
         class="p-button-raised p-button-danger"
-        >Reset</Button
+        >Reset</PrimeButton
       >
     </form>
   </div>
@@ -185,9 +185,8 @@ export default {
             messageText.value = { severity: "success", text: "Guest Updated!" };
           });
       } catch (error) {
-        console.log(error);
         loading.value = false;
-        console.warn(err);
+        console.warn(error);
         message.value = true;
         messageText.value = {
           severity: "error",

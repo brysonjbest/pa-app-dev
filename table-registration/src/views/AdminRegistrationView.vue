@@ -24,9 +24,9 @@ const tableCountAll = () => {
   return String(financialStore.getTotalTableCount);
 };
 
-//Dialog controls
+//PrimeDialog controls
 
-const tableInfo = (prod) => {
+const tableInfo = () => {
   tableInfoDialog.value = true;
 };
 
@@ -36,7 +36,7 @@ userStore.login();
 <template>
   <main>
     <PageHeader title="All Registrations" subtitle="Manage PA Registrations" />
-    <Button
+    <PrimeButton
       label="Table Count"
       type="button"
       icon="pi pi-ticket"
@@ -46,14 +46,14 @@ userStore.login();
       badgeClass="p-badge-danger"
     />
 
-    <Dialog
+    <PrimeDialog
       v-model:visible="tableInfoDialog"
       header="Table Information"
       :modal="true"
       class="p-fluid"
       >Current approximate table count across all registrations:
       {{ tableCountAll() }}
-    </Dialog>
+    </PrimeDialog>
     <NavMenu :title="''" :menuitems="navItems" />
     <RegistrationList :adminView="true" />
   </main>

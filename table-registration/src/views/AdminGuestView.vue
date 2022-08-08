@@ -24,9 +24,9 @@ const guestCountAll = () => {
   return String(guestStore.getGuestsCount);
 };
 
-//Dialog controls
+//PrimeDialog controls
 
-const guestInfo = (prod) => {
+const guestInfo = () => {
   guestInfoDialog.value = true;
 };
 
@@ -36,7 +36,7 @@ userStore.login();
 <template>
   <main>
     <PageHeader title="All Guests" subtitle="Manage PA Guests" />
-    <Button
+    <PrimeButton
       label="Guest Count"
       type="button"
       icon="pi pi-ticket"
@@ -46,14 +46,14 @@ userStore.login();
       badgeClass="p-badge-danger"
     />
 
-    <Dialog
+    <PrimeDialog
       v-model:visible="guestInfoDialog"
       header="Total Count of Current Guests"
       :modal="true"
       class="p-fluid"
       >Current guest count across all registrations:
       {{ guestCountAll() }}
-    </Dialog>
+    </PrimeDialog>
     <NavMenu :title="''" :menuitems="navItems" />
     <GuestList :adminView="true" />
   </main>

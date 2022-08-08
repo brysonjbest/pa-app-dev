@@ -19,10 +19,9 @@ export default {
   },
   setup(props) {
     const items = ref(props.menuitems);
-    const title = props.title;
     const activeIndex = ref(0);
 
-    return { title, items, activeIndex };
+    return { items, activeIndex };
   },
 };
 </script>

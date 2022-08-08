@@ -80,13 +80,13 @@ export default {
 <template>
   <header>
     <div>
-      <Menubar id="navbar" :model="siteNav">
+      <MenuBar id="navbar" :model="siteNav">
         <template #start>
           <router-link to="/" id="page-title"
             >Premier's Awards Event Registration
           </router-link>
         </template>
-      </Menubar>
+      </MenuBar>
     </div>
   </header>
 

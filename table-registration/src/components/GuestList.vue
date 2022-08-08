@@ -1,11 +1,11 @@
 <template>
   <div>
-    <Spinner v-if="loading" />
-    <Message
+    <ProgressSpinner v-if="loading" />
+    <PrimeMessage
       v-else-if="message"
       :severity="messageText.severity"
       :closable="false"
-      >{{ messageText.text }}</Message
+      >{{ messageText.text }}</PrimeMessage
     >
     <div v-else>
       <DataTable
@@ -34,12 +34,12 @@
       >
         <template #header>
           <div style="text-align: left">
-            <Button
+            <PrimeButton
               icon="pi pi-external-link"
               label="Export"
               @click="exportCSV($event)"
             />
-            <Button
+            <PrimeButton
               type="button"
               icon="pi pi-filter-slash"
               label="Clear"
@@ -57,7 +57,7 @@
         </template>
         <template #empty> No guests found. </template>
         <template #loading> Loading guest data. Please wait. </template>
-        <Column
+        <PrimeColumn
           v-if="adminView"
           field="registration"
           header="Registration"
@@ -77,12 +77,16 @@
               class="p-column-filter"
               placeholder="Search by registration"
             /> </template
-        ></Column>
-        <Column field="organization" header="Organization" key="organization">
+        ></PrimeColumn>
+        <PrimeColumn
+          field="organization"
+          header="Organization"
+          key="organization"
+        >
           <template #body="{ data }">
             {{ lookup("organizations", data.organization) }} </template
           ><template #filter="{ filterModel }">
-            <Dropdown
+            <DropDown
               v-model="filterModel.value"
               :options="organizationsFilter"
               optionLabel="text"
@@ -103,10 +107,10 @@
                   <div>{{ lookup("organizations", slotProps.option) }}</div>
                 </div>
               </template>
-            </Dropdown>
-          </template></Column
+            </DropDown>
+          </template></PrimeColumn
         >
-        <Column field="firstname" header="First Name" key="firstname">
+        <PrimeColumn field="firstname" header="First Name" key="firstname">
           <template #body="{ data }"> {{ data.firstname }} </template
           ><template #filter="{ filterModel }">
             <InputText
@@ -115,8 +119,8 @@
               class="p-column-filter"
               placeholder="Search by First Name"
             /> </template
-        ></Column>
-        <Column field="lastname" header="Last Name" key="lastname">
+        ></PrimeColumn>
+        <PrimeColumn field="lastname" header="Last Name" key="lastname">
           <template #body="{ data }"> {{ data.lastname }} </template
           ><template #filter="{ filterModel }">
             <InputText
@@ -125,8 +129,8 @@
               class="p-column-filter"
               placeholder="Search by Last Name"
             /> </template
-        ></Column>
-        <Column
+        ></PrimeColumn>
+        <PrimeColumn
           field="attendancetype"
           header="Attendance Type"
           key="attendancetype"
@@ -134,7 +138,7 @@
           <template #body="{ data }">
             {{ lookup("attendancetypes", data.attendancetype) }} </template
           ><template #filter="{ filterModel }">
-            <Dropdown
+            <DropDown
               v-model="filterModel.value"
               :options="attendancetypesFilter"
               optionLabel="text"
@@ -159,10 +163,10 @@
                   </div>
                 </div>
               </template>
-            </Dropdown>
-          </template></Column
+            </DropDown>
+          </template></PrimeColumn
         >
-        <Column
+        <PrimeColumn
           field="accessibility"
           header="Accessibility Requirements"
           key="accessibility"
@@ -172,7 +176,7 @@
               lookupLoop("accessibilityoptions", data.accessibility)
             }} </template
           ><template #filter="{ filterModel }">
-            <Dropdown
+            <DropDown
               v-model="filterModel.value"
               :options="accessibilityFilter"
               optionLabel="text"
@@ -197,14 +201,18 @@
                   </div>
                 </div>
               </template>
-            </Dropdown>
-          </template></Column
+            </DropDown>
+          </template></PrimeColumn
         >
-        <Column field="dietary" header="Dietary Requirements" key="dietary">
+        <PrimeColumn
+          field="dietary"
+          header="Dietary Requirements"
+          key="dietary"
+        >
           <template #body="{ data }">
             {{ lookupLoop("dietaryoptions", data.dietary) }} </template
           ><template #filter="{ filterModel }">
-            <Dropdown
+            <DropDown
               v-model="filterModel.value"
               :options="dietaryFilter"
               optionLabel="text"
@@ -229,10 +237,10 @@
                   </div>
                 </div>
               </template>
-            </Dropdown>
-          </template></Column
+            </DropDown>
+          </template></PrimeColumn
         >
-        <Column
+        <PrimeColumn
           v-if="adminView"
           field="createdAt"
           header="Created:"
@@ -245,13 +253,13 @@
               formatTime(data.createdAt)
             }} </template
           ><template #filter="{ filterModel }">
-            <Calendar
+            <PrimeCalendar
               v-model="filterModel.value"
               dateFormat="mm/dd/yy"
               placeholder="mm/dd/yyyy"
             /> </template
-        ></Column>
-        <Column
+        ></PrimeColumn>
+        <PrimeColumn
           v-if="adminView"
           field="updatedAt"
           header="Updated:"
@@ -263,34 +271,34 @@
             {{ formatDate(data.updatedAt) }},<br />
             {{ formatTime(data.updatedAt) }} </template
           ><template #filter="{ filterModel }">
-            <Calendar
+            <PrimeCalendar
               v-model="filterModel.value"
               dateFormat="mm/dd/yy"
               placeholder="mm/dd/yyyy"
             /> </template
-        ></Column>
-        <Column
+        ></PrimeColumn>
+        <PrimeColumn
           v-if="!isSubmitted() || adminView"
           :exportable="false"
           style="min-width: 8rem"
         >
           <template #body="slotProps">
-            <Button
+            <PrimeButton
               icon="pi pi-pencil"
               class="p-button-rounded p-button-success mr-2"
               @click="editGuest(slotProps.data)"
             />
-            <Button
+            <PrimeButton
               icon="pi pi-trash"
               class="p-button-rounded p-button-warning"
               @click="confirmDeleteGuest(slotProps.data)"
             />
           </template>
-        </Column>
+        </PrimeColumn>
       </DataTable>
     </div>
     <div>
-      <Dialog
+      <PrimeDialog
         v-model:visible="guestDialog"
         :style="{ width: '450px' }"
         header="Guest Details"
@@ -299,7 +307,7 @@
       >
         <div class="dropdown">
           <label for="organization">Organization:</label>
-          <Dropdown
+          <DropDown
             v-bind:class="{ 'p-invalid': v$.organization.$error }"
             id="organization"
             v-model="guest.organization"
@@ -345,7 +353,7 @@
 
         <div class="dropdown">
           <label for="attendancetype">Attendance Type:</label>
-          <Dropdown
+          <DropDown
             v-bind:class="{ 'p-invalid': v$.attendancetype.$error }"
             id="attendancetype"
             v-model="guest.attendancetype"
@@ -369,7 +377,7 @@
             :key="each.key"
             class="field-checkbox"
           >
-            <Checkbox
+            <CheckBox
               :id="each.key"
               name="each"
               :value="each.value"
@@ -382,7 +390,7 @@
         <div class="checkbox-group">
           <label for="dietary">Dietary Requirements:</label>
           <div v-for="each of dietary" :key="each.key" class="field-checkbox">
-            <Checkbox
+            <CheckBox
               :id="each.key"
               name="each"
               :value="each.value"
@@ -393,21 +401,21 @@
         </div>
 
         <template #footer>
-          <Button
+          <PrimeButton
             label="Cancel"
             icon="pi pi-times"
             class="p-button-text"
             @click="hideDialog"
           />
-          <Button
+          <PrimeButton
             label="Save"
             icon="pi pi-check"
             class="p-button-text"
             @click="saveGuest"
           />
         </template>
-      </Dialog>
-      <Dialog
+      </PrimeDialog>
+      <PrimeDialog
         v-model:visible="deleteGuestDialog"
         :style="{ width: '450px' }"
         header="Confirm"
@@ -422,20 +430,20 @@
           >
         </div>
         <template #footer>
-          <Button
+          <PrimeButton
             label="No"
             icon="pi pi-times"
             class="p-button-text"
             @click="deleteGuestDialog = false"
           />
-          <Button
+          <PrimeButton
             label="Yes"
             icon="pi pi-check"
             class="p-button-text"
             @click="deleteGuest"
           />
         </template>
-      </Dialog>
+      </PrimeDialog>
     </div>
   </div>
 </template>
@@ -449,7 +457,6 @@ import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../stores/guests";
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
-import router from "../router";
 
 export default {
   props: {
@@ -483,7 +490,8 @@ export default {
     const loading = ref(false);
     let message = ref(false);
     const messageText = ref({ severity: null, text: "" });
-    const { adminView, registrationID } = props;
+    //const adminView = props.adminView;
+    // const registrationID = props.registrationID;
     const financialStore = useFinancialStore();
 
     //Conditionally Fill DataList
@@ -492,9 +500,9 @@ export default {
       guestStore.$reset;
       loading.value = true;
       try {
-        if (adminView) return await guestStore.fillGuests();
-        if (registrationID)
-          return await guestStore.fillGuestsRegistration(registrationID);
+        if (props.adminView) return await guestStore.fillGuests();
+        if (props.registrationID)
+          return await guestStore.fillGuestsRegistration(props.registrationID);
         else
           return (await guestStore.fillGuestsRegistration(user.guid))
             ? guestStore.fillGuestsRegistration(user.guid)
@@ -581,7 +589,7 @@ export default {
       return list;
     };
 
-    //Dialog controls
+    //PrimeDialog controls
     const guest = ref({});
     const rules = {
       organization: { required },
@@ -684,7 +692,6 @@ export default {
       dietary,
       guests,
       guest,
-      adminView,
       submitted,
       guestDialog,
       deleteGuestDialog,

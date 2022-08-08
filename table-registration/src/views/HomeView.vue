@@ -5,12 +5,12 @@
       subtitle="Premier's Awards Event Registration"
     />
     <div v-if="() => isRegistrar">
-      <Card>
+      <PrimeCard>
         <template #content
           >You are logged in as
           <b>{{ userStore.getUser.username }}</b></template
         >
-      </Card>
+      </PrimeCard>
     </div>
     <div v-else>
       <p>
@@ -20,24 +20,24 @@
         group for attendance, please create an account at the link below.
       </p>
       <router-link to="/register/">
-        <Button block variant="info">
+        <PrimeButton block variant="info">
           Create a profile to register attendees for the Premier's Awards
           {{ year }} Event.
-        </Button>
+        </PrimeButton>
       </router-link>
     </div>
 
     <div v-if="() => isRegistrar">
       <div>
-        <Card title="Event Registration">
+        <PrimeCard title="Event Registration">
           <template #title>
             Premier's Awards {{ year }} Event Registration
           </template>
           <template #content>
             <router-link to="/create/registration/">
-              <Button block variant="info"> Register </Button>
+              <PrimeButton block variant="info"> Register </PrimeButton>
             </router-link></template
-          ></Card
+          ></PrimeCard
         >
       </div>
     </div>
@@ -47,19 +47,10 @@
 <script setup>
 import { useAuthUserStore } from "../stores/users";
 import { ref } from "vue";
-import router from "../router/index.js";
 import settings from "../services/settings.services";
 import PageHeader from "../components/common/PageHeader.vue";
 
 const userStore = useAuthUserStore();
-const isLoggedIn = userStore.isAuthenticated;
 const isRegistrar = userStore.isRegistrar;
-const user = userStore.getUser;
 const year = ref(settings.get("year") || "");
-
-const reroute = async function (uri) {
-  await router.push(uri);
-};
-
-//userStore.login();
 </script>

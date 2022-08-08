@@ -1,91 +1,105 @@
-<script setup>
+<script>
 import GuestList from "../components/GuestList.vue";
 import RegistrationList from "../components/RegistrationList.vue";
-import InputFinancial from "../components/inputs/InputFinancial.vue";
 import InputGuest from "../components/inputs/InputGuest.vue";
 import PageHeader from "../components/common/PageHeader.vue";
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
-import { storeToRefs } from "pinia";
 import { ref } from "vue";
 
-const props = defineProps({ id: String });
-const registration = props.id;
+export default {
+  props: {
+    id: String,
+  },
+  setup(props) {
+    const userStore = useAuthUserStore();
+    userStore.login();
+    const financialStore = useFinancialStore();
 
-const userStore = useAuthUserStore();
-userStore.login();
-const financialStore = useFinancialStore();
+    financialStore.fill(props.id);
 
-financialStore.fill(registration);
+    const tableCount = () => {
+      return String(financialStore.getTableCount);
+    };
 
-const tableCount = () => {
-  return String(financialStore.getTableCount);
-};
+    const guestCount = () => {
+      return String(financialStore.getGuestCount);
+    };
 
-const guestCount = () => {
-  return String(financialStore.getGuestCount);
-};
+    const getRegistrar = () => {
+      return financialStore.getRegistrar;
+    };
 
-const getRegistrar = () => {
-  return financialStore.getRegistrar;
-};
+    const isSubmitted = () => {
+      return financialStore.getRegistration.submitted;
+    };
 
-const isSubmitted = () => {
-  return financialStore.getRegistration.submitted;
-};
+    const isAdmin = () => {
+      return userStore.isAdmin;
+    };
 
-const isAdmin = () => {
-  return userStore.isAdmin;
-};
+    const toggleRegistration = async () => {
+      let submitStatus = isSubmitted() ? false : true;
+      financialStore
+        .registerFinancialInformation({
+          submitted: submitStatus,
+          registration: props.id,
+        })
+        .then(() => financialStore.fill(props.id));
+    };
 
-const toggleRegistration = async () => {
-  let submitStatus = isSubmitted() ? false : true;
-  financialStore
-    .registerFinancialInformation({
-      submitted: submitStatus,
-      registration,
-    })
-    .then(() => financialStore.fill(registration));
-};
+    const addGuestDialog = ref(false);
+    const tableInfoDialog = ref(false);
+    const guestInfoDialog = ref(false);
 
-const registrarName = getRegistrar();
+    //PrimeDialog controls
+    const addGuest = () => {
+      addGuestDialog.value = true;
+    };
 
-const addGuestDialog = ref(false);
-const tableInfoDialog = ref(false);
-const guestInfoDialog = ref(false);
+    const tableInfo = () => {
+      tableInfoDialog.value = true;
+    };
 
-//Dialog controls
-const addGuest = (prod) => {
-  addGuestDialog.value = true;
-};
+    const guestInfo = () => {
+      guestInfoDialog.value = true;
+    };
 
-const tableInfo = (prod) => {
-  tableInfoDialog.value = true;
-};
-
-const guestInfo = (prod) => {
-  guestInfoDialog.value = true;
-};
-
-const hideDialog = () => {
-  addGuestDialog.value = false;
+    return {
+      userStore,
+      financialStore,
+      tableCount,
+      guestCount,
+      getRegistrar,
+      isSubmitted,
+      isAdmin,
+      toggleRegistration,
+      addGuestDialog,
+      tableInfoDialog,
+      guestInfoDialog,
+      addGuest,
+      tableInfo,
+      guestInfo,
+    };
+  },
+  components: { GuestList, RegistrationList, InputGuest, PageHeader },
 };
 </script>
 
 <template>
   <main>
-    <PageHeader :title="`Registration # ${registration} `"
+    <PageHeader :title="`Registration # ${id} `"
       >Submitted by {{ getRegistrar() }}</PageHeader
     >
-    <RegistrationList :registrationID="registration" :detailsView="false" />
-    <Button
+    <RegistrationList :registrationID="id" :detailsView="false" />
+    <PrimeButton
       v-if="!isSubmitted()"
       label="Add Guests"
       icon="pi pi-pencil"
       class="p-button-rounded p-button-success mr-2"
       @click="addGuest()"
     />
-    <Button
+    <PrimeButton
       type="button"
       label="Total Guests"
       icon="pi pi-users"
@@ -94,7 +108,7 @@ const hideDialog = () => {
       @click="guestInfo()"
       badgeClass="p-badge-danger"
     />
-    <Button
+    <PrimeButton
       type="button"
       label="Tables"
       icon="pi pi-ticket"
@@ -103,7 +117,7 @@ const hideDialog = () => {
       @click="tableInfo()"
       badgeClass="p-badge-danger"
     />
-    <Button
+    <PrimeButton
       v-if="!isSubmitted()"
       type="button"
       label="Submit Registration"
@@ -112,7 +126,7 @@ const hideDialog = () => {
       @click="toggleRegistration()"
       badgeClass="p-badge-danger"
     />
-    <Button
+    <PrimeButton
       v-if="isSubmitted() && isAdmin()"
       type="button"
       label="Unsubmit Registration"
@@ -121,7 +135,7 @@ const hideDialog = () => {
       @click="toggleRegistration()"
       badgeClass="p-badge-danger"
     />
-    <Dialog
+    <PrimeDialog
       v-model:visible="tableInfoDialog"
       header="Table Information"
       :modal="true"
@@ -129,23 +143,23 @@ const hideDialog = () => {
       >Warning regarding table charges. Please be aware that half tables may not
       be able to be accomodated, and you may be charged the full table amount.
       Current table count: {{ tableCount() }}
-    </Dialog>
+    </PrimeDialog>
 
-    <Dialog
+    <PrimeDialog
       v-model:visible="guestInfoDialog"
       header="Guest Information"
       :modal="true"
       class="p-fluid"
       >Total Number of Guests: {{ guestCount() }}.
-    </Dialog>
+    </PrimeDialog>
 
-    <Dialog
+    <PrimeDialog
       v-model:visible="addGuestDialog"
       header="Add a new Guest"
       :modal="true"
       class="p-fluid"
-      ><InputGuest :registrationID="registration"
-    /></Dialog>
-    <GuestList :adminView="false" :registrationID="registration" />
+      ><InputGuest :registrationID="id"
+    /></PrimeDialog>
+    <GuestList :adminView="false" :registrationID="id" />
   </main>
 </template>

@@ -1,17 +1,17 @@
 <!-- Provides initial registration of financial details -->
 <template>
   <div>
-    <Spinner v-if="loading" />
-    <Message
+    <ProgressSpinner v-if="loading" />
+    <PrimeMessage
       v-else-if="message"
       :severity="messageText.severity"
       :closable="false"
-      >{{ messageText.text }}</Message
+      >{{ messageText.text }}</PrimeMessage
     >
     <form v-else @submit="onSubmit" @reset="onReset">
       <div class="dropdown">
         <label for="organization">Organization:</label>
-        <Dropdown
+        <DropDown
           v-bind:class="{ 'p-invalid': v$.organization.$error }"
           id="organization"
           v-model="registration.organization"
@@ -179,14 +179,14 @@
         >
       </div>
 
-      <Button type="submit" label="primary" class="p-button-raised"
-        >Submit</Button
+      <PrimeButton type="submit" label="primary" class="p-button-raised"
+        >Submit</PrimeButton
       >
-      <Button
+      <PrimeButton
         type="reset"
         label="danger"
         class="p-button-raised p-button-danger"
-        >Reset</Button
+        >Reset</PrimeButton
       >
     </form>
   </div>
@@ -262,9 +262,8 @@ export default {
           };
         });
       } catch (error) {
-        console.log(error);
         loading.value = false;
-        console.warn(err);
+        console.warn(error);
         message.value = true;
         messageText.value = {
           severity: "error",
@@ -273,9 +272,7 @@ export default {
         // error.response.status Check status code
       } finally {
         setTimeout(() => (message.value = false), 1500);
-        if (props.registrationID) {
-          return;
-        } else {
+        if (!props.registrationID) {
           router.push("/create/registration/");
         }
       }

@@ -1,13 +1,13 @@
 <!-- PageHeader Common Component -->
 <template>
   <div>
-    <Card class="text-3xl">
+    <PrimeCard class="text-3xl">
       <template #header>{{ header }}</template>
       <template #title>{{ title }}</template>
       <template #subtitle>{{ subtitle }}<slot></slot></template>
       <template #content>{{ content }}</template>
       <template #footer>{{ footer }}</template>
-    </Card>
+    </PrimeCard>
   </div>
 </template>
 
@@ -19,16 +19,6 @@ export default {
     subtitle: String,
     content: String,
     footer: String,
-  },
-  setup(props) {
-    const { header, title, subtitle, content, footer } = props;
-    return {
-      header,
-      title,
-      subtitle,
-      content,
-      footer,
-    };
   },
 };
 </script>

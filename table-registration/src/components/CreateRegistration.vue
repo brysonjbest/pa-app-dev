@@ -1,17 +1,19 @@
 <template>
   <div>
-    <Card>
-      <Row style="height: 200px" class="text-center" align-v="center">
-        <Column>
+    <PrimeCard>
+      <PrimeRow style="height: 200px" class="text-center" align-v="center">
+        <PrimeColumn>
           <router-link to="/"
-            ><Button>Return to Registration Homepage</Button></router-link
+            ><PrimeButton
+              >Return to Registration Homepage</PrimeButton
+            ></router-link
           >
-          <Message severity="warn"
-            >Please wait while the registration is initialized...</Message
+          <PrimeMessage severity="warn"
+            >Please wait while the registration is initialized...</PrimeMessage
           >
-        </Column>
-      </Row>
-    </Card>
+        </PrimeColumn>
+      </PrimeRow>
+    </PrimeCard>
   </div>
 </template>
 

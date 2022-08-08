@@ -1,6 +1,11 @@
 <template>
   <div>
-    <Message show v-if="user && isRegistered" variant="info" :closable="false">
+    <PrimeMessage
+      show
+      v-if="user && isRegistered"
+      variant="info"
+      :closable="false"
+    >
       <p v-if="user.role === 'inactive'">
         Your registration is currently under review. Please check back regularly
         for updates.
@@ -9,8 +14,8 @@
         You are currently registered as a(n) <b>{{ user.role }}</b
         >.
       </p>
-    </Message>
-    <Message
+    </PrimeMessage>
+    <PrimeMessage
       show
       v-if="activeMessage"
       :variant="message.type"
@@ -20,9 +25,9 @@
       <p>
         {{ message.text }}
       </p>
-    </Message>
+    </PrimeMessage>
 
-    <Card v-if="user && (!isRegistered || edit)">
+    <PrimeCard v-if="user && (!isRegistered || edit)">
       <template #content>
         <form>
           <InputText
@@ -52,28 +57,28 @@
             placeholder="Enter user's email"
           >
           </InputText>
-          <Button
+          <PrimeButton
             v-if="edit"
             @click="update"
             :disabled="!validation"
             class="m-2"
             type="button"
             variant="info"
-            >Update</Button
+            >Update</PrimeButton
           >
 
-          <Button
+          <PrimeButton
             v-else
             @click="register"
             :disabled="!validation"
             class="m-2"
             type="button"
             variant="info"
-            >Register</Button
+            >Register</PrimeButton
           >
         </form>
       </template>
-    </Card>
+    </PrimeCard>
   </div>
 </template>
 
@@ -90,7 +95,7 @@ export default {
   props: {
     edit: Boolean,
   },
-  setup(props) {
+  setup() {
     const userStore = useAuthUserStore();
     const messageStore = useMessageStore();
     const { message } = storeToRefs(useMessageStore());
@@ -101,8 +106,6 @@ export default {
       lastname: { required },
       email: { required, email },
     };
-
-    const edit = props.edit || false;
 
     const v$ = useVuelidate(rules, user);
 
@@ -124,7 +127,7 @@ export default {
           spinner: true,
         });
         // handle data submission
-        const response = await apiRoutesUsers.registerUser(user.value);
+        await apiRoutesUsers.registerUser(user.value);
         messageStore.setMessage({
           text: "Successfully registered user!",
           type: "success",
@@ -149,10 +152,7 @@ export default {
         });
 
         // handle data submission
-        const response = await apiRoutesUsers.updateUser(
-          user.value.guid,
-          user.value
-        );
+        await apiRoutesUsers.updateUser(user.value.guid, user.value);
         messageStore.setMessage({
           text: "Successfully updated user!",
           type: "success",
@@ -171,7 +171,6 @@ export default {
       user,
       message,
       rules,
-      edit,
       v$,
       isRegistered,
       validation,
