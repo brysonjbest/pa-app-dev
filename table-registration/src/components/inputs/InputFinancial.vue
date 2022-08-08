@@ -1,7 +1,14 @@
 <!-- Provides initial registration of financial details -->
 <template>
   <div>
-    <form @submit="onSubmit" @reset="onReset">
+    <Spinner v-if="loading" />
+    <Message
+      v-else-if="message"
+      :severity="messageText.severity"
+      :closable="false"
+      >{{ messageText.text }}</Message
+    >
+    <form v-else @submit="onSubmit" @reset="onReset">
       <div class="dropdown">
         <label for="organization">Organization:</label>
         <Dropdown
@@ -223,43 +230,55 @@ export default {
 
     const v$ = useVuelidate(rules, registration);
 
+    let loading = ref(false);
+    let message = ref(false);
+    const messageText = ref({ severity: null, text: "" });
+
     //registers user if all form fields valid
     const onSubmit = async function (event) {
       event.preventDefault();
       const isFormCorrect = await this.v$.$validate();
       if (!isFormCorrect) return;
 
-      const userGUID = userStore.getUser.username;
-      console.log(userGUID);
+      try {
+        loading.value = true;
+        const userGUID = userStore.getUser.username;
 
-      //attaches the creator's username to the registration
-      this.registration.registrar =
-        this.registration.registrar !== null ||
-        this.registration.registrar.length !== 0
-          ? this.registration.registrar
-          : userGUID.username;
+        //attaches the creator's username to the registration
+        this.registration.registrar =
+          this.registration.registrar !== null ||
+          this.registration.registrar.length !== 0
+            ? this.registration.registrar
+            : userGUID.username;
 
-      register
-        .registerFinancialInformation(this.registration)
-        .then((res) => {
+        register.registerFinancialInformation(this.registration).then((res) => {
           console.log(res);
           this.$forceUpdate;
-          //Perform Success Action
-        })
-        .catch((error) => {
-          console.log(error);
-          // error.response.status Check status code
-        })
-        .finally(() => {
-          if (props.registrationID) {
-            return;
-            //router.go();
-          } else {
-            router.push("/create/registration/");
-          }
-
-          //Perform action in always
+          loading.value = false;
+          message.value = true;
+          messageText.value = {
+            severity: "success",
+            text: "Registration Updated!",
+          };
         });
+      } catch (error) {
+        console.log(error);
+        loading.value = false;
+        console.warn(err);
+        message.value = true;
+        messageText.value = {
+          severity: "error",
+          text: "Registration could not be updated.",
+        };
+        // error.response.status Check status code
+      } finally {
+        setTimeout(() => (message.value = false), 1500);
+        if (props.registrationID) {
+          return;
+        } else {
+          router.push("/create/registration/");
+        }
+      }
     };
 
     //reset form fields to default
@@ -292,7 +311,17 @@ export default {
 
     fillList();
 
-    return { registration, v$, organizations, fillList, onSubmit, onReset };
+    return {
+      loading,
+      message,
+      messageText,
+      registration,
+      v$,
+      organizations,
+      fillList,
+      onSubmit,
+      onReset,
+    };
   },
 };
 </script>

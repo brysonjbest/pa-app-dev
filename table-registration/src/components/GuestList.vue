@@ -77,7 +77,7 @@
           ><template #filter="{ filterModel }">
             <Dropdown
               v-model="filterModel.value"
-              :options="organizations"
+              :options="organizationsFilter"
               optionLabel="text"
               placeholder="Any"
               class="p-column-filter"
@@ -129,7 +129,7 @@
           ><template #filter="{ filterModel }">
             <Dropdown
               v-model="filterModel.value"
-              :options="attendancetypes"
+              :options="attendancetypesFilter"
               optionLabel="text"
               placeholder="Any"
               class="p-column-filter"
@@ -167,7 +167,7 @@
           ><template #filter="{ filterModel }">
             <Dropdown
               v-model="filterModel.value"
-              :options="accessibility"
+              :options="accessibilityFilter"
               optionLabel="text"
               placeholder="Any"
               class="p-column-filter"
@@ -199,7 +199,7 @@
           ><template #filter="{ filterModel }">
             <Dropdown
               v-model="filterModel.value"
-              :options="dietary"
+              :options="dietaryFilter"
               optionLabel="text"
               placeholder="Any"
               class="p-column-filter"
@@ -452,18 +452,24 @@ export default {
     const guestStore = useGuestsStore();
     const { guests } = storeToRefs(useGuestsStore());
     const columns = ref(formServices.get("guestSelection") || []);
-    const organizations = ref(
+    const organizationsFilter = ref(
       (formServices.get("organizations") || []).map((each) => each.value)
     );
-    const attendancetypes = ref(
+    const attendancetypesFilter = ref(
       (formServices.get("attendancetypes") || []).map((each) => each.value)
     );
-    const accessibility = ref(
+    const accessibilityFilter = ref(
       (formServices.get("accessibilityoptions") || []).map((each) => each.value)
     );
-    const dietary = ref(
+    const dietaryFilter = ref(
       (formServices.get("dietaryoptions") || []).map((each) => each.value)
     );
+
+    const organizations = ref(formServices.get("organizations") || []);
+    const attendancetypes = ref(formServices.get("attendancetypes") || []);
+    const accessibility = ref(formServices.get("accessibilityoptions") || []);
+    const dietary = ref(formServices.get("dietaryoptions") || []);
+
     const userStore = useAuthUserStore();
     const dt = ref();
     const loading = ref(true);
@@ -629,6 +635,10 @@ export default {
       isSubmitted,
       exportCSV,
       clearFilters,
+      organizationsFilter,
+      attendancetypesFilter,
+      accessibilityFilter,
+      dietaryFilter,
       organizations,
       attendancetypes,
       accessibility,
