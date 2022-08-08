@@ -2,7 +2,14 @@
 <!-- Provides initial registration of financial details -->
 <template>
   <div>
-    <form @submit="onSubmit" @reset="onReset">
+    <Spinner v-if="loading" />
+    <Message
+      v-else-if="message"
+      :severity="messageText.severity"
+      :closable="false"
+      >{{ messageText.text }}</Message
+    >
+    <form v-else @submit="onSubmit" @reset="onReset">
       <div class="dropdown">
         <label for="organization">Organization:</label>
         <Dropdown
@@ -149,32 +156,46 @@ export default {
       registrationData.fill(props.registrationID);
     }
 
+    let loading = ref(false);
+    let message = ref(false);
+    const messageText = ref({ severity: null, text: "" });
+
     const onSubmit = async function (event) {
       event.preventDefault();
       const isFormCorrect = await this.v$.$validate();
       if (!isFormCorrect) return;
       this.guest.registration = registrationData.getId;
-
-      guestData
-        .registerGuest(this.guest)
-        .then((guest) => guestData.addGuestList(guest))
-        .then(() => {
-          delete this.guest["guid"];
-          this.guest.organization = "";
-          this.guest.firstname = "";
-          this.guest.lastname = "";
-          this.guest.attendancetype = "";
-          this.guest.dietary = [];
-          this.guest.accessibility = [];
-          this.$forceUpdate;
-        })
-        .catch((error) => {
-          console.log(error);
-          // error.response.status Check status code
-        })
-        .finally(() => {
-          //Perform action in always
-        });
+      try {
+        loading.value = true;
+        guestData
+          .registerGuest(this.guest)
+          .then((guest) => guestData.addGuestList(guest))
+          .then(() => {
+            delete this.guest["guid"];
+            this.guest.organization = "";
+            this.guest.firstname = "";
+            this.guest.lastname = "";
+            this.guest.attendancetype = "";
+            this.guest.dietary = [];
+            this.guest.accessibility = [];
+            this.$forceUpdate;
+            this.v$.$reset();
+            loading.value = false;
+            message.value = true;
+            messageText.value = { severity: "success", text: "Guest Updated!" };
+          });
+      } catch (error) {
+        console.log(error);
+        loading.value = false;
+        console.warn(err);
+        message.value = true;
+        messageText.value = {
+          severity: "error",
+          text: "Guest could not be updated.",
+        };
+      } finally {
+        setTimeout(() => (message.value = false), 1500);
+      }
     };
 
     //reset to default
@@ -189,6 +210,9 @@ export default {
       this.guest.accessibility = [];
     };
     return {
+      loading,
+      message,
+      messageText,
       guest,
       guestData,
       v$,
