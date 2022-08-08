@@ -100,8 +100,8 @@ const schemaData = {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 
     organization: {
-      operator: FilterOperator.AND,
-      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+      operator: FilterOperator.OR,
+      constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
     },
     branch: {
       operator: FilterOperator.AND,
@@ -146,19 +146,19 @@ const schemaData = {
     submitted: { value: null, matchMode: FilterMatchMode.EQUALS },
     createdAt: {
       operator: FilterOperator.AND,
-      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+      constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
     },
     updatedAt: {
       operator: FilterOperator.AND,
-      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+      constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
     },
   },
   guestFilters: {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
 
     organization: {
-      operator: FilterOperator.AND,
-      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+      operator: FilterOperator.OR,
+      constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
     },
     firstname: {
       operator: FilterOperator.AND,
@@ -182,11 +182,11 @@ const schemaData = {
     },
     createdAt: {
       operator: FilterOperator.AND,
-      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+      constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
     },
     updatedAt: {
       operator: FilterOperator.AND,
-      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+      constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
     },
   },
   userFilters: {

@@ -98,13 +98,8 @@
                 </div>
               </template>
             </Dropdown>
-            <InputText
-              type="text"
-              v-model="filterModel.value"
-              class="p-column-filter"
-              placeholder="Search by organization"
-            /> </template
-        ></Column>
+          </template></Column
+        >
         <Column field="firstname" header="First Name" key="firstname">
           <template #body="{ data }"> {{ data.firstname }} </template
           ><template #filter="{ filterModel }">
@@ -174,17 +169,17 @@
           header="Created:"
           key="createdAt"
           :sortable="true"
+          dataType="date"
         >
           <template #body="{ data }">
             {{ formatDate(data.createdAt) }},<br />{{
               formatTime(data.createdAt)
             }} </template
           ><template #filter="{ filterModel }">
-            <InputText
-              type="text"
+            <Calendar
               v-model="filterModel.value"
-              class="p-column-filter"
-              placeholder="Search by Date Created"
+              dateFormat="mm/dd/yy"
+              placeholder="mm/dd/yyyy"
             /> </template
         ></Column>
         <Column
@@ -193,16 +188,16 @@
           header="Updated:"
           key="updatedAt"
           :sortable="true"
+          dataType="date"
         >
           <template #body="{ data }">
             {{ formatDate(data.updatedAt) }},<br />
             {{ formatTime(data.updatedAt) }} </template
           ><template #filter="{ filterModel }">
-            <InputText
-              type="text"
+            <Calendar
               v-model="filterModel.value"
-              class="p-column-filter"
-              placeholder="Search by Date Updated"
+              dateFormat="mm/dd/yy"
+              placeholder="mm/dd/yyyy"
             /> </template
         ></Column>
         <Column
@@ -408,21 +403,26 @@ export default {
     const financialStore = useFinancialStore();
 
     //Conditionally Fill DataList
-    const fillList = function () {
+    const fillList = async function () {
       const user = userStore.getUser;
       guestStore.$reset;
       loading.value = false;
-      if (adminView) return guestStore.fillGuests();
+      if (adminView) return await guestStore.fillGuests();
       if (registrationID)
-        return guestStore.fillGuestsRegistration(registrationID);
+        return await guestStore.fillGuestsRegistration(registrationID);
       else
-        return guestStore.fillGuestsRegistration(user.guid)
+        return (await guestStore.fillGuestsRegistration(user.guid))
           ? guestStore.fillGuestsRegistration(user.guid)
           : [];
     };
 
     const loadLazyData = () => {
-      fillList();
+      fillList().then(() => {
+        guests.value.forEach((guest) => {
+          guest.createdAt = new Date(guest.createdAt);
+          guest.updatedAt = new Date(guest.updatedAt);
+        });
+      });
     };
 
     onMounted(() => {

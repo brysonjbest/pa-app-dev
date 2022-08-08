@@ -35,6 +35,7 @@ import ColumnGroup from "primevue/columngroup";
 import Row from "primevue/row";
 import Dialog from "primevue/dialog";
 import TriStateCheckbox from "primevue/tristatecheckbox";
+import Calendar from "primevue/calendar";
 
 const app = createApp(App);
 
@@ -70,5 +71,6 @@ app.component("ColumnGroup", ColumnGroup);
 app.component("Row", Row);
 app.component("Dialog", Dialog);
 app.component("TriStateCheckbox", TriStateCheckbox);
+app.component("Calendar", Calendar);
 
 app.mount("#app");

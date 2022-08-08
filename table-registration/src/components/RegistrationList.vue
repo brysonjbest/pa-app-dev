@@ -127,27 +127,9 @@
           :sortable="true"
         >
           <template #body="{ data }">
-            <span>{{ tableCount(data.guests.length) }}</span>
+            <span>{{ Number(tableCount(data.guests.length)) }}</span>
           </template>
-          <template #filter="{ filterModel }">
-            <InputText
-              type="text"
-              v-model="filterModel.value"
-              class="p-column-filter"
-              placeholder="Search by Number of Tables" />
-
-            <InputNumber
-              v-model="filterModel.value"
-              id="horizontal"
-              showButtons
-              buttonLayout="horizontal"
-              :step="0.5"
-              decrementButtonClass="p-button-danger"
-              incrementButtonClass="p-button-success"
-              incrementButtonIcon="pi pi-plus"
-              decrementButtonIcon="pi pi-minus"
-              mode="decimal" /></template
-        ></Column>
+        </Column>
         <Column
           v-if="adminView"
           field="submitted"
@@ -174,6 +156,7 @@
           header="Created:"
           key="createdAt"
           :sortable="true"
+          dataType="date"
         >
           <template #body="{ data }">
             {{ formatDate(data.createdAt) }},<br />{{
@@ -181,11 +164,10 @@
             }}
           </template>
           <template #filter="{ filterModel }">
-            <InputText
-              type="text"
+            <Calendar
               v-model="filterModel.value"
-              class="p-column-filter"
-              placeholder="Search by Date Created"
+              dateFormat="mm/dd/yy"
+              placeholder="mm/dd/yyyy"
             /> </template
         ></Column>
 
@@ -195,17 +177,17 @@
           header="Updated:"
           key="updatedAt"
           :sortable="true"
+          dataType="date"
         >
           <template #body="{ data }">
             {{ formatDate(data.updatedAt) }},<br />
             {{ formatTime(data.updatedAt) }}
           </template>
           <template #filter="{ filterModel }">
-            <InputText
-              type="text"
+            <Calendar
               v-model="filterModel.value"
-              class="p-column-filter"
-              placeholder="Search by Date Updated"
+              dateFormat="mm/dd/yy"
+              placeholder="mm/dd/yyyy"
             /> </template
         ></Column>
         <Column v-if="!detailsView" :exportable="false" style="min-width: 8rem">
@@ -280,7 +262,6 @@ import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
-import router from "../router/index.js";
 
 export default {
   props: {
@@ -328,7 +309,12 @@ export default {
     };
 
     const loadLazyData = () => {
-      fillList();
+      fillList().then(() => {
+        registrations.value.forEach((registration) => {
+          registration.createdAt = new Date(registration.createdAt);
+          registration.updatedAt = new Date(registration.updatedAt);
+        });
+      });
     };
 
     onMounted(() => {
