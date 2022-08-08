@@ -34,6 +34,15 @@ export default {
       return financialStore.getRegistration.submitted;
     };
 
+    const dateSubmitted = () => {
+      const date = new Date(financialStore.getRegistration.updatedAt);
+      return date.toLocaleDateString("en-US", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+      });
+    };
+
     const isAdmin = () => {
       return userStore.isAdmin;
     };
@@ -80,6 +89,7 @@ export default {
       addGuest,
       tableInfo,
       guestInfo,
+      dateSubmitted,
     };
   },
   components: { GuestList, RegistrationList, InputGuest, PageHeader },
@@ -89,8 +99,11 @@ export default {
 <template>
   <main>
     <PageHeader :title="`Registration # ${id} `"
-      >Submitted by {{ getRegistrar() }}</PageHeader
+      ><span v-if="isSubmitted()">Submitted {{ dateSubmitted() }} by</span>
+      <span v-else>In Progress Registration for</span>
+      {{ getRegistrar() }}</PageHeader
     >
+
     <RegistrationList :registrationID="id" :detailsView="false" />
     <PrimeButton
       v-if="!isSubmitted()"
