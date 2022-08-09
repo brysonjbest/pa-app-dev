@@ -3,7 +3,11 @@
   <div>
     <div class="card">
       <h5>{{ title }}</h5>
-      <TabMenu :model="menuitems" :activeIndex="activeIndex" />
+      <TabMenu
+        class="admin-nav"
+        :model="menuitems"
+        :activeIndex="activeIndex"
+      />
       <RouterView />
     </div>
   </div>
@@ -25,4 +29,17 @@ export default {
 };
 </script>
 
-<style scoped></style>
+<style lang="scss">
+.admin-nav {
+  color: blue !important;
+  .p-tabmenu-nav {
+    color: blue !important;
+    .p-tabmenuitem {
+      color: blue !important;
+    }
+  }
+  .p-tabmenuitem {
+    color: blue;
+  }
+}
+</style>

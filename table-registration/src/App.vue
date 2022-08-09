@@ -92,12 +92,13 @@ export default {
 @import "primevue/resources/primevue.min.css";
 @import "primeicons/primeicons.css";
 @import "/node_modules/primeflex/primeflex.css";
+@import "./assets/_theme.scss"; /* Originally from "primevue/resources/themes/md-light-indigo/theme.css" */
 
 /* Theme Choices: */
 
 /* @import "primevue/resources/themes/nova/theme.css"; */
 
-@import "primevue/resources/themes/md-light-indigo/theme.css";
+/* @import "primevue/resources/themes/md-light-indigo/theme.css"; */
 
 /* @import "primevue/resources/themes/nova-alt/theme.css"; */
 
