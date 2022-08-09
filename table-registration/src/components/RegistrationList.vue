@@ -162,7 +162,8 @@
                 'false-icon pi-times-circle': !data.submitted,
               }"
               style="font-size: 2rem"
-            ></i>
+            ></i
+            ><br /><span>{{ data.submitted ? " Submitted" : " Pending" }}</span>
           </template>
           <template #filter="{ filterModel }">
             <TriStateCheckbox v-model="filterModel.value" /> </template
@@ -208,21 +209,23 @@
             /> </template
         ></PrimeColumn>
         <PrimeColumn
-          v-if="!detailsView"
+          v-if="!isSubmitted() || adminView"
           :exportable="false"
           style="min-width: 8rem"
         >
           <template #body="slotProps">
             <PrimeButton
               v-if="!slotProps.data.submitted"
+              label="Edit"
               icon="pi pi-pencil"
-              class="p-button-rounded p-button-success mr-2"
+              class="p-button-rounded p-button-success mr-2 edit-button"
               @click="editRegistration(slotProps.data)"
             />
             <PrimeButton
               v-if="!slotProps.data.submitted"
               icon="pi pi-trash"
-              class="p-button-rounded p-button-warning"
+              label="Delete"
+              class="p-button-rounded p-button-warning delete-button"
               @click="confirmDeleteRegistration(slotProps.data)"
             />
           </template>
@@ -495,3 +498,23 @@ export default {
   components: { InputFinancial },
 };
 </script>
+
+<style lang="scss">
+.p-datatable {
+  .p-button {
+    margin-left: 1em;
+    margin-right: 1em;
+    .edit-button {
+      margin: 2em;
+    }
+    .delete-button {
+      margin: none;
+    }
+  }
+
+  .p-input-icon-left {
+    margin-left: 1em;
+    margin-right: 1em;
+  }
+}
+</style>

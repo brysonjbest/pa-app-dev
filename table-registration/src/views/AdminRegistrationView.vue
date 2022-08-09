@@ -37,7 +37,7 @@ userStore.login();
   <main>
     <PageHeader title="All Registrations" subtitle="Manage PA Registrations" />
     <PrimeButton
-      label="Table Count"
+      label="Table Count: "
       type="button"
       icon="pi pi-ticket"
       class="p-button-warning"

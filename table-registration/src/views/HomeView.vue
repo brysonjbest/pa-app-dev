@@ -4,10 +4,16 @@
       :subtitle="`Welcome to the registration system for the ${year} Premier's Awards.`"
       :content="userGreeting"
     />
+    <div v-if="isRegistrar()">
+      <router-link to="/create/registration/">
+        <PrimeButton block variant="info"> Register </PrimeButton>
+      </router-link>
+    </div>
     <div v-if="!isRegistrar()">
       <p>
-        This event registration tool is restricted to authorized registrars.
-        Please contact your organization's representative to request attendance.
+        This event registration tool is restricted to authorized registrars.<br />
+        Please contact your organization's representative to request
+        attendance.<br />
         If you are your organization's representative and wish to register a
         group for attendance, please create an account at the link below.
       </p>
@@ -17,18 +23,6 @@
           {{ year }} Event.
         </PrimeButton>
       </router-link>
-    </div>
-
-    <div v-if="isRegistrar()">
-      <div>
-        <PrimeCard title="Event Registration">
-          <template #content>
-            <router-link to="/create/registration/">
-              <PrimeButton block variant="info"> Register </PrimeButton>
-            </router-link></template
-          ></PrimeCard
-        >
-      </div>
     </div>
   </main>
 </template>

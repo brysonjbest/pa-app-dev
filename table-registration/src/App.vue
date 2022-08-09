@@ -114,9 +114,12 @@ html {
 }
 
 main {
-  margin-top: 80px;
+  margin-top: 4em;
   padding-bottom: 300px;
+  margin-left: 2em;
+  margin-right: 2em;
 }
+
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -141,6 +144,7 @@ header {
   color: white !important;
   background-color: #343a40;
   top: 0;
+  font-size: 1.3em;
 }
 
 #navbar .p-menuitem-text {
@@ -154,6 +158,9 @@ header {
 #navbar .p-submenu-list .p-menuitem-text {
   color: black !important;
 }
+#navbar .p-submenu-list .p-menuitem-link {
+  font-size: 0.9em;
+}
 
 #page-title {
   color: white !important;
@@ -162,7 +169,7 @@ header {
   padding-top: 0.3125rem;
   padding-bottom: 0.3125rem;
   margin-right: 1rem;
-  font-size: 1.25rem;
+  font-size: 2rem;
   line-height: inherit;
   white-space: nowrap;
   text-decoration: none;
@@ -173,12 +180,12 @@ header {
   position: absolute !important;
   right: 10px;
   z-index: 9999 !important;
-  background-color: #116fbf;
+  background-color: rgba(63, 81, 181, 0.92);
 }
 
 .dropdown-account:hover {
   color: #343a40 !important;
-  background-color: #116fbf;
+  background-color: rgba(63, 81, 181, 0.92);
 }
 
 .p-submenu-list {

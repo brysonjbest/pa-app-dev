@@ -98,11 +98,24 @@ export default {
 
 <template>
   <main>
-    <PageHeader :title="`Registration # ${id} `"
+    <PageHeader class="pageheader" :footer="`Registration # ${id} `"
       ><span v-if="isSubmitted()">Submitted {{ dateSubmitted() }} by</span>
-      <span v-else>In Progress Registration for</span>
+      <span v-else>In-progress registration for</span>
       {{ getRegistrar() }}</PageHeader
     >
+    <div v-if="!isAdmin() & !isSubmitted()">
+      <div>
+        <PrimeCard id="registration-info">
+          <template #content>
+            Please ensure that the registration information on this page is
+            complete prior to submitting your registration for the event. If you
+            cannot complete the registration at this time, your current progress
+            will remain saved here until you are ready to complete your
+            submission.
+          </template></PrimeCard
+        >
+      </div>
+    </div>
 
     <RegistrationList :registrationID="id" :detailsView="false" />
     <PrimeButton
@@ -176,3 +189,11 @@ export default {
     <GuestList :adminView="false" :registrationID="id" />
   </main>
 </template>
+
+<style lang="scss">
+#registration-info {
+  .p-card-content {
+    font-size: 1em;
+  }
+}
+</style>

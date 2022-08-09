@@ -285,12 +285,14 @@
           <template #body="slotProps">
             <PrimeButton
               icon="pi pi-pencil"
-              class="p-button-rounded p-button-success mr-2"
+              label="Edit"
+              class="p-button-rounded p-button-success mr-2 edit-button"
               @click="editGuest(slotProps.data)"
             />
             <PrimeButton
               icon="pi pi-trash"
-              class="p-button-rounded p-button-warning"
+              label="Delete"
+              class="p-button-rounded p-button-warning delete-button"
               @click="confirmDeleteGuest(slotProps.data)"
             />
           </template>
