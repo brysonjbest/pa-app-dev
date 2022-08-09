@@ -4,7 +4,7 @@
       title="Welcome"
       subtitle="Premier's Awards Event Registration"
     />
-    <div v-if="() => isRegistrar">
+    <div v-if="isRegistrar()">
       <PrimeCard>
         <template #content
           >You are logged in as
@@ -27,7 +27,7 @@
       </router-link>
     </div>
 
-    <div v-if="() => isRegistrar">
+    <div v-if="isRegistrar()">
       <div>
         <PrimeCard title="Event Registration">
           <template #title>
@@ -51,6 +51,10 @@ import settings from "../services/settings.services";
 import PageHeader from "../components/common/PageHeader.vue";
 
 const userStore = useAuthUserStore();
-const isRegistrar = userStore.isRegistrar;
+
+const isRegistrar = () => {
+  return userStore.isRegistrar;
+};
+
 const year = ref(settings.get("year") || "");
 </script>

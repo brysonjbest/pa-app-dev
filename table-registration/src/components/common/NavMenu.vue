@@ -3,7 +3,7 @@
   <div>
     <div class="card">
       <h5>{{ title }}</h5>
-      <TabMenu :model="items" :activeIndex="activeIndex" />
+      <TabMenu :model="menuitems" :activeIndex="activeIndex" />
       <RouterView />
     </div>
   </div>
@@ -17,11 +17,10 @@ export default {
     title: String,
     menuitems: Array,
   },
-  setup(props) {
-    const items = ref(props.menuitems);
+  setup() {
     const activeIndex = ref(0);
 
-    return { items, activeIndex };
+    return { activeIndex };
   },
 };
 </script>

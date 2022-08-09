@@ -9,6 +9,8 @@ export default {
     const username = user.username;
     const menu = ref();
 
+    userStore.login();
+
     const siteNav = ref([
       {
         label: "Home",
@@ -27,25 +29,19 @@ export default {
           {
             label: "Create Account",
             to: "/register/",
-            visible: () => !userStore.isAuthenticated,
-            class: "dropdown-account-item",
-          },
-          {
-            label: "Login",
-            to: "/login/",
-            visible: () => !userStore.isAuthenticated,
+            visible: () => !userStore.isAuthenticated || !userStore.isRegistrar,
             class: "dropdown-account-item",
           },
           {
             label: "My Registration",
             to: "/create/registration/",
-            visible: () => userStore.isAuthenticated,
+            visible: () => userStore.isRegistrar,
             class: "dropdown-account-item",
           },
           {
             label: "Update Profile",
             to: "/user/update/",
-            visible: () => userStore.isAuthenticated,
+            visible: () => userStore.isRegistrar,
             class: "dropdown-account-item",
           },
           {
@@ -69,8 +65,6 @@ export default {
         ],
       },
     ]);
-
-    userStore.login();
 
     return { siteNav, username, menu };
   },
@@ -101,7 +95,9 @@ export default {
 
 /* Theme Choices: */
 
-@import "primevue/resources/themes/nova/theme.css";
+/* @import "primevue/resources/themes/nova/theme.css"; */
+
+@import "primevue/resources/themes/md-light-indigo/theme.css";
 
 /* @import "primevue/resources/themes/nova-alt/theme.css"; */
 
@@ -113,7 +109,7 @@ export default {
 
 /* @import "primevue/resources/themes/lara-light-teal/theme.css"; */
 html {
-  font-size: 16px;
+  font-size: 12px;
 }
 
 main {

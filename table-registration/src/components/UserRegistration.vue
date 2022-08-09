@@ -127,10 +127,11 @@ export default {
           spinner: true,
         });
         // handle data submission
-        await apiRoutesUsers.registerUser(user.value);
-        messageStore.setMessage({
-          text: "Successfully registered user!",
-          type: "success",
+        await apiRoutesUsers.registerUser(user.value).then(() => {
+          messageStore.setMessage({
+            text: "Successfully registered user!",
+            type: "success",
+          });
         });
       } catch (err) {
         console.error(err);
