@@ -1,3 +1,5 @@
+$primaryColor: #3F51B5;
+
 :root {
     --surface-a:#ffffff;
     --surface-b:#fafafa;
@@ -1677,7 +1679,7 @@
   
   .p-button {
     color: #ffffff;
-    background: #3F51B5;
+    background: rgb(63, 81, 181);
     border: 0 none;
     padding: 0.714rem 1rem;
     font-size: 1rem;
@@ -5031,16 +5033,21 @@
     background: #ffffff;
     border: solid rgba(0, 0, 0, 0.12);
     border-width: 0 0 1px 0;
+    border-color: #004b55;
   }
   .p-tabmenu .p-tabmenu-nav .p-tabmenuitem {
     margin-right: 0;
+    background: #3F51B5;
+    color: #ffffff;
+    border-top-right-radius: 4px;
+    border-top-left-radius: 4px;
   }
   .p-tabmenu .p-tabmenu-nav .p-tabmenuitem .p-menuitem-link {
     border: solid rgba(0, 0, 0, 0.12);
     border-width: 0 0 1px 0;
     border-color: transparent transparent rgba(0, 0, 0, 0.12) transparent;
     background: #ffffff;
-    color: rgba(0, 0, 0, 0.6);
+    color: #3F51B5;
     padding: 1rem 1.5rem;
     font-weight: 500;
     border-top-right-radius: 4px;
@@ -5060,11 +5067,14 @@
     background: rgba(63, 81, 181, 0.04);
     border-color: rgba(0, 0, 0, 0.12);
     color: rgba(0, 0, 0, 0.6);
+    color:#ffffff;
   }
   .p-tabmenu .p-tabmenu-nav .p-tabmenuitem.p-highlight .p-menuitem-link {
-    background: #ffffff;
+
+    background: rgba(63, 81, 181, 0.04);
     border-color: rgba(0, 0, 0, 0.12);
-    color: #3F51B5;
+    color: rgba(0, 0, 0, 0.6);
+    color:#ffffff;
   }
   
   .p-tieredmenu {

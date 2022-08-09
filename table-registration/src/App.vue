@@ -143,6 +143,18 @@ header {
   top: 0;
 }
 
+#navbar .p-menuitem-text {
+  color: white !important;
+}
+
+#navbar .p-submenu-list {
+  z-index: 9999 !important;
+}
+
+#navbar .p-submenu-list .p-menuitem-text {
+  color: black !important;
+}
+
 #page-title {
   color: white !important;
   z-index: 9999 !important;
@@ -155,10 +167,6 @@ header {
   white-space: nowrap;
   text-decoration: none;
   background-color: transparent;
-}
-
-.p-menuitem-text {
-  color: white !important;
 }
 
 .dropdown-account {

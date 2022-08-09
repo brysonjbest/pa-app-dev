@@ -28,18 +28,3 @@ export default {
   },
 };
 </script>
-
-<style lang="scss">
-.admin-nav {
-  color: blue !important;
-  .p-tabmenu-nav {
-    color: blue !important;
-    .p-tabmenuitem {
-      color: blue !important;
-    }
-  }
-  .p-tabmenuitem {
-    color: blue;
-  }
-}
-</style>
