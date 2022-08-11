@@ -4,6 +4,8 @@ import RegistrationList from "../components/RegistrationList.vue";
 import InputGuest from "../components/inputs/InputGuest.vue";
 import PageHeader from "../components/common/PageHeader.vue";
 import { useAuthUserStore } from "../stores/users";
+import { useMessageStore } from "../stores/messages";
+import { storeToRefs } from "pinia";
 import { useFinancialStore } from "../stores/financial";
 import { ref } from "vue";
 
@@ -12,6 +14,10 @@ export default {
     id: String,
   },
   setup(props) {
+    const messageStore = useMessageStore();
+    const { message } = storeToRefs(useMessageStore());
+    const activeMessage = ref(false);
+    const loading = ref(false);
     const userStore = useAuthUserStore();
     userStore.login();
     const financialStore = useFinancialStore();
@@ -49,12 +55,33 @@ export default {
 
     const toggleRegistration = async () => {
       let submitStatus = isSubmitted() ? false : true;
-      financialStore
-        .registerFinancialInformation({
-          submitted: submitStatus,
-          registration: props.id,
-        })
-        .then(() => financialStore.fill(props.id));
+      let message = submitStatus ? "submitted" : "re-opened";
+      loading.value = true;
+      try {
+        activeMessage.value = true;
+
+        financialStore
+          .registerFinancialInformation({
+            submitted: submitStatus,
+            registration: props.id,
+          })
+          .then(() => {
+            loading.value = false;
+            messageStore.setMessage({
+              text: `Successfully ${message} registration!`,
+              type: "success",
+            });
+          })
+          .then(() => financialStore.fill(props.id));
+      } catch (error) {
+        loading.value = false;
+        console.warn(error);
+        activeMessage.value = true;
+        messageStore.setMessage({
+          text: `Registration could not be ${message}.`,
+          type: "error",
+        });
+      }
     };
 
     const addGuestDialog = ref(false);
@@ -76,6 +103,7 @@ export default {
     };
 
     const submitRegistration = () => {
+      activeMessage.value = false;
       submissionDialog.value = true;
     };
 
@@ -97,6 +125,9 @@ export default {
       guestInfo,
       submitRegistration,
       dateSubmitted,
+      activeMessage,
+      message,
+      loading,
     };
   },
   components: { GuestList, RegistrationList, InputGuest, PageHeader },
@@ -123,116 +154,147 @@ export default {
         >
       </div>
     </div>
-    <RegistrationList
-      id="personal-registration-table"
-      :registrationID="id"
-      :detailsView="false"
-    />
-
-    <div class="registration-buttons">
-      <PrimeButton
-        type="button"
-        label="Tables"
-        icon="pi pi-ticket"
-        class="p-button-warning"
-        :badge="tableCount()"
-        @click="tableInfo()"
-        badgeClass="p-badge-danger"
+    <ProgressSpinner v-if="loading" />
+    <div v-else class="page-body">
+      <RegistrationList
+        id="personal-registration-table"
+        :registrationID="id"
+        :detailsView="false"
       />
-      <PrimeButton
-        type="button"
-        label="Total Guests"
-        icon="pi pi-users"
-        class="p-button-warning"
-        :badge="guestCount()"
-        @click="guestInfo()"
-        badgeClass="p-badge-danger"
-      />
-      <PrimeButton
-        v-if="!isSubmitted()"
-        label="Add Guests"
-        icon="pi pi-pencil"
-        class="p-button-rounded p-button-success mr-2"
-        @click="addGuest()"
-      />
-    </div>
-    <PrimeDialog
-      v-model:visible="tableInfoDialog"
-      header="Table Information"
-      :modal="true"
-      class="p-fluid"
-      >Warning regarding table charges:<br />
-      Please be aware that half tables may not be able to be accomodated, and
-      you may be charged the full table amount. <br />
-      Current table count: {{ tableCount() }}
-    </PrimeDialog>
 
-    <PrimeDialog
-      v-model:visible="guestInfoDialog"
-      header="Guest Information"
-      :modal="true"
-      class="p-fluid"
-      >Total Number of Guests: {{ guestCount() }}.
-    </PrimeDialog>
-
-    <PrimeDialog
-      v-model:visible="submissionDialog"
-      header="Confirm Submission"
-      :modal="true"
-      class="p-fluid"
-      ><div>
-        <p>
-          Are you sure you wish to submit your event-registration?<br />
-          You will not be able to revise your submission once completed.
-        </p>
-        <p>
-          Please be aware that half tables may not be able to be accomodated,
-          and you may be charged the full table amount.<br />
-          Guests submitted on this registration: {{ guestCount() }}.<br />
-          Total tables required for this number of guests: {{ tableCount() }}
-        </p>
+      <div class="registration-buttons">
+        <PrimeButton
+          type="button"
+          label="Tables"
+          icon="pi pi-ticket"
+          class="p-button-warning"
+          :badge="tableCount()"
+          @click="tableInfo()"
+          badgeClass="p-badge-danger"
+        />
+        <PrimeButton
+          type="button"
+          label="Total Guests"
+          icon="pi pi-users"
+          class="p-button-warning"
+          :badge="guestCount()"
+          @click="guestInfo()"
+          badgeClass="p-badge-danger"
+        />
+        <PrimeButton
+          v-if="!isSubmitted()"
+          label="Add Guests"
+          icon="pi pi-pencil"
+          class="p-button-rounded p-button-success mr-2"
+          @click="addGuest()"
+        />
       </div>
-      <PrimeButton
-        type="button"
-        label="Confirm Submit Registration"
-        icon="pi pi-ticket"
-        class="p-button-warning"
-        @click="toggleRegistration()"
-        badgeClass="p-badge-danger"
-      />
-    </PrimeDialog>
+      <PrimeDialog
+        v-model:visible="tableInfoDialog"
+        header="Table Information"
+        :modal="true"
+        class="p-fluid"
+        >Warning regarding table charges:<br />
+        Please be aware that half tables may not be able to be accomodated, and
+        you may be charged the full table amount. <br />
+        Current table count: {{ tableCount() }}
+      </PrimeDialog>
 
-    <PrimeDialog
-      v-model:visible="addGuestDialog"
-      header="Add a new Guest"
-      :modal="true"
-      class="p-fluid"
-      ><InputGuest :registrationID="id"
-    /></PrimeDialog>
-    <GuestList
-      id="personal-registration-guests-table"
-      :adminView="false"
-      :registrationID="id"
-    />
-    <div class="submission-buttons">
-      <PrimeButton
-        v-if="!isSubmitted() && (guestCount() >= 5 || isAdmin())"
-        type="button"
-        label="Submit Registration"
-        icon="pi pi-ticket"
-        class="p-button-warning"
-        @click="submitRegistration()"
-        badgeClass="p-badge-danger"
+      <PrimeDialog
+        v-model:visible="guestInfoDialog"
+        header="Guest Information"
+        :modal="true"
+        class="p-fluid"
+        >Total Number of Guests: {{ guestCount() }}.
+      </PrimeDialog>
+
+      <PrimeDialog
+        v-model:visible="submissionDialog"
+        header="Confirm Submission"
+        :modal="true"
+        class="p-fluid"
+        ><div v-if="!isSubmitted() && !activeMessage">
+          <p>
+            Are you sure you wish to submit your event-registration?<br />
+            You will not be able to revise your submission once completed.
+          </p>
+          <p>
+            Please be aware that half tables may not be able to be accomodated,
+            and you may be charged the full table amount.<br />
+            Guests submitted on this registration: {{ guestCount() }}.<br />
+            Total tables required for this number of guests: {{ tableCount() }}
+          </p>
+        </div>
+        <div v-else-if="isSubmitted() && isAdmin() && !activeMessage">
+          <p>
+            Are you sure you wish to reverse submission of this
+            event-registration?<br />
+            This will re-open this submission for editing, and remove the
+            current submission date.
+          </p>
+        </div>
+        <PrimeButton
+          v-if="!isSubmitted() && !activeMessage"
+          type="button"
+          label="Confirm submit registration"
+          icon="pi pi-ticket"
+          class="p-button-warning"
+          @click="toggleRegistration()"
+          badgeClass="p-badge-danger"
+        />
+        <PrimeButton
+          v-if="isSubmitted() && isAdmin() && !activeMessage"
+          type="button"
+          label="Re-open registration"
+          icon="pi pi-ticket"
+          class="p-button-warning"
+          @click="toggleRegistration()"
+          badgeClass="p-badge-danger"
+        />
+        <PrimeMessage
+          show
+          v-if="activeMessage"
+          :variant="message.type"
+          :closable="false"
+        >
+          <p>
+            {{ message.text }}
+          </p>
+        </PrimeMessage>
+      </PrimeDialog>
+
+      <PrimeDialog
+        v-model:visible="addGuestDialog"
+        header="Add a new Guest"
+        :modal="true"
+        class="p-fluid"
+        ><InputGuest :registrationID="id"
+      /></PrimeDialog>
+      <GuestList
+        id="personal-registration-guests-table"
+        :adminView="false"
+        :registrationID="id"
       />
-      <PrimeButton
-        v-if="isSubmitted() && isAdmin()"
-        type="button"
-        label="Unsubmit Registration"
-        icon="pi pi-ticket"
-        class="p-button-warning"
-        @click="toggleRegistration()"
-        badgeClass="p-badge-danger"
-      />
+      <div class="submission-buttons">
+        <PrimeButton
+          v-if="!isSubmitted() && (guestCount() >= 5 || isAdmin())"
+          type="button"
+          label="Submit Registration"
+          icon="pi pi-ticket"
+          class="p-button-warning"
+          @click="submitRegistration()"
+          badgeClass="p-badge-danger"
+        />
+        <PrimeButton
+          v-if="isSubmitted() && isAdmin()"
+          type="button"
+          label="Unsubmit Registration"
+          icon="pi pi-ticket"
+          class="p-button-warning"
+          @click="submitRegistration()"
+          badgeClass="p-badge-danger"
+        />
+      </div>
     </div>
   </main>
 </template>
