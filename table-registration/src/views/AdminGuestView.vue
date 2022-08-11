@@ -17,6 +17,10 @@ const navItems = [
     label: "Guests",
     to: "/admin/guests",
   },
+  {
+    label: "Tables",
+    to: "/admin/tables",
+  },
 ];
 
 const guestInfoDialog = ref(false);

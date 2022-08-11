@@ -174,6 +174,8 @@ exports.updateTable = async (req, res, next) => {
  * @src public
  */
 
+/** 
+
 exports.deleteTable = async (req, res, next) => {
   try {
     const id = req.params.id;
@@ -189,6 +191,8 @@ exports.deleteTable = async (req, res, next) => {
     return next(err);
   }
 };
+
+*/
 
 /**
  * Removes table and resets all connected guests

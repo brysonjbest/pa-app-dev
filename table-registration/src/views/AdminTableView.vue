@@ -1,12 +1,16 @@
 <script setup>
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
+import { useTablesStore } from "../stores/tables";
 import { ref } from "vue";
+import { storeToRefs } from "pinia";
 import PageHeader from "../components/common/PageHeader.vue";
 import RegistrationList from "../components/RegistrationList.vue";
 import NavMenu from "../components/common/NavMenu.vue";
+import TableList from "../components/TableList.vue";
 const userStore = useAuthUserStore();
 const financialStore = useFinancialStore();
+const tableStore = useTablesStore();
 
 const navItems = [
   {
@@ -25,7 +29,18 @@ const navItems = [
 
 const tableInfoDialog = ref(false);
 const tableCountAll = () => {
-  return String(financialStore.getTotalTableCount);
+  return String(tableStore.getTablesCount);
+};
+
+const fillTables = () => {
+  return tableStore.fillTables();
+};
+
+const { tables } = storeToRefs(useTablesStore());
+const tableColumns = ["guid", "tablename", "tablecapacity"];
+
+const generateDefaultTables = () => {
+  return tableStore.generateNewEventTables();
 };
 
 //PrimeDialog controls
@@ -39,7 +54,7 @@ userStore.login();
 
 <template>
   <main>
-    <PageHeader title="All Registrations" subtitle="Manage PA Registrations" />
+    <PageHeader title="All Tables" subtitle="Manage PA Tables" />
     <PrimeButton
       label="Table Count: "
       type="button"
@@ -48,6 +63,22 @@ userStore.login();
       :badge="tableCountAll()"
       @click="tableInfo()"
       badgeClass="p-badge-danger"
+    />
+
+    <PrimeButton
+      label="Generate Default Layout: "
+      type="button"
+      icon="pi pi-ticket"
+      class="p-button"
+      @click="generateDefaultTables()"
+    />
+
+    <PrimeButton
+      label="Fill Tables: "
+      type="button"
+      icon="pi pi-ticket"
+      class="p-button"
+      @click="fillTables()"
     />
 
     <PrimeDialog
@@ -59,6 +90,7 @@ userStore.login();
       {{ tableCountAll() }}
     </PrimeDialog>
     <NavMenu :title="''" :menuitems="navItems" />
+    <TableList :data="tables" :columns="tableColumns" />
     <RegistrationList :adminView="true" />
   </main>
 </template>

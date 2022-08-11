@@ -211,6 +211,14 @@ const router = createRouter({
     },
 
     {
+      path: "/admin/tables",
+      name: "admin-table-view",
+      component: () => import("../views/AdminTableView.vue"),
+      meta: getMeta("Administration Table View"),
+      beforeEnter: authorizeAdmin,
+    },
+
+    {
       path: "/register",
       name: "admin-user-register",
       component: () => import("../views/NewUser.vue"),

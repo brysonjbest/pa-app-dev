@@ -13,12 +13,13 @@ const tableController = require("../controllers/table.controller");
  * Table routes.
  */
 
-router.post("/tables", tableController.createTable);
-router.post("/tables/:id", tableController.updateTable);
-router.post("/tables/delete/:id", tableController.deleteTable);
+router.post("/seating", tableController.createTable);
+router.post("/seating/:id", tableController.updateTable);
+router.post("/seating/delete/:id", tableController.deleteTable);
+router.post("/seating/newevent", tableController.createTableSet);
 
-router.get("/tables", tableController.getAllTables);
-router.get("/tables/:id/", tableController.getTable);
-router.get("/tables/:id/guests", tableController.getTableGuests);
+router.get("/seating", tableController.getAllTables);
+router.get("/seating/:id/", tableController.getTable);
+router.get("/seating/:id/guests", tableController.getTableGuests);
 
 module.exports = router;
