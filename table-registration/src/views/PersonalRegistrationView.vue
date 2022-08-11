@@ -60,6 +60,7 @@ export default {
     const addGuestDialog = ref(false);
     const tableInfoDialog = ref(false);
     const guestInfoDialog = ref(false);
+    const submissionDialog = ref(false);
 
     //PrimeDialog controls
     const addGuest = () => {
@@ -74,6 +75,10 @@ export default {
       guestInfoDialog.value = true;
     };
 
+    const submitRegistration = () => {
+      submissionDialog.value = true;
+    };
+
     return {
       userStore,
       financialStore,
@@ -86,9 +91,11 @@ export default {
       addGuestDialog,
       tableInfoDialog,
       guestInfoDialog,
+      submissionDialog,
       addGuest,
       tableInfo,
       guestInfo,
+      submitRegistration,
       dateSubmitted,
     };
   },
@@ -97,7 +104,7 @@ export default {
 </script>
 
 <template>
-  <main>
+  <main class="personal-registration">
     <PageHeader class="pageheader" :footer="`Registration # ${id} `"
       ><span v-if="isSubmitted()">Submitted {{ dateSubmitted() }} by</span>
       <span v-else>In-progress registration for</span>
@@ -116,58 +123,47 @@ export default {
         >
       </div>
     </div>
+    <RegistrationList
+      id="personal-registration-table"
+      :registrationID="id"
+      :detailsView="false"
+    />
 
-    <RegistrationList :registrationID="id" :detailsView="false" />
-    <PrimeButton
-      v-if="!isSubmitted()"
-      label="Add Guests"
-      icon="pi pi-pencil"
-      class="p-button-rounded p-button-success mr-2"
-      @click="addGuest()"
-    />
-    <PrimeButton
-      type="button"
-      label="Total Guests"
-      icon="pi pi-users"
-      class="p-button-warning"
-      :badge="guestCount()"
-      @click="guestInfo()"
-      badgeClass="p-badge-danger"
-    />
-    <PrimeButton
-      type="button"
-      label="Tables"
-      icon="pi pi-ticket"
-      class="p-button-warning"
-      :badge="tableCount()"
-      @click="tableInfo()"
-      badgeClass="p-badge-danger"
-    />
-    <PrimeButton
-      v-if="!isSubmitted() && (guestCount() >= 5 || isAdmin())"
-      type="button"
-      label="Submit Registration"
-      icon="pi pi-ticket"
-      class="p-button-warning"
-      @click="toggleRegistration()"
-      badgeClass="p-badge-danger"
-    />
-    <PrimeButton
-      v-if="isSubmitted() && isAdmin()"
-      type="button"
-      label="Unsubmit Registration"
-      icon="pi pi-ticket"
-      class="p-button-warning"
-      @click="toggleRegistration()"
-      badgeClass="p-badge-danger"
-    />
+    <div class="registration-buttons">
+      <PrimeButton
+        type="button"
+        label="Tables"
+        icon="pi pi-ticket"
+        class="p-button-warning"
+        :badge="tableCount()"
+        @click="tableInfo()"
+        badgeClass="p-badge-danger"
+      />
+      <PrimeButton
+        type="button"
+        label="Total Guests"
+        icon="pi pi-users"
+        class="p-button-warning"
+        :badge="guestCount()"
+        @click="guestInfo()"
+        badgeClass="p-badge-danger"
+      />
+      <PrimeButton
+        v-if="!isSubmitted()"
+        label="Add Guests"
+        icon="pi pi-pencil"
+        class="p-button-rounded p-button-success mr-2"
+        @click="addGuest()"
+      />
+    </div>
     <PrimeDialog
       v-model:visible="tableInfoDialog"
       header="Table Information"
       :modal="true"
       class="p-fluid"
-      >Warning regarding table charges. Please be aware that half tables may not
-      be able to be accomodated, and you may be charged the full table amount.
+      >Warning regarding table charges:<br />
+      Please be aware that half tables may not be able to be accomodated, and
+      you may be charged the full table amount. <br />
       Current table count: {{ tableCount() }}
     </PrimeDialog>
 
@@ -180,20 +176,96 @@ export default {
     </PrimeDialog>
 
     <PrimeDialog
+      v-model:visible="submissionDialog"
+      header="Confirm Submission"
+      :modal="true"
+      class="p-fluid"
+      ><div>
+        <p>
+          Are you sure you wish to submit your event-registration?<br />
+          You will not be able to revise your submission once completed.
+        </p>
+        <p>
+          Please be aware that half tables may not be able to be accomodated,
+          and you may be charged the full table amount.<br />
+          Guests submitted on this registration: {{ guestCount() }}.<br />
+          Total tables required for this number of guests: {{ tableCount() }}
+        </p>
+      </div>
+      <PrimeButton
+        type="button"
+        label="Confirm Submit Registration"
+        icon="pi pi-ticket"
+        class="p-button-warning"
+        @click="toggleRegistration()"
+        badgeClass="p-badge-danger"
+      />
+    </PrimeDialog>
+
+    <PrimeDialog
       v-model:visible="addGuestDialog"
       header="Add a new Guest"
       :modal="true"
       class="p-fluid"
       ><InputGuest :registrationID="id"
     /></PrimeDialog>
-    <GuestList :adminView="false" :registrationID="id" />
+    <GuestList
+      id="personal-registration-guests-table"
+      :adminView="false"
+      :registrationID="id"
+    />
+    <div class="submission-buttons">
+      <PrimeButton
+        v-if="!isSubmitted() && (guestCount() >= 5 || isAdmin())"
+        type="button"
+        label="Submit Registration"
+        icon="pi pi-ticket"
+        class="p-button-warning"
+        @click="submitRegistration()"
+        badgeClass="p-badge-danger"
+      />
+      <PrimeButton
+        v-if="isSubmitted() && isAdmin()"
+        type="button"
+        label="Unsubmit Registration"
+        icon="pi pi-ticket"
+        class="p-button-warning"
+        @click="toggleRegistration()"
+        badgeClass="p-badge-danger"
+      />
+    </div>
   </main>
 </template>
 
 <style lang="scss">
-#registration-info {
-  .p-card-content {
-    font-size: 1em;
+.personal-registration {
+  #registration-info {
+    .p-card-content {
+      font-size: 1rem;
+    }
+  }
+
+  #personal-registration-table {
+    .p-datatable {
+      padding: 1rem;
+    }
+  }
+
+  #personal-registration-guests-table {
+    .p-datatable {
+      padding: 1rem;
+    }
+  }
+  .registration-buttons {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
+    gap: 1rem;
+  }
+  .submission-buttons {
+    display: flex;
+    justify-content: flex-end;
+    padding: 1rem;
   }
 }
 </style>

@@ -1,11 +1,6 @@
 <template>
   <div>
-    <PrimeMessage
-      show
-      v-if="user && isRegistered"
-      variant="info"
-      :closable="false"
-    >
+    <PrimeMessage show v-if="isRegistered()" variant="info" :closable="false">
       <p v-if="user.role === 'inactive'">
         Your registration is currently under review. Please check back regularly
         for updates.
@@ -27,7 +22,7 @@
       </p>
     </PrimeMessage>
 
-    <PrimeCard v-if="user && (!isRegistered || edit)">
+    <PrimeCard v-if="!isRegistered() || edit">
       <template #content>
         <form>
           <InputText
@@ -115,7 +110,7 @@ export default {
 
     const isRegistered = function () {
       const currentUser = userStore.getUser;
-      return this.mode === "register" && !!currentUser.role;
+      return currentUser.role;
     };
 
     const register = async function () {

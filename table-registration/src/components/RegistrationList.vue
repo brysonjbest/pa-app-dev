@@ -154,16 +154,18 @@
           key="submitted"
           dataType="boolean"
         >
-          <template #body="{ data }">
-            <i
-              class="pi pi-check-circle"
-              :class="{
-                'true-icon pi-check-circle': data.submitted,
-                'false-icon pi-times-circle': !data.submitted,
-              }"
-              style="font-size: 2rem"
-            ></i
-            ><br /><span>{{ data.submitted ? " Submitted" : " Pending" }}</span>
+          <template #body="{ data }"
+            ><span>
+              <i
+                class="pi pi-check-circle"
+                :class="{
+                  'true-icon pi-check-circle': data.submitted,
+                  'false-icon pi-times-circle': !data.submitted,
+                }"
+                style="font-size: 2rem"
+              ></i
+              ><br />{{ data.submitted ? " Submitted" : " Pending" }}</span
+            >
           </template>
           <template #filter="{ filterModel }">
             <TriStateCheckbox v-model="filterModel.value" /> </template
