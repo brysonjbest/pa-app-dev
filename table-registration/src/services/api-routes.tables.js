@@ -16,8 +16,8 @@ class SeatingDataService {
     return api.post("/tables/seating/", data);
   }
 
-  createDefaultArrangment(data) {
-    return api.post("/tables/seating/newevent/", data);
+  createDefaultArrangment() {
+    return api.post("/tables/seating/generate");
   }
 
   updateTable(id, data) {

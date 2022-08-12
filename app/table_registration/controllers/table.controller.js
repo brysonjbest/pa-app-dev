@@ -129,10 +129,12 @@ exports.createTable = async (req, res, next) => {
       organizations = [],
     } = req.body || {};
 
+    const finalName = tablename !== "" ? tablename : name;
+
     // insert new record into collection
     const table = await TableModel.create({
       guid,
-      tablename: tablename !== "" ? tablename : name,
+      tablename: finalName,
       tablecapacity,
       tabletype,
       organizations,
@@ -141,7 +143,7 @@ exports.createTable = async (req, res, next) => {
     await TableCounterModel.updateOne(
       { _id: "tablename" },
       {
-        $push: { alpha: tablename !== "" ? tablename : name },
+        $push: { alpha: finalName },
       }
     );
 
@@ -161,7 +163,7 @@ exports.createTable = async (req, res, next) => {
  * @src public
  */
 
-exports.createTableSet = async (req, res, next) => {
+exports.generateTableSetup = async (req, res, next) => {
   try {
     const result = await TableCounterModel.exists({ _id: "tablename" });
     if (result) {
@@ -170,14 +172,14 @@ exports.createTableSet = async (req, res, next) => {
     await TableModel.deleteMany({});
     await TableCounterModel.create({ _id: "tablename", seq: 0, alpha: [] });
 
-    const { guestCount = null } = req.body || {};
-    const tableCount = guestCount / 10 > 1 ? guestCount / 10 : 1;
-    const tablecapacity = 10;
+    const guestCount = await GuestModel.countDocuments({});
+    const tableCount = guestCount / 10 > 1 ? Math.ceil(guestCount / 10) : 1;
 
-    for (let each of tableCount) {
+    for (let i = 0; i < tableCount; i++) {
       const guid = genID();
-      const tablename = `${alphabet[alphacount]}${each.toString()}`;
+      const tablename = await createName();
       const tabletype = "Standard";
+      const tablecapacity = 10;
       const organizations = [];
       await TableModel.create({
         guid,
@@ -186,6 +188,12 @@ exports.createTableSet = async (req, res, next) => {
         tabletype,
         organizations,
       });
+      await TableCounterModel.updateOne(
+        { _id: "tablename" },
+        {
+          $push: { alpha: tablename },
+        }
+      );
     }
 
     res.status(200);

@@ -44,9 +44,7 @@ export const useTablesStore = defineStore({
     },
 
     async generateNewEventTables() {
-      const guestStore = useGuestsStore();
-      const totalGuests = guestStore.getGuestsCount;
-      await tableRoutes.createDefaultArrangment({ guestCount: totalGuests });
+      await tableRoutes.createDefaultArrangment();
     },
 
     async addTable() {
@@ -76,7 +74,6 @@ export const useTablesStore = defineStore({
 
     async registerTableHandler(tableData) {
       const id = tableData["_id"] || "";
-      console.log(tableData);
       if (await tableRoutes.getTable(id)) {
         const updatedTable = await tableRoutes.updateTable(id, tableData);
         this.table = updatedTable.data;

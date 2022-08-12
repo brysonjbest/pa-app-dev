@@ -40,7 +40,7 @@ const createTable = (data) => {
   return tableStore.addTable(data);
 };
 
-const { tables } = storeToRefs(useTablesStore());
+const { table, tables } = storeToRefs(useTablesStore());
 const tableColumns = ["guid", "tablename", "tablecapacity"];
 
 const generateDefaultTables = () => {
@@ -57,6 +57,7 @@ const tableInfo = () => {
 };
 
 const addTable = () => {
+  table.value = {};
   addTableDialog.value = true;
 };
 
