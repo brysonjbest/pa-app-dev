@@ -67,8 +67,10 @@ export const useTablesStore = defineStore({
 
     async registerTable(guid, tableData) {
       const id = guid || this.table._id;
+      console.log("this is guid", guid, "and this is tabledata", tableData);
       const newTable = await tableRoutes.updateTable(id, tableData);
       this.table = newTable.data;
+      console.log(newTable.data, "this is new table");
       return this.table;
     },
 

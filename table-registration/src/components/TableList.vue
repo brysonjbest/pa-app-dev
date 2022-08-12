@@ -65,9 +65,11 @@
           class="tablename"
         >
           <template #body="{ data }">
-            <router-link :to="`/admin/table/${data.guid}`">{{
-              data.tablename
-            }}</router-link>
+            <router-link
+              v-if="!detailsView"
+              :to="`/admin/table/${data.guid}`"
+              >{{ data.tablename }}</router-link
+            ><span v-else>{{ data.tablename }}</span>
           </template>
           <template #filter="{ filterModel }">
             <InputText
@@ -221,7 +223,6 @@ export default {
     );
     const dataTableRender = ref(0);
     const userStore = useAuthUserStore();
-    //const detailsView = props.detailsView || false;
     const dt = ref();
 
     let message = ref(false);

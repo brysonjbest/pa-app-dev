@@ -23,6 +23,7 @@ import Dropdown from "primevue/dropdown";
 import InputMask from "primevue/inputmask";
 import InputNumber from "primevue/inputnumber";
 import InputText from "primevue/inputtext";
+import PickList from "primevue/picklist";
 
 //DataTable Component Imports
 import DataTable from "primevue/datatable";
@@ -56,6 +57,7 @@ app.component("CheckBox", Checkbox);
 app.component("InputMask", InputMask);
 app.component("InputNumber", InputNumber);
 app.component("InputText", InputText);
+app.component("PickList", PickList);
 
 app.component("DataTable", DataTable);
 app.component("PrimeColumn", Column);

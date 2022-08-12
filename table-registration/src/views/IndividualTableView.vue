@@ -82,6 +82,7 @@ export default {
           badgeClass="p-badge-danger"
         />
       </div>
+      <GuestList :tableID="id" />
 
       <PrimeDialog
         v-model:visible="guestInfoDialog"

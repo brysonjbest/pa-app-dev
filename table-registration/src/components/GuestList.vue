@@ -291,7 +291,7 @@
             />
             <PrimeButton
               icon="pi pi-trash"
-              label="Delete"
+              :label="!tableID ? 'Delete' : 'Remove from Table'"
               class="p-button-rounded p-button-warning delete-button"
               @click="confirmDeleteGuest(slotProps.data)"
             />
@@ -426,7 +426,7 @@
         <div class="confirmation-content">
           <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
           <span v-if="guest"
-            >Are you sure you want to delete
+            >Are you sure you want to {{ !tableID ? "delete" : "remove" }}
             <b>{{ guest.firstname }} {{ guest.lastname }}</b
             >?</span
           >
@@ -439,10 +439,19 @@
             @click="deleteGuestDialog = false"
           />
           <PrimeButton
+            v-if="!tableID"
             label="Yes"
             icon="pi pi-check"
             class="p-button-text"
             @click="deleteGuest"
+          />
+
+          <PrimeButton
+            v-else
+            icon="pi pi-trash"
+            label="Remove from Table"
+            class="p-button-rounded p-button-warning delete-button"
+            @click="removeGuest"
           />
         </template>
       </PrimeDialog>
@@ -459,11 +468,13 @@ import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../stores/guests";
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
+import { useTablesStore } from "../stores/tables";
 
 export default {
   props: {
     adminView: Boolean,
     registrationID: String,
+    tableID: String,
   },
   setup(props) {
     const guestStore = useGuestsStore();
@@ -492,9 +503,8 @@ export default {
     const loading = ref(false);
     let message = ref(false);
     const messageText = ref({ severity: null, text: "" });
-    //const adminView = props.adminView;
-    // const registrationID = props.registrationID;
     const financialStore = useFinancialStore();
+    const tableStore = useTablesStore();
 
     //Conditionally Fill DataList
     const fillList = async function () {
@@ -505,6 +515,8 @@ export default {
         if (props.adminView) return await guestStore.fillGuests();
         if (props.registrationID)
           return await guestStore.fillGuestsRegistration(props.registrationID);
+        if (props.tableID)
+          return await guestStore.fillGuestsTable(props.tableID);
         else
           return (await guestStore.fillGuestsRegistration(user.guid))
             ? guestStore.fillGuestsRegistration(user.guid)
@@ -673,6 +685,40 @@ export default {
       }
     };
 
+    //removes guest from table rather than deleting
+    const removeGuest = async function () {
+      loading.value = true;
+      await tableStore.fillOnlyTable(props.tableID);
+      const { table } = storeToRefs(useTablesStore());
+      const tablevalue = table.value;
+      try {
+        guestStore
+          .removeGuestFromTable(guest.value["_id"], { table: null }, tablevalue)
+          .then(fillList())
+          .then(() => {
+            loading.value = false;
+            message.value = true;
+            messageText.value = {
+              severity: "success",
+              text: "Successfully removed guest.",
+            };
+          });
+      } catch (error) {
+        console.log(error);
+        loading.value = false;
+        console.warn(error);
+        message.value = true;
+        messageText.value = {
+          severity: "error",
+          text: "Could not delete guest.",
+        };
+      } finally {
+        await new Promise((resolve) => setTimeout(resolve, 1500)).then(() => {
+          message.value = false;
+          fillList();
+        });
+      }
+    };
     return {
       columns,
       v$,
@@ -704,6 +750,7 @@ export default {
       editGuest,
       confirmDeleteGuest,
       deleteGuest,
+      removeGuest,
       hideDialog,
       saveGuest,
       loadLazyData,

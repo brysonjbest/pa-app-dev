@@ -1,6 +1,8 @@
 import { defineStore } from "pinia";
 import apiRoutes from "../services/api-routes.services";
+import tableRoutes from "../services/api-routes.tables";
 import { useFinancialStore } from "./financial";
+import { useTablesStore } from "./tables";
 
 export const useGuestsStore = defineStore({
   id: "guestsStore",
@@ -27,6 +29,13 @@ export const useGuestsStore = defineStore({
     async fillGuestsRegistration(guid) {
       const guestList = await (
         await apiRoutes.getGuestsByRegistration(guid)
+      ).data[0];
+      this.guests = guestList.guests || [];
+    },
+
+    async fillGuestsTable(guid) {
+      const guestList = await (
+        await tableRoutes.getGuestsByTable(guid)
       ).data[0];
       this.guests = guestList.guests || [];
     },
@@ -71,6 +80,15 @@ export const useGuestsStore = defineStore({
     },
     async updateGuest(id, guestData) {
       await apiRoutes.updateGuest(id, guestData);
+    },
+
+    async removeGuestFromTable(id, guestData, table) {
+      const tableStore = useTablesStore();
+      await apiRoutes.updateGuest(id, guestData).then(() => {
+        tableStore.registerTable(table._id, {
+          $pull: { guests: id },
+        });
+      });
     },
 
     async deleteGuest(id, registrationID) {

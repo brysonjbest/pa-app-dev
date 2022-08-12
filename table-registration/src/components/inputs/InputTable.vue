@@ -1,4 +1,4 @@
-<!-- Provides initial registration of financial details -->
+<!-- Allows submission of table details -->
 <template>
   <div>
     <ProgressSpinner v-if="loading" />
