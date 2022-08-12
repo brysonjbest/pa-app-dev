@@ -13,7 +13,7 @@
         :value="tables"
         responsiveLayout="stack"
         :key="dataTableRender"
-        :paginator="true"
+        :paginator="!detailsView"
         :rows="10"
         ref="dt"
         stripedRows
@@ -33,7 +33,7 @@
         :rowsPerPageOptions="[10, 20, 50]"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
       >
-        <template #header>
+        <template #header v-if="!detailsView">
           <div style="text-align: left">
             <PrimeButton
               icon="pi pi-external-link"
