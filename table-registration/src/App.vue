@@ -62,6 +62,12 @@ export default {
             visible: () => userStore.isAdmin,
             class: "dropdown-account-item",
           },
+          {
+            label: "View Tables",
+            to: "/admin/tables",
+            visible: () => userStore.isAdmin,
+            class: "dropdown-account-item",
+          },
         ],
       },
     ]);
@@ -145,6 +151,7 @@ header {
   background-color: #343a40;
   top: 0;
   font-size: 1.3em;
+  z-index: 9999 !important;
 }
 
 #navbar .p-menuitem-text {
