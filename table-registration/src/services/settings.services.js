@@ -8,6 +8,7 @@ import { FilterMatchMode, FilterOperator } from "primevue/api";
 
 const schemaData = {
   year: "2022",
+  defaultNumberOfTables: 72,
   registrationSelection: [
     { field: "organization", text: "Organization" },
     { field: "branch", text: "Branch" },
@@ -27,6 +28,14 @@ const schemaData = {
     { field: "attendancetype", text: "Attendance Type" },
     { field: "accessibility", text: "Accessibility Requirements" },
     { field: "dietary", text: "Dietary Requirements" },
+  ],
+  tableSelection: [
+    { field: "tablename", text: "Table Name" },
+    { field: "tabletype", text: "Type of Table" },
+    { field: "tablecapacity", text: "Table Capacity" },
+    { field: "tableguestcount", text: "Number of Guests at Table" },
+    { field: "tablefull", text: "Table Full?" },
+    { field: "organizations", text: "Organizations at Table" },
   ],
   roles: [
     { value: "inactive", text: "Inactive" },
@@ -95,6 +104,10 @@ const schemaData = {
     { value: "wheelchairrequired", text: "Wheelchair Required" },
     { value: "attendantrequired", text: "Attendant Required" },
     { value: "mobilityneeds", text: "Mobility Needs" },
+  ],
+  tabletypes: [
+    { value: "Standard", text: "Standard" },
+    { value: "Reserved", text: "Reserved" },
   ],
   registrationFilters: {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
@@ -187,6 +200,45 @@ const schemaData = {
     updatedAt: {
       operator: FilterOperator.AND,
       constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
+    },
+  },
+  tableFilters: {
+    global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+    guid: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    tablename: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    tabletype: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    tablecapacity: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    tableguestcount: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    tablefull: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    organizations: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    createdAt: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+    },
+    updatedAt: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
     },
   },
   userFilters: {

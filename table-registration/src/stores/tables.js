@@ -33,6 +33,16 @@ export const useTablesStore = defineStore({
       this.tables = await (await tableRoutes.getAllTables()).data;
     },
 
+    async fillTable(guid) {
+      this.tables = await (await tableRoutes.getTable(guid)).data;
+    },
+
+    async fillOnlyTable(guid) {
+      const tableData = await tableRoutes.getTable(guid);
+      this.table = tableData.data[0];
+      return tableData.data[0];
+    },
+
     async generateNewEventTables() {
       const guestStore = useGuestsStore();
       const totalGuests = guestStore.getGuestsCount;
@@ -55,6 +65,27 @@ export const useTablesStore = defineStore({
 
     async updateTable(id, tableData) {
       await tableRoutes.updateTable(id, tableData);
+    },
+
+    async registerTable(guid, tableData) {
+      const id = guid || this.table._id;
+      const newTable = await tableRoutes.updateTable(id, tableData);
+      this.table = newTable.data;
+      return this.table;
+    },
+
+    async registerTableHandler(tableData) {
+      const id = tableData["_id"] || "";
+      console.log(tableData);
+      if (await tableRoutes.getTable(id)) {
+        const updatedTable = await tableRoutes.updateTable(id, tableData);
+        this.table = updatedTable.data;
+        return this.table;
+      } else {
+        const newTable = await tableRoutes.createTable(tableData);
+        this.table = newTable.data;
+        return this.table;
+      }
     },
 
     async deleteTable(id) {

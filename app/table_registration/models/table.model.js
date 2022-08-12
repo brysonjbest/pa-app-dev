@@ -29,10 +29,15 @@ const TableSchema = new Schema(
       type: String,
       required: true,
     },
-    tableCapacity: {
+    tablecapacity: {
       type: Number,
       required: true,
     },
+    tabletype: {
+      type: String,
+      required: true,
+    },
+    organizations: [{ type: String }],
   },
   { timestamps: true }
 );

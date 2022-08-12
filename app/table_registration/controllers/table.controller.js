@@ -9,6 +9,31 @@ const { default: mongoose } = require("mongoose");
 const { genID } = require("../../services/validation.services.js");
 const GuestModel = require("../models/guest.model.js");
 const TableModel = require("../models/table.model.js");
+const TableCounterModel = require("../models/tablecounter.model.js");
+
+/**
+ * Table Counter name Generator.
+ * Uses set alphabet and numerical set of tables to generate a list of potential table names.
+ * @src public
+ */
+
+const createName = async function () {
+  const result = await TableCounterModel.findById({ _id: "tablename" });
+  console.log(result);
+  const alphaArray = result.alpha;
+
+  const alphabetTables = Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
+  //specific format for premier's awards seating
+  const orderedTables = Array.from("AGBHCIDJEKL");
+  const numericalTables = ["1", "2", "3", "4", "5", "6"];
+  const totalTables = numericalTables
+    .map((numeral) => orderedTables.map((each) => each + numeral))
+    .flat();
+
+  for (let each of totalTables) {
+    if (!alphaArray.includes(each)) return each;
+  }
+};
 
 /**
  * Retrieve all table data.
@@ -90,15 +115,35 @@ exports.getTableGuests = async (req, res, next) => {
 
 exports.createTable = async (req, res, next) => {
   try {
+    const result = await TableCounterModel.exists({ _id: "tablename" });
+    if (!result) {
+      await TableCounterModel.create({ _id: "tablename", seq: 0, alpha: [] });
+    }
+
     const guid = genID();
-    const { tablename = "", tablecapacity = null } = req.body || {};
+    const name = await createName();
+    const {
+      tablename = "",
+      tablecapacity = null,
+      tabletype = "",
+      organizations = [],
+    } = req.body || {};
 
     // insert new record into collection
     const table = await TableModel.create({
       guid,
-      tablename,
+      tablename: tablename !== "" ? tablename : name,
       tablecapacity,
+      tabletype,
+      organizations,
     });
+
+    await TableCounterModel.updateOne(
+      { _id: "tablename" },
+      {
+        $push: { alpha: tablename !== "" ? tablename : name },
+      }
+    );
 
     res.status(200).json(table);
   } catch (err) {
@@ -118,19 +163,28 @@ exports.createTable = async (req, res, next) => {
 
 exports.createTableSet = async (req, res, next) => {
   try {
-    const { guestCount = null } = req.bod || {};
-    const tableCount = guestCount / 10;
+    const result = await TableCounterModel.exists({ _id: "tablename" });
+    if (result) {
+      await TableCounterModel.findByIdAndRemove({ _id: "tablename" });
+    }
+    await TableModel.deleteMany({});
+    await TableCounterModel.create({ _id: "tablename", seq: 0, alpha: [] });
+
+    const { guestCount = null } = req.body || {};
+    const tableCount = guestCount / 10 > 1 ? guestCount / 10 : 1;
     const tablecapacity = 10;
-    const alphabet = Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    let alphacount = 0;
 
     for (let each of tableCount) {
       const guid = genID();
       const tablename = `${alphabet[alphacount]}${each.toString()}`;
+      const tabletype = "Standard";
+      const organizations = [];
       await TableModel.create({
         guid,
         tablename,
         tablecapacity,
+        tabletype,
+        organizations,
       });
     }
 
@@ -210,6 +264,7 @@ exports.deleteTable = async (req, res, next) => {
     // look up registration exists
     const table = await TableModel.findById(id);
     if (!table) return next(Error("invalidInput"));
+    const tablename = table.tablename;
 
     for (let each of table.guests) {
       const guestID = each._id;
@@ -217,6 +272,13 @@ exports.deleteTable = async (req, res, next) => {
     }
 
     const response = await TableModel.deleteOne({ _id: id });
+
+    await TableCounterModel.updateOne(
+      { _id: "tablename" },
+      {
+        $pull: { alpha: tablename },
+      }
+    );
 
     res.status(200).json(response);
   } catch (err) {

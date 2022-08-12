@@ -8,6 +8,7 @@ import PageHeader from "../components/common/PageHeader.vue";
 import RegistrationList from "../components/RegistrationList.vue";
 import NavMenu from "../components/common/NavMenu.vue";
 import TableList from "../components/TableList.vue";
+import InputTable from "../components/inputs/InputTable.vue";
 const userStore = useAuthUserStore();
 const financialStore = useFinancialStore();
 const tableStore = useTablesStore();
@@ -27,13 +28,16 @@ const navItems = [
   },
 ];
 
-const tableInfoDialog = ref(false);
 const tableCountAll = () => {
   return String(tableStore.getTablesCount);
 };
 
 const fillTables = () => {
   return tableStore.fillTables();
+};
+
+const createTable = (data) => {
+  return tableStore.addTable(data);
 };
 
 const { tables } = storeToRefs(useTablesStore());
@@ -45,8 +49,15 @@ const generateDefaultTables = () => {
 
 //PrimeDialog controls
 
+const tableInfoDialog = ref(false);
+const addTableDialog = ref(false);
+
 const tableInfo = () => {
   tableInfoDialog.value = true;
+};
+
+const addTable = () => {
+  addTableDialog.value = true;
 };
 
 userStore.login();
@@ -81,6 +92,24 @@ userStore.login();
       @click="fillTables()"
     />
 
+    <PrimeButton
+      label="Add New Table"
+      type="button"
+      icon="pi pi-ticket"
+      class="p-button-warning"
+      @click="addTable()"
+      badgeClass="p-badge-danger"
+    />
+
+    <PrimeDialog
+      v-model:visible="addTableDialog"
+      header="Add New Table"
+      :modal="true"
+      class="p-fluid"
+      @hide="fillTables()"
+      ><InputTable :adminView="true" />
+    </PrimeDialog>
+
     <PrimeDialog
       v-model:visible="tableInfoDialog"
       header="Table Information"
@@ -91,6 +120,5 @@ userStore.login();
     </PrimeDialog>
     <NavMenu :title="''" :menuitems="navItems" />
     <TableList :data="tables" :columns="tableColumns" />
-    <RegistrationList :adminView="true" />
   </main>
 </template>
