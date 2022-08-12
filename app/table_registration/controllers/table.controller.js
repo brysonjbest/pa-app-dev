@@ -10,6 +10,7 @@ const { genID } = require("../../services/validation.services.js");
 const GuestModel = require("../models/guest.model.js");
 const TableModel = require("../models/table.model.js");
 const TableCounterModel = require("../models/tablecounter.model.js");
+const RegistrationModel = require("../models/registration.model.js");
 
 /**
  * Table Counter name Generator.
@@ -275,8 +276,13 @@ exports.deleteTable = async (req, res, next) => {
     const tablename = table.tablename;
 
     for (let each of table.guests) {
-      const guestID = each._id;
-      await GuestModel.updateOne({ _id: id }, { table: {} });
+      const guestID = each["_id"];
+      await GuestModel.updateOne({ _id: guestID }, { table: {} });
+    }
+
+    for (let each of table.registrations) {
+      const registrationID = each["_id"];
+      await RegistrationModel.updateOne({ _id: registrationID }, { table: {} });
     }
 
     const response = await TableModel.deleteOne({ _id: id });

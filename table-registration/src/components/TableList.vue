@@ -59,6 +59,26 @@
         <template #empty> No tables found. </template>
         <template #loading> Loading table data. Please wait. </template>
         <PrimeColumn
+          field="tablename"
+          header="Table Name"
+          key="tablename"
+          class="tablename"
+        >
+          <template #body="{ data }">
+            <router-link :to="`/admin/table/${data.guid}`">{{
+              data.tablename
+            }}</router-link>
+          </template>
+          <template #filter="{ filterModel }">
+            <InputText
+              type="text"
+              v-model="filterModel.value"
+              class="p-column-filter"
+              :placeholder="`Search by Table Name`"
+            /> </template
+        ></PrimeColumn>
+
+        <PrimeColumn
           v-for="col of filter(columns)"
           :field="col.field"
           :header="col.text"

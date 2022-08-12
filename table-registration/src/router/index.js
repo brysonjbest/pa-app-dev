@@ -219,6 +219,15 @@ const router = createRouter({
     },
 
     {
+      path: "/admin/table/:id",
+      name: "individual-table-view",
+      component: () => import("../views/IndividualTableView.vue"),
+      props: true,
+      meta: getMeta("Edit Table Details"),
+      beforeEnter: authorizeAdmin,
+    },
+
+    {
       path: "/register",
       name: "admin-user-register",
       component: () => import("../views/NewUser.vue"),

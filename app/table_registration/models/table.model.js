@@ -19,6 +19,12 @@ const TableSchema = new Schema(
       required: true,
       unique: true,
     },
+    registrations: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Registration",
+      },
+    ],
     guests: [
       {
         type: Schema.Types.ObjectId,
