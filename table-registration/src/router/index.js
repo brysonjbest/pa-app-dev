@@ -219,6 +219,14 @@ const router = createRouter({
     },
 
     {
+      path: "/admin/tables/event",
+      name: "admin-table-event-view",
+      component: () => import("../components/inputs/TableSelector.vue"),
+      meta: getMeta("Administration Table Event Planning"),
+      beforeEnter: authorizeAdmin,
+    },
+
+    {
       path: "/admin/table/:id",
       name: "individual-table-view",
       component: () => import("../views/IndividualTableView.vue"),
