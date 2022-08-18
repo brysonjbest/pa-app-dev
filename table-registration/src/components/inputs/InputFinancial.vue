@@ -8,186 +8,202 @@
       :closable="false"
       >{{ messageText.text }}</PrimeMessage
     >
-    <form v-else @submit="onSubmit" @reset="onReset">
-      <div class="dropdown">
-        <label for="organization">Organization:</label>
-        <DropDown
-          v-bind:class="{ 'p-invalid': v$.organization.$error }"
-          id="organization"
-          v-model="registration.organization"
-          :options="organizations"
-          optionLabel="text"
-          optionValue="value"
-          placeholder="Select an Organization"
-        />
-        <small
-          v-if="v$.organization.$error"
-          class="p-error"
-          id="organization-help"
-          >Please select your organization.</small
-        >
-      </div>
+    <form
+      class="financial-registration-form"
+      v-else
+      @submit="onSubmit"
+      @reset="onReset"
+    >
+      <div class="financial-form-selections">
+        <h3 class="form-header">Organizational Information</h3>
+        <div class="form-break"></div>
+        <div class="form-item dropdown">
+          <label for="organization">Organization:</label>
+          <DropDown
+            v-bind:class="{ 'p-invalid': v$.organization.$error }"
+            id="organization"
+            v-model="registration.organization"
+            :options="organizations"
+            optionLabel="text"
+            optionValue="value"
+            placeholder="Select an Organization"
+          />
+          <small
+            v-if="v$.organization.$error"
+            class="p-error"
+            id="organization-help"
+            >Please select your organization.</small
+          >
+        </div>
 
-      <div class="text-field">
-        <label for="branch">Branch:</label>
-        <InputText
-          v-bind:class="{ 'p-invalid': v$.branch.$error }"
-          id="branch"
-          type="branch"
-          aria-describedby="branch-help"
-          v-model.trim="registration.branch"
-        />
-        <small v-if="v$.branch.$error" class="p-error" id="branch-help"
-          >Please enter your branch.</small
-        >
-      </div>
+        <div class="form-item text-field">
+          <label for="branch">Branch:</label>
+          <InputText
+            v-bind:class="{ 'p-invalid': v$.branch.$error }"
+            id="branch"
+            type="branch"
+            aria-describedby="branch-help"
+            v-model.trim="registration.branch"
+          />
+          <small v-if="v$.branch.$error" class="p-error" id="branch-help"
+            >Please enter your branch.</small
+          >
+        </div>
 
-      <div class="text-field">
-        <label for="primarycontact">Primary Contact:</label>
-        <InputText
-          v-bind:class="{ 'p-invalid': v$.primarycontact.$error }"
-          id="primarycontact"
-          type="primarycontact"
-          aria-describedby="primarycontact-help"
-          v-model.trim="registration.primarycontact"
-        />
-        <small
-          v-if="v$.primarycontact.$error"
-          class="p-error"
-          id="primarycontact-help"
-          >Please enter the name of the Primary Contact for this
-          registration.</small
+        <div class="form-break"></div>
+        <h3 class="form-header">Contact Information</h3>
+        <div class="form-break"></div>
+        <div class="form-item text-field">
+          <label for="primarycontact">Primary Contact:</label>
+          <InputText
+            v-bind:class="{ 'p-invalid': v$.primarycontact.$error }"
+            id="primarycontact"
+            type="primarycontact"
+            aria-describedby="primarycontact-help"
+            v-model.trim="registration.primarycontact"
+          />
+          <small
+            v-if="v$.primarycontact.$error"
+            class="p-error"
+            id="primarycontact-help"
+            >Please enter the name of the Primary Contact for this
+            registration.</small
+          >
+        </div>
+        <div class="form-item text-field">
+          <label for="primaryemail">Primary Contact Email:</label>
+          <InputText
+            v-bind:class="{ 'p-invalid': v$.primaryemail.$error }"
+            id="primaryemail"
+            type="primaryemail"
+            aria-describedby="primaryemail-help"
+            v-model.trim="registration.primaryemail"
+          />
+          <small
+            v-if="v$.primaryemail.$error"
+            id="primaryemail-help"
+            class="p-error"
+            >Email Field is Incorrect.</small
+          >
+        </div>
+        <div class="form-item text-field">
+          <label for="financialcontact">Financial Contact:</label>
+          <InputText
+            v-bind:class="{ 'p-invalid': v$.financialcontact.$error }"
+            id="financialcontact"
+            type="financialcontact"
+            aria-describedby="financialcontact-help"
+            v-model.trim="registration.financialcontact"
+          />
+          <small
+            v-if="v$.financialcontact.$error"
+            class="p-error"
+            id="financialcontact-help"
+            >Please enter the name of the Financial Contact for this
+            registration.</small
+          >
+        </div>
+        <div class="form-break"></div>
+        <h3 class="form-header">Financial Information</h3>
+        <div class="form-break"></div>
+        <div class="form-item number-field">
+          <label for="clientministry">Client/Ministry Number:</label>
+          <InputNumber
+            v-bind:class="{ 'p-invalid': v$.clientministry.$error }"
+            id="clientministry"
+            v-model="registration.clientministry"
+            :min="100"
+            :max="999"
+            aria-placeholder="3 digit number"
+            placeholder="3 digit number"
+            :useGrouping="false"
+          />
+          <small
+            v-if="v$.clientministry.$error"
+            id="clientministry-help"
+            class="p-error"
+            >Please enter the 3-digit client/ministry number.</small
+          >
+        </div>
+        <div class="form-item number-field">
+          <label for="respcode">RESP Code:</label>
+          <InputNumber
+            v-bind:class="{ 'p-invalid': v$.respcode.$error }"
+            id="respcode"
+            v-model="registration.respcode"
+            :min="10000"
+            :max="99999"
+            aria-placeholder="5 digit number"
+            placeholder="5 digit number"
+            :useGrouping="false"
+          />
+          <small v-if="v$.respcode.$error" id="respcode-help" class="p-error"
+            >Please enter the 5-digit RESP Code number.</small
+          >
+        </div>
+        <div class="form-item number-field">
+          <label for="serviceline">Service Line:</label>
+          <InputNumber
+            v-bind:class="{ 'p-invalid': v$.serviceline.$error }"
+            id="serviceline"
+            v-model="registration.serviceline"
+            :min="10000"
+            :max="99999"
+            aria-placeholder="5 digit number"
+            placeholder="5 digit number"
+            :useGrouping="false"
+          />
+          <small
+            v-if="v$.serviceline.$error"
+            id="serviceline-help"
+            class="p-error"
+            >Please enter the 5-digit Service Line number.</small
+          >
+        </div>
+        <div class="form-item number-field">
+          <label for="stob">STOB:</label>
+          <InputNumber
+            v-bind:class="{ 'p-invalid': v$.stob.$error }"
+            id="stob"
+            v-model="registration.stob"
+            :min="1000"
+            :max="9999"
+            aria-placeholder="4 digit number"
+            placeholder="4 digit number"
+            :useGrouping="false"
+          />
+          <small v-if="v$.stob.$error" id="stob-help" class="p-error"
+            >Please enter the 4-digit STOB number.</small
+          >
+        </div>
+        <div class="form-item number-field">
+          <label for="project">Project:</label>
+          <InputNumber
+            v-bind:class="{ 'p-invalid': v$.project.$error }"
+            id="project"
+            v-model="registration.project"
+            :min="1000000"
+            :max="9999999"
+            aria-placeholder="7 digit number"
+            placeholder="7 digit number"
+            :useGrouping="false"
+          />
+          <small v-if="v$.project.$error" id="project-help" class="p-error"
+            >Please enter the 7-digit project number.</small
+          >
+        </div>
+      </div>
+      <div class="submission-form-buttons">
+        <PrimeButton type="submit" label="primary" class="p-button-raised"
+          >Submit</PrimeButton
+        >
+        <PrimeButton
+          type="reset"
+          label="danger"
+          class="p-button-raised p-button-danger"
+          >Reset</PrimeButton
         >
       </div>
-      <div class="text-field">
-        <label for="primaryemail">Primary Contact Email:</label>
-        <InputText
-          v-bind:class="{ 'p-invalid': v$.primaryemail.$error }"
-          id="primaryemail"
-          type="primaryemail"
-          aria-describedby="primaryemail-help"
-          v-model.trim="registration.primaryemail"
-        />
-        <small
-          v-if="v$.primaryemail.$error"
-          id="primaryemail-help"
-          class="p-error"
-          >Email Field is Incorrect.</small
-        >
-      </div>
-      <div class="text-field">
-        <label for="financialcontact">Financial Contact:</label>
-        <InputText
-          v-bind:class="{ 'p-invalid': v$.financialcontact.$error }"
-          id="financialcontact"
-          type="financialcontact"
-          aria-describedby="financialcontact-help"
-          v-model.trim="registration.financialcontact"
-        />
-        <small
-          v-if="v$.financialcontact.$error"
-          class="p-error"
-          id="financialcontact-help"
-          >Please enter the name of the Financial Contact for this
-          registration.</small
-        >
-      </div>
-      <div class="number-field">
-        <label for="clientministry">Client/Ministry Number:</label>
-        <InputNumber
-          v-bind:class="{ 'p-invalid': v$.clientministry.$error }"
-          id="clientministry"
-          v-model="registration.clientministry"
-          :min="100"
-          :max="999"
-          aria-placeholder="3 digit number"
-          placeholder="3 digit number"
-          :useGrouping="false"
-        />
-        <small
-          v-if="v$.clientministry.$error"
-          id="clientministry-help"
-          class="p-error"
-          >Please enter the 3-digit client/ministry number.</small
-        >
-      </div>
-      <div class="number-field">
-        <label for="respcode">RESP Code:</label>
-        <InputNumber
-          v-bind:class="{ 'p-invalid': v$.respcode.$error }"
-          id="respcode"
-          v-model="registration.respcode"
-          :min="10000"
-          :max="99999"
-          aria-placeholder="5 digit number"
-          placeholder="5 digit number"
-          :useGrouping="false"
-        />
-        <small v-if="v$.respcode.$error" id="respcode-help" class="p-error"
-          >Please enter the 5-digit RESP Code number.</small
-        >
-      </div>
-      <div class="number-field">
-        <label for="serviceline">Service Line:</label>
-        <InputNumber
-          v-bind:class="{ 'p-invalid': v$.serviceline.$error }"
-          id="serviceline"
-          v-model="registration.serviceline"
-          :min="10000"
-          :max="99999"
-          aria-placeholder="5 digit number"
-          placeholder="5 digit number"
-          :useGrouping="false"
-        />
-        <small
-          v-if="v$.serviceline.$error"
-          id="serviceline-help"
-          class="p-error"
-          >Please enter the 5-digit Service Line number.</small
-        >
-      </div>
-      <div class="number-field">
-        <label for="stob">STOB:</label>
-        <InputNumber
-          v-bind:class="{ 'p-invalid': v$.stob.$error }"
-          id="stob"
-          v-model="registration.stob"
-          :min="1000"
-          :max="9999"
-          aria-placeholder="4 digit number"
-          placeholder="4 digit number"
-          :useGrouping="false"
-        />
-        <small v-if="v$.stob.$error" id="stob-help" class="p-error"
-          >Please enter the 4-digit STOB number.</small
-        >
-      </div>
-      <div class="number-field">
-        <label for="project">Project:</label>
-        <InputNumber
-          v-bind:class="{ 'p-invalid': v$.project.$error }"
-          id="project"
-          v-model="registration.project"
-          :min="1000000"
-          :max="9999999"
-          aria-placeholder="7 digit number"
-          placeholder="7 digit number"
-          :useGrouping="false"
-        />
-        <small v-if="v$.project.$error" id="project-help" class="p-error"
-          >Please enter the 7-digit project number.</small
-        >
-      </div>
-
-      <PrimeButton type="submit" label="primary" class="p-button-raised"
-        >Submit</PrimeButton
-      >
-      <PrimeButton
-        type="reset"
-        label="danger"
-        class="p-button-raised p-button-danger"
-        >Reset</PrimeButton
-      >
     </form>
   </div>
 </template>
@@ -322,4 +338,42 @@ export default {
   },
 };
 </script>
-<style scoped></style>
+
+<style lang="scss">
+.financial-registration-form {
+  // width: 90%;
+  padding: 1rem;
+
+  .financial-form-selections {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    .form-item {
+      // flex-grow: 1;
+      margin: 0 10px;
+    }
+    .form-break {
+      flex-basis: 100%;
+      height: 0;
+    }
+
+    .form-header {
+      margin: 0;
+    }
+  }
+
+  label {
+    display: flex;
+  }
+
+  .submission-form-buttons {
+    display: flex;
+    justify-content: center;
+    padding: 1rem;
+    gap: 1rem;
+  }
+}
+</style>

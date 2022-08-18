@@ -9,102 +9,109 @@
       :closable="false"
       >{{ messageText.text }}</PrimeMessage
     >
-    <form v-else @submit="onSubmit" @reset="onReset">
-      <div class="dropdown">
-        <label for="organization">Organization:</label>
-        <DropDown
-          v-bind:class="{ 'p-invalid': v$.organization.$error }"
-          id="organization"
-          v-model="guest.organization"
-          :options="organizations"
-          optionLabel="text"
-          optionValue="value"
-          placeholder="Select a Organization"
-        />
-        <small
-          v-if="v$.organization.$error"
-          class="p-error"
-          id="organization-help"
-          >Please select your organization.</small
-        >
-      </div>
-
-      <div class="text-field">
-        <label for="firstname">First Name:</label>
-        <InputText
-          v-bind:class="{ 'p-invalid': v$.firstname.$error }"
-          id="firstname"
-          type="firstname"
-          aria-describedby="firstname-help"
-          v-model="guest.firstname"
-          placeholder="First Name"
-        />
-        <small v-if="v$.firstname.$error" class="p-error" id="firstname-help"
-          >Please enter guest's first name.</small
-        >
-      </div>
-
-      <div class="text-field">
-        <label for="lastname">Last Name:</label>
-        <InputText
-          v-bind:class="{ 'p-invalid': v$.lastname.$error }"
-          id="lastname"
-          type="lastname"
-          aria-describedby="lastname-help"
-          v-model="guest.lastname"
-          placeholder="Last Name"
-        />
-        <small v-if="v$.lastname.$error" class="p-error" id="lastname-help"
-          >Please enter guest's last name.</small
-        >
-      </div>
-
-      <div class="dropdown">
-        <label for="attendancetype">Attendance Type:</label>
-        <DropDown
-          v-bind:class="{ 'p-invalid': v$.attendancetype.$error }"
-          id="attendancetype"
-          v-model="guest.attendancetype"
-          :options="attendancetypes"
-          optionLabel="text"
-          optionValue="value"
-          placeholder="Select the type of attendance for this guest"
-        />
-        <small
-          v-if="v$.attendancetype.$error"
-          class="p-error"
-          id="attendancetype-help"
-          >Please select the attendance type for this guest.</small
-        >
-      </div>
-
-      <div class="checkbox-group">
-        <label for="accessibility">Accessibility Requirements:</label>
-        <div
-          v-for="each of accessibility"
-          :key="each.key"
-          class="field-checkbox"
-        >
-          <CheckBox
-            :id="each.key"
-            name="each"
-            :value="each.value"
-            v-model="guest.accessibility"
+    <form
+      class="guest-registration-form"
+      v-else
+      @submit="onSubmit"
+      @reset="onReset"
+    >
+      <div class="guest-registration-selections">
+        <div class="dropdown">
+          <label for="organization">Organization:</label>
+          <DropDown
+            v-bind:class="{ 'p-invalid': v$.organization.$error }"
+            id="organization"
+            v-model="guest.organization"
+            :options="organizations"
+            optionLabel="text"
+            optionValue="value"
+            placeholder="Select a Organization"
           />
-          <label :for="each.key">{{ each.text }}</label>
+          <small
+            v-if="v$.organization.$error"
+            class="p-error"
+            id="organization-help"
+            >Please select your organization.</small
+          >
         </div>
-      </div>
 
-      <div class="checkbox-group">
-        <label for="dietary">Dietary Requirements:</label>
-        <div v-for="each of dietary" :key="each.key" class="field-checkbox">
-          <CheckBox
-            :id="each.key"
-            name="each"
-            :value="each.value"
-            v-model="guest.dietary"
+        <div class="text-field">
+          <label for="firstname">First Name:</label>
+          <InputText
+            v-bind:class="{ 'p-invalid': v$.firstname.$error }"
+            id="firstname"
+            type="firstname"
+            aria-describedby="firstname-help"
+            v-model="guest.firstname"
+            placeholder="First Name"
           />
-          <label :for="each.key">{{ each.text }}</label>
+          <small v-if="v$.firstname.$error" class="p-error" id="firstname-help"
+            >Please enter guest's first name.</small
+          >
+        </div>
+
+        <div class="text-field">
+          <label for="lastname">Last Name:</label>
+          <InputText
+            v-bind:class="{ 'p-invalid': v$.lastname.$error }"
+            id="lastname"
+            type="lastname"
+            aria-describedby="lastname-help"
+            v-model="guest.lastname"
+            placeholder="Last Name"
+          />
+          <small v-if="v$.lastname.$error" class="p-error" id="lastname-help"
+            >Please enter guest's last name.</small
+          >
+        </div>
+
+        <div class="dropdown">
+          <label for="attendancetype">Attendance Type:</label>
+          <DropDown
+            v-bind:class="{ 'p-invalid': v$.attendancetype.$error }"
+            id="attendancetype"
+            v-model="guest.attendancetype"
+            :options="attendancetypes"
+            optionLabel="text"
+            optionValue="value"
+            placeholder="Select the type of attendance for this guest"
+          />
+          <small
+            v-if="v$.attendancetype.$error"
+            class="p-error"
+            id="attendancetype-help"
+            >Please select the attendance type for this guest.</small
+          >
+        </div>
+
+        <div class="checkbox-group">
+          <label for="accessibility">Accessibility Requirements:</label>
+          <div
+            v-for="each of accessibility"
+            :key="each.key"
+            class="field-checkbox"
+          >
+            <CheckBox
+              :id="each.key"
+              name="each"
+              :value="each.value"
+              v-model="guest.accessibility"
+            />
+            <label :for="each.key">{{ each.text }}</label>
+          </div>
+        </div>
+
+        <div class="checkbox-group">
+          <label for="dietary">Dietary Requirements:</label>
+          <div v-for="each of dietary" :key="each.key" class="field-checkbox">
+            <CheckBox
+              :id="each.key"
+              name="each"
+              :value="each.value"
+              v-model="guest.dietary"
+            />
+            <label :for="each.key">{{ each.text }}</label>
+          </div>
         </div>
       </div>
 
@@ -226,12 +233,21 @@ export default {
   },
 };
 </script>
-<style scoped>
-/* .checkbox-group {
-  display: flex;
-} */
 
+<style lang="scss">
 .field-checkbox {
   padding: 0px 0.5em;
+}
+.guest-registration-form {
+  // width: 90%;
+  padding: 1rem;
+
+  .guest-registration-selections {
+    display: flex;
+    flex-direction: column;
+    // align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
 }
 </style>
