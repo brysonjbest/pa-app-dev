@@ -1,8 +1,9 @@
 <!-- Navbar common component -->
 <template>
   <div>
-    <div class="card">
-      <h5>{{ title }}</h5>
+    <div class="card navigation-card">
+      <h5 v-if="title" class="spacer">{{ title }}</h5>
+      <div class="spacer" v-else></div>
       <TabMenu
         class="admin-nav"
         :model="menuitems"
@@ -28,3 +29,11 @@ export default {
   },
 };
 </script>
+
+<style lang="scss">
+.navigation-card {
+  .spacer {
+    margin: 1rem;
+  }
+}
+</style>

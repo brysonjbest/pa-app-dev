@@ -54,6 +54,7 @@
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
               <InputText
+                title="Search all by keyword"
                 v-model="filters['global'].value"
                 placeholder="Keyword Search"
               />
@@ -214,6 +215,7 @@
           v-if="!isSubmitted() || adminView"
           :exportable="false"
           style="min-width: 8rem"
+          header="Options:"
         >
           <template #body="slotProps">
             <PrimeButton

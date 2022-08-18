@@ -53,6 +53,7 @@
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
               <InputText
+                title="Search all by keyword"
                 v-model="filters['global'].value"
                 placeholder="Keyword Search"
               />
@@ -185,7 +186,8 @@
               icon="pi pi-pencil"
               class="p-button-rounded p-button-success mr-2"
               @click="editUser(slotProps.data)"
-            />
+              >Edit</PrimeButton
+            >
             <!-- <PrimeButton
             v-if="
               slotProps.data.role !== 'super-administrator' &&
