@@ -24,23 +24,28 @@ export default {
 </script>
 
 <style lang="scss">
-.p-card {
+.text-3xl {
   background-color: #e8ecef;
   color: #2b3e50;
   margin-bottom: 1em;
-}
+  .p-card {
+    background-color: #e8ecef;
+    color: #2b3e50;
+    margin-bottom: 1em;
+  }
 
-.p-card-title {
-  font-size: 5px;
-}
-.p-card-subtitle {
-  font-size: 1.5em;
-}
-.p-card-content {
-  font-size: 0.75em;
-}
+  .p-card-title {
+    font-size: 1.5em;
+  }
+  .p-card-subtitle {
+    font-size: 1em;
+  }
+  .p-card-content {
+    font-size: 0.75em;
+  }
 
-.p-card-footer {
-  font-size: 0.55em;
+  .p-card-footer {
+    font-size: 0.55em;
+  }
 }
 </style>

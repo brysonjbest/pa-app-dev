@@ -27,6 +27,7 @@
         <form>
           <InputText
             id="input-user-register-username"
+            title="username"
             :disabled="true"
             :value="user.username"
           >
@@ -34,6 +35,7 @@
 
           <InputText
             id="input-user-register-firstname"
+            title="first name"
             v-model="user.firstname"
             placeholder="Enter user's given name"
           >
@@ -41,12 +43,14 @@
 
           <InputText
             id="input-user-register-lastname"
+            title="last name"
             v-model="user.lastname"
             placeholder="Enter user's last name"
           />
 
           <InputText
             type="email"
+            title="email address"
             id="input-user-register-email"
             v-model="user.email"
             placeholder="Enter user's email"
