@@ -304,7 +304,7 @@
     <div>
       <PrimeDialog
         v-model:visible="guestDialog"
-        :style="{ width: '450px' }"
+        :style="{ width: '50rem', margin: '5rem' }"
         header="Guest Details"
         :modal="true"
         class="p-fluid"
@@ -318,7 +318,9 @@
             :options="organizations"
             optionLabel="text"
             optionValue="value"
-            placeholder="Select a Organization"
+            name="organization"
+            title="Organization"
+            placeholder="Select an Organization"
           />
           <small
             v-if="v$.organization.$error"
@@ -335,6 +337,8 @@
             id="firstname"
             v-model.trim="guest.firstname"
             required="true"
+            name="firstname"
+            title="First Name"
             autofocus
           />
           <small v-if="v$.firstname.$error" class="p-error" id="firstname-help"
@@ -348,6 +352,8 @@
             id="lastname"
             v-model.trim="guest.lastname"
             required="true"
+            name="lastname"
+            title="Last Name"
             autofocus
           />
           <small v-if="v$.lastname.$error" class="p-error" id="lastname-help"
@@ -364,6 +370,8 @@
             :options="attendancetypes"
             optionLabel="text"
             optionValue="value"
+            name="attendancetype"
+            title="Attendance Type"
             placeholder="Select the type of attendance for this guest"
           />
           <small
@@ -373,17 +381,17 @@
             >Please select the attendance type for this guest.</small
           >
         </div>
-
+        <label for="accessibility">Accessibility Requirements:</label>
         <div class="checkbox-group">
-          <label for="accessibility">Accessibility Requirements:</label>
           <div
             v-for="each of accessibility"
             :key="each.key"
+            name="accessibility"
             class="field-checkbox"
           >
             <CheckBox
               :id="each.key"
-              name="each"
+              name="accessibility"
               :value="each.value"
               v-model="guest.accessibility"
             />
@@ -391,12 +399,17 @@
           </div>
         </div>
 
+        <label for="dietary">Dietary Requirements:</label>
         <div class="checkbox-group">
-          <label for="dietary">Dietary Requirements:</label>
-          <div v-for="each of dietary" :key="each.key" class="field-checkbox">
+          <div
+            v-for="each of dietary"
+            :key="each.key"
+            class="field-checkbox"
+            name="dietary"
+          >
             <CheckBox
               :id="each.key"
-              name="each"
+              name="dietary"
               :value="each.value"
               v-model="guest.dietary"
             />
@@ -725,5 +738,10 @@ export default {
 }
 .p-datatable-wrapper {
   line-height: 1rem;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
 }
 </style>

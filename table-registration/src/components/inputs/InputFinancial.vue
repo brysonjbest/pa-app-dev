@@ -27,6 +27,7 @@
             optionLabel="text"
             optionValue="value"
             placeholder="Select an Organization"
+            title="organization"
           />
           <small
             v-if="v$.organization.$error"
@@ -37,7 +38,7 @@
         </div>
 
         <div class="form-item text-field">
-          <label for="branch">Branch:</label>
+          <label for="branch" id="branch-help">Branch:</label>
           <InputText
             v-bind:class="{ 'p-invalid': v$.branch.$error }"
             id="branch"
@@ -54,7 +55,9 @@
         <h3 class="form-header">Contact Information</h3>
         <div class="form-break"></div>
         <div class="form-item text-field">
-          <label for="primarycontact">Primary Contact:</label>
+          <label for="primarycontact" id="primarycontact-help"
+            >Primary Contact:</label
+          >
           <InputText
             v-bind:class="{ 'p-invalid': v$.primarycontact.$error }"
             id="primarycontact"
@@ -71,7 +74,9 @@
           >
         </div>
         <div class="form-item text-field">
-          <label for="primaryemail">Primary Contact Email:</label>
+          <label for="primaryemail" id="primaryemail-help"
+            >Primary Contact Email:</label
+          >
           <InputText
             v-bind:class="{ 'p-invalid': v$.primaryemail.$error }"
             id="primaryemail"
@@ -87,7 +92,9 @@
           >
         </div>
         <div class="form-item text-field">
-          <label for="financialcontact">Financial Contact:</label>
+          <label for="financialcontact" id="financialcontact-help"
+            >Financial Contact:</label
+          >
           <InputText
             v-bind:class="{ 'p-invalid': v$.financialcontact.$error }"
             id="financialcontact"

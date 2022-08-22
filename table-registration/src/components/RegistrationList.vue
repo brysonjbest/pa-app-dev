@@ -239,10 +239,10 @@
     <div>
       <PrimeDialog
         v-model:visible="registrationDialog"
-        :style="{ width: '450px' }"
+        :style="{ width: '50rem', margin: '5rem' }"
         header="Registration Details"
         :modal="true"
-        class="p-fluid"
+        class="p-fluid registration-dialog"
         @hide="() => loadLazyData()"
         ><InputFinancial
           :registrationID="registration.guid"

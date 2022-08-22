@@ -25,7 +25,7 @@
             :options="organizations"
             optionLabel="text"
             optionValue="value"
-            placeholder="Select a Organization"
+            placeholder="Select an Organization"
           />
           <small
             v-if="v$.organization.$error"
@@ -84,8 +84,8 @@
           >
         </div>
 
+        <label for="accessibility">Accessibility Requirements:</label>
         <div class="checkbox-group">
-          <label for="accessibility">Accessibility Requirements:</label>
           <div
             v-for="each of accessibility"
             :key="each.key"
@@ -101,8 +101,8 @@
           </div>
         </div>
 
+        <label for="dietary">Dietary Requirements:</label>
         <div class="checkbox-group">
-          <label for="dietary">Dietary Requirements:</label>
           <div v-for="each of dietary" :key="each.key" class="field-checkbox">
             <CheckBox
               :id="each.key"
@@ -248,6 +248,11 @@ export default {
     // align-items: center;
     flex-wrap: wrap;
     gap: 1rem;
+  }
+
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
   }
 }
 </style>
