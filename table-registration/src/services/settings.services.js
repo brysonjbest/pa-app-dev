@@ -45,10 +45,6 @@ const schemaData = {
     { value: "super-administrator", text: "Super-Administrator" },
   ],
   organizations: [
-    {
-      value: null,
-      text: "Please select an eligible Ministry or organization",
-    },
     { value: "org-1", text: "Advanced Education and Skills Training" },
     { value: "org-2", text: "Agriculture, Food and Fisheries" },
     { value: "org-3", text: "Attorney General & Housing" },
