@@ -1,0 +1,220 @@
+<template>
+  <div>
+    <ProgressSpinner v-if="loading" />
+    <PrimeMessage
+      v-else-if="message"
+      :severity="messageText.severity"
+      :closable="false"
+      >{{ messageText.text }}</PrimeMessage
+    >
+    <div v-else>
+      <DataTable
+        class="p-datatable-sm"
+        :value="guests"
+        :paginator="true"
+        responsiveLayout="scroll"
+        :rows="10"
+        ref="dt"
+        stripedRows
+        v-model:filters="filters"
+        filterDisplay="menu"
+        :globalFilterFields="['firstname', 'lastname']"
+        :loading="loading"
+        showGridlines
+        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+        :rowsPerPageOptions="[10, 20, 50]"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+      >
+        <template #header>
+          <div style="text-align: left">
+            <span class="p-input-icon-left">
+              <i class="pi pi-search" />
+              <InputText
+                title="Search Guest List."
+                v-model="filters['global'].value"
+                placeholder="Search Guest List"
+              />
+            </span>
+          </div>
+        </template>
+        <template #empty> No guests found. </template>
+        <template #loading> Loading guest data. Please wait. </template>
+
+        <PrimeColumn field="firstname" header="First Name" key="firstname">
+          <template #body="{ data }">
+            {{ data.firstname }}
+          </template></PrimeColumn
+        >
+        <PrimeColumn field="lastname" header="Last Name" key="lastname">
+          <template #body="{ data }">
+            {{ data.lastname }}
+          </template></PrimeColumn
+        >
+        <PrimeColumn field="details" header="Guest Details" key="registration">
+          <template #body="{ data }">
+            {{ lookup("attendancetypes", data.attendancetype) }}
+            <br />
+            Organization: {{ lookup("organizations", data.organization) }}
+
+            <br />
+            Registration:
+            <router-link
+              :to="`/admin/edit/${data.registration}`"
+              class="registration-link"
+              >{{ data.registration }}</router-link
+            >
+          </template></PrimeColumn
+        >
+
+        <PrimeColumn :exportable="false" style="min-width: 8rem" header="Add:">
+          <template #body="slotProps">
+            <PrimeButton
+              icon="pi pi-pencil"
+              label="Add Guest to Table"
+              class="p-button-rounded p-button-success mr-2 edit-button"
+              @click="onAdd(slotProps.data)"
+            />
+          </template>
+        </PrimeColumn>
+      </DataTable>
+    </div>
+    <div></div>
+  </div>
+</template>
+
+<script>
+import formServices from "../../services/settings.services";
+import apiRoutes from "../../services/api-routes.services";
+import { ref, onMounted } from "vue";
+import { storeToRefs } from "pinia";
+import { useGuestsStore } from "../../stores/guests";
+import { useAuthUserStore } from "../../stores/users";
+import { useFinancialStore } from "../../stores/financial";
+import { useTablesStore } from "../../stores/tables";
+
+export default {
+  props: {
+    tableID: String,
+  },
+  setup(props) {
+    const guestStore = useGuestsStore();
+    const guests = ref();
+    const columns = ref(formServices.get("guestSelection") || []);
+    const organizations = ref(formServices.get("organizations") || []);
+
+    const dt = ref();
+    const loading = ref(false);
+    let message = ref(false);
+    const messageText = ref({ severity: null, text: "" });
+    const financialStore = useFinancialStore();
+    const tableStore = useTablesStore();
+
+    //Conditionally Fill DataList
+    const fillList = async function () {
+      loading.value = true;
+      try {
+        guests.value = await (await apiRoutes.getAllGuests()).data;
+
+        // return await guestStore.fillGuests();
+      } catch (error) {
+        loading.value = false;
+        console.warn(error);
+        message.value = true;
+        messageText.value = {
+          severity: "error",
+          text: "Could not fetch guests.",
+        };
+      } finally {
+        loading.value = false;
+        setTimeout(() => (message.value = false), 1500);
+      }
+    };
+
+    const loadLazyData = () => {
+      fillList();
+    };
+
+    onMounted(() => {
+      loadLazyData();
+    });
+
+    const isSubmitted = function () {
+      return financialStore.getRegistration.submitted;
+    };
+
+    //Sorting Filters for DataList
+
+    const filters = ref(formServices.get("guestFilters") || {});
+
+    //Helper Functions
+
+    const lookup = function (key, value) {
+      return formServices.lookup(key, value);
+    };
+
+    //PrimeDialog controls
+    const guest = ref({});
+
+    const onAdd = async function (data) {
+      const guest = data;
+      const table = { _id: props.tableID };
+      const guestID = data._id;
+      try {
+        loading.value = true;
+        if (data.table != null) {
+          await guestStore.removeGuestFromTable(guestID, guest, {
+            _id: data.table,
+          });
+        }
+        await guestStore.addGuestToTable(guestID, guest, table);
+      } catch (error) {
+        loading.value = false;
+        console.warn(error);
+        message.value = true;
+        messageText.value = {
+          severity: "error",
+          text: "Guest could not be updated.",
+        };
+      } finally {
+        loading.value = false;
+        setTimeout(() => (message.value = false), 1500);
+      }
+    };
+
+    return {
+      columns,
+      dt,
+      filters,
+      loading,
+      message,
+      messageText,
+      isSubmitted,
+      organizations,
+      guests,
+      guest,
+      lookup,
+      loadLazyData,
+      onAdd,
+    };
+  },
+};
+</script>
+
+<style scoped>
+.p-datatable-sm tr td {
+  font-size: 16px;
+  padding: 0.3rem;
+}
+
+.guid {
+  line-break: anywhere;
+}
+.p-datatable-wrapper {
+  line-height: 1rem;
+}
+
+.checkbox-group {
+  display: flex;
+  flex-wrap: wrap;
+}
+</style>

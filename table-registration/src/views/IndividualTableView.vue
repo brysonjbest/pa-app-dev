@@ -3,6 +3,7 @@ import GuestList from "../components/GuestList.vue";
 import RegistrationList from "../components/RegistrationList.vue";
 import TableList from "../components/TableList.vue";
 import PageHeader from "../components/common/PageHeader.vue";
+import GuestPicker from "../components/inputs/GuestPicker.vue";
 import { useAuthUserStore } from "../stores/users";
 import { useMessageStore } from "../stores/messages";
 import { useTablesStore } from "../stores/tables";
@@ -46,6 +47,10 @@ export default {
       guestInfoDialog.value = true;
     };
 
+    const addGuest = () => {
+      addGuestDialog.value = true;
+    };
+
     return {
       userStore,
       financialStore,
@@ -57,9 +62,16 @@ export default {
       activeMessage,
       message,
       loading,
+      addGuest,
     };
   },
-  components: { GuestList, RegistrationList, PageHeader, TableList },
+  components: {
+    GuestList,
+    RegistrationList,
+    PageHeader,
+    TableList,
+    GuestPicker,
+  },
 };
 </script>
 
@@ -81,6 +93,13 @@ export default {
           @click="guestInfo()"
           badgeClass="p-badge-danger"
         />
+        <PrimeButton
+          type="button"
+          label="Add guest"
+          icon="pi pi-users"
+          class="p-button"
+          @click="addGuest()"
+        />
       </div>
       <GuestList :tableID="id" />
 
@@ -97,7 +116,8 @@ export default {
         header="Add a new Guest"
         :modal="true"
         class="p-fluid"
-      ></PrimeDialog>
+        ><GuestPicker :tableID="id"
+      /></PrimeDialog>
     </div>
   </main>
 </template>

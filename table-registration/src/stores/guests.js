@@ -46,7 +46,6 @@ export const useGuestsStore = defineStore({
     },
 
     async addRegistrationData() {
-      console.log("registrationdata add");
       const registrationData = useFinancialStore();
       this.guest.registration = await registrationData.getId;
     },
@@ -87,6 +86,15 @@ export const useGuestsStore = defineStore({
       await apiRoutes.updateGuest(id, guestData).then(() => {
         tableStore.registerTable(table._id, {
           $pull: { guests: id },
+        });
+      });
+    },
+
+    async addGuestToTable(id, guestData, table) {
+      const tableStore = useTablesStore();
+      await apiRoutes.updateGuest(id, guestData).then(() => {
+        tableStore.registerTable(table._id, {
+          $push: { guests: id },
         });
       });
     },

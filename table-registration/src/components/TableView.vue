@@ -10,24 +10,26 @@
     >
     <div v-else>
       <TableDisplay :tables="tables" />
+      <GuestPicker />
     </div>
   </div>
 </template>
 
 <script>
-import { useFinancialStore } from "../../stores/financial";
-import { useTablesStore } from "../../stores/tables";
-import { useAuthUserStore } from "../../stores/users";
-import TableIcon from "../icons/TableIcon.vue";
-import TableDisplay from "../common/TableDisplay.vue";
+import { useFinancialStore } from "../stores/financial";
+import { useTablesStore } from "../stores/tables";
+import { useAuthUserStore } from "../stores/users";
+import TableIcon from "./icons/TableIcon.vue";
+import TableDisplay from "./common/TableDisplay.vue";
 import { storeToRefs } from "pinia";
 import { ref, onMounted, computed } from "vue";
-import formServices from "../../services/settings.services";
+import formServices from "../services/settings.services";
+import GuestPicker from "./inputs/GuestPicker.vue";
 
 export default {
   setup() {
     const financialStore = useFinancialStore();
-    const { registrations } = storeToRefs(useAuthUserStore());
+    const { registrations } = storeToRefs(useFinancialStore());
 
     const registrationTables = ref({});
 
@@ -105,6 +107,7 @@ export default {
   components: {
     TableIcon,
     TableDisplay,
+    GuestPicker,
   },
 };
 </script>
