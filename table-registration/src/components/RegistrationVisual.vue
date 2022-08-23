@@ -8,10 +8,7 @@
       :closable="false"
       >{{ messageText.text }}</PrimeMessage
     >
-    <div v-else>
-      <TableDisplay :tables="tables" />
-      <GuestPicker />
-    </div>
+    <div v-else></div>
   </div>
 </template>
 
@@ -33,9 +30,6 @@ export default {
 
     const registrationTables = ref({});
 
-    const tableStore = useTablesStore();
-    const { tables } = storeToRefs(useTablesStore());
-
     const columns = ref(formServices.get("tableSelection") || []);
     const organizations = ref(
       (formServices.get("organizations") || []).map((each) => each.value)
@@ -48,19 +42,16 @@ export default {
     //Fill tables datatables with appropriate data based on props
     const fillList = async function () {
       financialStore.$reset;
-      tableStore.$reset;
       loading.value = true;
       try {
-        return await tableStore.fillTables().then(() => {
-          financialStore.fillAllRegistrations();
-        });
+        return await financialStore.fillAllRegistrations();
       } catch (error) {
         loading.value = false;
         console.warn(error);
         message.value = true;
         messageText.value = {
           severity: "error",
-          text: "Could not fetch tables and/or registrations.",
+          text: "Could not fetch registrations.",
         };
       } finally {
         loading.value = false;
@@ -69,23 +60,9 @@ export default {
     };
 
     const loadLazyData = () => {
-      fillList()
-        .then(() => {
-          tables.value.forEach((table) => {
-            table.status = computed(() => {
-              if (table.guests.length >= table.tablecapacity) {
-                return "full-table";
-              }
-              if (table.guests.length > 0) {
-                return "half-table";
-              }
-              return "empty-table";
-            });
-          });
-        })
-        .then(() => {
-          registrations.value.forEach((registration) => {});
-        });
+      fillList().then(() => {
+        registrations.value.forEach((registration) => {});
+      });
     };
 
     onMounted(() => {
@@ -95,12 +72,11 @@ export default {
     return {
       fillList,
       loadLazyData,
-      tables,
+      registrations,
       organizations,
       message,
       loading,
       messageText,
-      tableStore,
       columns,
     };
   },

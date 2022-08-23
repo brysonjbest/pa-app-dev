@@ -1,10 +1,11 @@
 <!-- Use an object array of tables to generate an icon layout -->
 <template>
-  <div>
+  <div class="table-display">
     <TableIcon
       v-for="table of tables"
       :key="table"
       :tableStatus="table.status"
+      :tableName="table.tablename"
     />
   </div>
 </template>
@@ -23,4 +24,9 @@ export default {
   },
 };
 </script>
-<style></style>
+<style lang="scss">
+.table-display {
+  display: flex;
+  flex-direction: row;
+}
+</style>

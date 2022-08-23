@@ -21,6 +21,10 @@ const navItems = [
     label: "Tables",
     to: "/admin/tables",
   },
+  {
+    label: "Event Planning",
+    to: "/admin/tables/event/planning",
+  },
 ];
 
 const tableInfoDialog = ref(false);

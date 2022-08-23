@@ -2,6 +2,7 @@
 <template>
   <div class="table-icon">
     <i :class="tableClass"></i>
+    <div class="table-name">{{ tableName }}</div>
   </div>
 </template>
 
@@ -11,6 +12,8 @@ import { computed } from "vue";
 export default {
   props: {
     tableStatus: String,
+    tableName: String,
+    tableOrg: String,
   },
   setup(props) {
     const fullIcon = "pi pi-circle-fill full-table";
