@@ -19,6 +19,14 @@ export const useTablesStore = defineStore({
     getTablesCount() {
       return this.tables.length;
     },
+    getGuestCount() {
+      return this.table.guests.length;
+    },
+    getIsFull() {
+      return this.table.guests.length >= this.table.tablecapacity
+        ? true
+        : false;
+    },
   },
   actions: {
     async fillGuestsTable(guid) {
@@ -35,6 +43,7 @@ export const useTablesStore = defineStore({
 
     async fillTable(guid) {
       this.tables = await (await tableRoutes.getTable(guid)).data;
+      this.table = this.tables[0];
     },
 
     async fillOnlyTable(guid) {

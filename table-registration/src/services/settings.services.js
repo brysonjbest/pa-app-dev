@@ -210,32 +210,29 @@ const schemaData = {
       constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
     },
     tabletype: {
-      operator: FilterOperator.AND,
-      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+      operator: FilterOperator.OR,
+      constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
     },
     tablecapacity: {
       operator: FilterOperator.AND,
-      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+      constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
     },
-    tableguestcount: {
+    guestCount: {
       operator: FilterOperator.AND,
-      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+      constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
     },
-    tablefull: {
-      operator: FilterOperator.AND,
-      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
-    },
+    tableStatus: { value: null, matchMode: FilterMatchMode.EQUALS },
     organizations: {
       operator: FilterOperator.AND,
       constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
     },
     createdAt: {
       operator: FilterOperator.AND,
-      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+      constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
     },
     updatedAt: {
       operator: FilterOperator.AND,
-      constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
+      constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
     },
   },
   userFilters: {

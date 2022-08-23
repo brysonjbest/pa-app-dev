@@ -31,7 +31,7 @@ export default {
     tableStore.fillTable(props.id);
 
     const guestCount = () => {
-      return String(financialStore.getGuestCount);
+      return String(tableStore.getGuestCount);
     };
 
     const isAdmin = () => {
@@ -61,6 +61,7 @@ export default {
     return {
       userStore,
       financialStore,
+      tableStore,
       guestCount,
       isAdmin,
       guestInfoDialog,
@@ -89,7 +90,7 @@ export default {
 
     <ProgressSpinner v-if="loading" />
     <div v-else class="page-body">
-      <TableList :tableID="id" :detailsView="true" />
+      <TableList :tableID="id" :detailsView="true" :key="keycount.count" />
 
       <div class="registration-buttons">
         <PrimeButton
@@ -102,6 +103,7 @@ export default {
           badgeClass="p-badge-danger"
         />
         <PrimeButton
+          v-if="!tableStore.getIsFull"
           type="button"
           label="Add guest"
           icon="pi pi-users"

@@ -81,17 +81,126 @@
         ></PrimeColumn>
 
         <PrimeColumn
-          v-for="col of filter(columns)"
-          :field="col.field"
-          :header="col.text"
-          :key="col.field"
+          field="tabletype"
+          header="Type of Table"
+          key="tabletype"
+          class="tabletype"
         >
+          <template #body="{ data }">
+            {{ data.tabletype }}
+          </template>
+
+          <template #filter="{ filterModel }">
+            <DropDown
+              v-model="filterModel.value"
+              :options="['Standard', 'Reserved']"
+              optionLabel="text"
+              placeholder="Any"
+              class="p-column-filter"
+              :showClear="true"
+            >
+              <template #value="slotProps">
+                <div v-if="slotProps.value">
+                  <div>{{ slotProps.value }}</div>
+                </div>
+                <span v-else>
+                  {{ slotProps.placeholder }}
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="item">
+                  <div>{{ slotProps.option }}</div>
+                </div>
+              </template>
+            </DropDown>
+          </template></PrimeColumn
+        >
+
+        <PrimeColumn
+          field="tablecapacity"
+          header="Table Capacity"
+          key="tablecapacity"
+          class="tablecapacity"
+        >
+          <template #body="{ data }">
+            {{ data.tablecapacity }}
+          </template>
+          <template #filter="{ filterModel }">
+            <InputNumber
+              v-model="filterModel.value"
+              showButtons
+              buttonLayout="horizontal"
+              :step="1"
+              decrementButtonClass="p-button-danger"
+              incrementButtonClass="p-button-success"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+            /> </template
+        ></PrimeColumn>
+
+        <PrimeColumn
+          v-if="!detailsView"
+          field="guestCount"
+          header="Number of Guests"
+          key="guestCount"
+          class="guestCount"
+        >
+          <template #body="{ data }">
+            {{ data.guestCount || 0 }}
+          </template>
+          <template #filter="{ filterModel }">
+            <InputNumber
+              v-model="filterModel.value"
+              showButtons
+              buttonLayout="horizontal"
+              :step="1"
+              decrementButtonClass="p-button-danger"
+              incrementButtonClass="p-button-success"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+            />
+          </template>
+        </PrimeColumn>
+
+        <PrimeColumn
+          field="tableStatus"
+          header="Table Status"
+          key="guests"
+          class="tableStatus"
+          datatype="boolean"
+        >
+          <template #body="{ data }"
+            ><span>
+              <i
+                class="pi"
+                :class="{
+                  'true-icon pi-plus-circle': data.tableStatus,
+                  'false-icon pi-ban': !data.tableStatus,
+                }"
+                style="font-size: 2rem"
+              ></i
+              ><br />{{ data.tableStatus ? " Space Available" : " Full" }}</span
+            >
+          </template>
+          <template #filter="{ filterModel }">
+            <TriStateCheckbox v-model="filterModel.value" /> </template
+        ></PrimeColumn>
+
+        <PrimeColumn
+          field="organizations"
+          header="Organizations Present"
+          key="organizations"
+          class="organizations"
+        >
+          <template #body="{ data }">
+            {{ data.organizations.join(", ") }}
+          </template>
           <template #filter="{ filterModel }">
             <InputText
               type="text"
               v-model="filterModel.value"
               class="p-column-filter"
-              :placeholder="`Search by ${col.field}`"
+              :placeholder="`Search by Organization`"
             /> </template
         ></PrimeColumn>
         <PrimeColumn
@@ -267,6 +376,8 @@ export default {
           table.createdAt = new Date(table.createdAt);
           table.updatedAt = new Date(table.updatedAt);
           table.guestCount = Number(table.guests.length);
+          table.tableStatus =
+            table.guests.length < table.tablecapacity ? true : false;
         });
       });
     };
@@ -302,10 +413,6 @@ export default {
         hour: "2-digit",
         minute: "2-digit",
       });
-    };
-
-    const filter = function (data) {
-      return data.filter((item) => item.field !== "organization");
     };
 
     //PrimeDialog Controls
@@ -379,7 +486,6 @@ export default {
       formatDate,
       formatTime,
       lookup,
-      filter,
       editTable,
       confirmDeleteTable,
       deleteTable,
