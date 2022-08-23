@@ -155,25 +155,35 @@ export default {
     //PrimeDialog controls
     const guest = ref({});
 
-    const onAdd = async function (data) {
-      const guest = data;
-      const table = { _id: props.tableID };
-      const guestID = data._id;
+    const onAdd = async function (guest) {
+      await tableStore.fillOnlyTable(props.tableID);
+      const { table } = storeToRefs(useTablesStore());
+      const tablevalue = table.value;
+      const tableGUID = tablevalue["_id"];
+      const guestID = guest._id;
       try {
         loading.value = true;
-        if (data.table != null) {
-          await guestStore.removeGuestFromTable(guestID, guest, {
-            _id: data.table,
-          });
+        if (guest.table != null) {
+          await guestStore.removeGuestFromTable(
+            guestID,
+            { table: null },
+            {
+              _id: guest.table,
+            }
+          );
         }
-        await guestStore.addGuestToTable(guestID, guest, table);
+        await guestStore.addGuestToTable(
+          guestID,
+          { table: tableGUID },
+          tablevalue
+        );
       } catch (error) {
         loading.value = false;
         console.warn(error);
         message.value = true;
         messageText.value = {
           severity: "error",
-          text: "Guest could not be updated.",
+          text: "Guest and table could not be updated.",
         };
       } finally {
         loading.value = false;
