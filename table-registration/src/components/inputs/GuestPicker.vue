@@ -91,6 +91,7 @@
         <PrimeColumn :exportable="false" style="min-width: 8rem" header="Add:">
           <template #body="slotProps">
             <PrimeButton
+              v-if="!tableStore.getIsFull"
               icon="pi pi-pencil"
               label="Add Guest to Table"
               class="p-button-rounded p-button-success mr-2 edit-button"
@@ -214,6 +215,7 @@ export default {
 
     return {
       columns,
+      tableStore,
       dt,
       filters,
       loading,
