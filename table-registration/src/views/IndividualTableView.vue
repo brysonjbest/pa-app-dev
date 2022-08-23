@@ -9,7 +9,7 @@ import { useMessageStore } from "../stores/messages";
 import { useTablesStore } from "../stores/tables";
 import { storeToRefs } from "pinia";
 import { useFinancialStore } from "../stores/financial";
-import { ref } from "vue";
+import { ref, reactive } from "vue";
 
 export default {
   props: {
@@ -51,6 +51,13 @@ export default {
       addGuestDialog.value = true;
     };
 
+    const keycount = reactive({
+      count: 0,
+      increment() {
+        this.count++;
+      },
+    });
+
     return {
       userStore,
       financialStore,
@@ -63,6 +70,7 @@ export default {
       message,
       loading,
       addGuest,
+      keycount,
     };
   },
   components: {
@@ -101,7 +109,7 @@ export default {
           @click="addGuest()"
         />
       </div>
-      <GuestList :tableID="id" />
+      <GuestList :tableID="id" :key="keycount.count" />
 
       <PrimeDialog
         v-model:visible="guestInfoDialog"
@@ -116,6 +124,7 @@ export default {
         header="Add a new Guest"
         :modal="true"
         class="p-fluid"
+        @hide="keycount.increment()"
         ><GuestPicker :tableID="id"
       /></PrimeDialog>
     </div>

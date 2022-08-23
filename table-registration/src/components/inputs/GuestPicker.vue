@@ -50,6 +50,28 @@
             {{ data.lastname }}
           </template></PrimeColumn
         >
+        <PrimeColumn
+          field="assignedTable"
+          header="Table"
+          key="assignedTable"
+          dataType="boolean"
+        >
+          <template #body="{ data }"
+            ><span>
+              <i
+                class="pi pi-check-circle"
+                :class="{
+                  'true-icon pi-check-circle': data.assignedTable,
+                  'false-icon pi-times-circle': !data.assignedTable,
+                }"
+                style="font-size: 2rem"
+              ></i
+              ><br />{{ data.assignedTable ? " Assigned" : " Pending" }}</span
+            >
+          </template>
+          <template #filter="{ filterModel }">
+            <TriStateCheckbox v-model="filterModel.value" /> </template
+        ></PrimeColumn>
         <PrimeColumn field="details" header="Guest Details" key="registration">
           <template #body="{ data }">
             {{ lookup("attendancetypes", data.attendancetype) }}
@@ -85,7 +107,7 @@
 <script>
 import formServices from "../../services/settings.services";
 import apiRoutes from "../../services/api-routes.services";
-import { ref, onMounted } from "vue";
+import { ref, onMounted, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../../stores/guests";
 import { useAuthUserStore } from "../../stores/users";
@@ -114,8 +136,9 @@ export default {
       loading.value = true;
       try {
         guests.value = await (await apiRoutes.getAllGuests()).data;
-
-        // return await guestStore.fillGuests();
+        guests.value.map((each) => {
+          each.assignedTable = each.table ? true : false;
+        });
       } catch (error) {
         loading.value = false;
         console.warn(error);
@@ -138,10 +161,6 @@ export default {
       loadLazyData();
     });
 
-    const isSubmitted = function () {
-      return financialStore.getRegistration.submitted;
-    };
-
     //Sorting Filters for DataList
 
     const filters = ref(formServices.get("guestFilters") || {});
@@ -155,6 +174,7 @@ export default {
     //PrimeDialog controls
     const guest = ref({});
 
+    //add new guest to table
     const onAdd = async function (guest) {
       await tableStore.fillOnlyTable(props.tableID);
       const { table } = storeToRefs(useTablesStore());
@@ -188,6 +208,7 @@ export default {
       } finally {
         loading.value = false;
         setTimeout(() => (message.value = false), 1500);
+        fillList();
       }
     };
 
@@ -198,7 +219,6 @@ export default {
       loading,
       message,
       messageText,
-      isSubmitted,
       organizations,
       guests,
       guest,

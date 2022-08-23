@@ -728,6 +728,7 @@ export default {
           text: "Could not delete guest.",
         };
       } finally {
+        deleteGuestDialog.value = false;
         await new Promise((resolve) => setTimeout(resolve, 1500)).then(() => {
           message.value = false;
           fillList();

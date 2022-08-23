@@ -197,6 +197,7 @@ const schemaData = {
       operator: FilterOperator.AND,
       constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
     },
+    assignedTable: { value: null, matchMode: FilterMatchMode.EQUALS },
   },
   tableFilters: {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
