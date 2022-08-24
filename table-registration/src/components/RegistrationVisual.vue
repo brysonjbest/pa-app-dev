@@ -8,7 +8,15 @@
       :closable="false"
       >{{ messageText.text }}</PrimeMessage
     >
-    <div v-else></div>
+    <div class="registrations-visual" v-else>
+      <div
+        class="registration-details"
+        v-for="registration of registrations"
+        :key="registration"
+      >
+        <TableIcon :table="registration" />
+      </div>
+    </div>
   </div>
 </template>
 
@@ -87,4 +95,10 @@ export default {
   },
 };
 </script>
-<style></style>
+<style lang="scss">
+.registrations-visual {
+  display: flex;
+  flex-direction: row;
+}
+</style>
+>

@@ -1,13 +1,21 @@
 <!-- Use an object array of tables to generate an icon layout -->
 <template>
   <div class="table-display">
-    <TableIcon
-      v-for="table of tables"
-      :key="table"
-      :tableStatus="table.status"
-      :tableName="table.tablename"
-      :table="table"
-    />
+    <div class="table-details" v-for="table of tables" :key="table">
+      <TableIcon :table="table" />
+      <div class="table-name">
+        <router-link :to="`/admin/table/${table.guid}`">{{
+          table.tablename
+        }}</router-link>
+      </div>
+      <div class="table-seats-taken">
+        {{ table.guests.length }} / {{ table.tablecapacity }} Seats taken
+      </div>
+      <div class="table-free-seats">
+        {{ table.tablecapacity - table.guests.length }} Seats Free
+      </div>
+      <br v-if="table.tablename === 'G1'" />
+    </div>
   </div>
 </template>
 
@@ -17,7 +25,6 @@ import TableIcon from "../icons/TableIcon.vue";
 export default {
   props: {
     tables: Array,
-    columns: Array,
   },
 
   components: {
@@ -27,8 +34,13 @@ export default {
 </script>
 <style lang="scss">
 .table-display {
-  display: flex;
-  flex-direction: row;
-  justify-content: space-around;
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+
+  .table-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 </style>

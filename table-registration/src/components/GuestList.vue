@@ -243,6 +243,35 @@
         >
         <PrimeColumn
           v-if="adminView"
+          field="assignedTable"
+          header="Table"
+          key="assignedTable"
+          dataType="boolean"
+        >
+          <template #body="{ data }"
+            ><span>
+              <i
+                class="pi pi-check-circle"
+                :class="{
+                  'true-icon pi-check-circle': data.assignedTable,
+                  'false-icon pi-times-circle': !data.assignedTable,
+                }"
+                style="font-size: 2rem"
+              ></i
+              ><br />
+              <div v-if="data.assignedTable">
+                <router-link :to="`/admin/table/${data.table}`"
+                  >Assigned</router-link
+                >
+              </div>
+              <div v-else>Pending</div></span
+            >
+          </template>
+          <template #filter="{ filterModel }">
+            <TriStateCheckbox v-model="filterModel.value" /> </template
+        ></PrimeColumn>
+        <PrimeColumn
+          v-if="adminView"
           field="createdAt"
           header="Created:"
           key="createdAt"
@@ -555,6 +584,7 @@ export default {
         guests.value.forEach((guest) => {
           guest.createdAt = new Date(guest.createdAt);
           guest.updatedAt = new Date(guest.updatedAt);
+          guest.assignedTable = guest.table ? true : false;
         });
       });
     };

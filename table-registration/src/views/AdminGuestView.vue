@@ -4,28 +4,12 @@ import { useGuestsStore } from "../stores/guests";
 import { ref } from "vue";
 import PageHeader from "../components/common/PageHeader.vue";
 import GuestList from "../components/GuestList.vue";
+import formServices from "../services/settings.services";
 import NavMenu from "../components/common/NavMenu.vue";
 const userStore = useAuthUserStore();
 const guestStore = useGuestsStore();
 
-const navItems = [
-  {
-    label: "Registrations",
-    to: "/admin",
-  },
-  {
-    label: "Guests",
-    to: "/admin/guests",
-  },
-  {
-    label: "Tables",
-    to: "/admin/tables",
-  },
-  {
-    label: "Event Planning",
-    to: "/admin/tables/event/planning",
-  },
-];
+const navItems = ref(formServices.get("navItems") || []);
 
 const guestInfoDialog = ref(false);
 const guestCountAll = () => {

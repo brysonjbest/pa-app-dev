@@ -8,29 +8,13 @@ import PageHeader from "../components/common/PageHeader.vue";
 import RegistrationList from "../components/RegistrationList.vue";
 import NavMenu from "../components/common/NavMenu.vue";
 import TableList from "../components/TableList.vue";
+import formServices from "../services/settings.services";
 import InputTable from "../components/inputs/InputTable.vue";
 const userStore = useAuthUserStore();
 const financialStore = useFinancialStore();
 const tableStore = useTablesStore();
 
-const navItems = [
-  {
-    label: "Registrations",
-    to: "/admin",
-  },
-  {
-    label: "Guests",
-    to: "/admin/guests",
-  },
-  {
-    label: "Tables",
-    to: "/admin/tables",
-  },
-  {
-    label: "Event Planning",
-    to: "/admin/tables/event/planning",
-  },
-];
+const navItems = ref(formServices.get("navItems") || []);
 
 const tableCountAll = () => {
   return String(tableStore.getTablesCount);

@@ -9,6 +9,24 @@ import { FilterMatchMode, FilterOperator } from "primevue/api";
 const schemaData = {
   year: "2022",
   defaultNumberOfTables: 72,
+  navItems: [
+    {
+      label: "Registrations",
+      to: "/admin",
+    },
+    {
+      label: "Guests",
+      to: "/admin/guests",
+    },
+    {
+      label: "Tables",
+      to: "/admin/tables",
+    },
+    {
+      label: "Event Planning",
+      to: "/admin/tables/event/planning",
+    },
+  ],
   registrationSelection: [
     { field: "organization", text: "Organization" },
     { field: "branch", text: "Branch" },

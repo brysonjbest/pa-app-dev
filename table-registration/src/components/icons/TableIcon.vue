@@ -2,7 +2,6 @@
 <template>
   <div class="table-icon">
     <i :class="tableClass"></i>
-    <div class="table-name">{{ table.tablename }}</div>
   </div>
 </template>
 
