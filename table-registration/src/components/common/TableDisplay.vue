@@ -29,5 +29,6 @@ export default {
 .table-display {
   display: flex;
   flex-direction: row;
+  justify-content: space-around;
 }
 </style>
