@@ -6,6 +6,7 @@
       :key="table"
       :tableStatus="table.status"
       :tableName="table.tablename"
+      :table="table"
     />
   </div>
 </template>
