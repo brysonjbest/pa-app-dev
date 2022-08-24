@@ -181,12 +181,12 @@ header {
   position: absolute !important;
   right: 10px;
   z-index: 9999 !important;
-  background-color: rgba(63, 81, 181, 0.92);
+  background-color: rgba(21, 162, 184, 0.92);
 }
 
 .dropdown-account:hover {
   color: #343a40 !important;
-  background-color: rgba(63, 81, 181, 0.92);
+  background-color: rgba(21, 162, 184, 0.92);
 }
 
 .p-submenu-list {
