@@ -470,7 +470,8 @@
         <div class="confirmation-content">
           <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
           <span v-if="guest"
-            >Are you sure you want to {{ !tableID ? "delete" : "remove" }}
+            >Are you sure you want to
+            {{ !tableID && !guest.table ? "delete" : "remove" }}
             <b>{{ guest.firstname }} {{ guest.lastname }}</b
             >?</span
           >
@@ -483,7 +484,7 @@
             @click="deleteGuestDialog = false"
           />
           <PrimeButton
-            v-if="!tableID"
+            v-if="!tableID && !guest.table"
             label="Yes"
             icon="pi pi-check"
             class="p-button-text"
@@ -495,7 +496,7 @@
             icon="pi pi-trash"
             label="Remove from Table"
             class="p-button-rounded p-button-warning delete-button"
-            @click="removeGuest"
+            @click="removeGuest(guest.table)"
           />
         </template>
       </PrimeDialog>
@@ -579,8 +580,8 @@ export default {
       }
     };
 
-    const loadLazyData = () => {
-      fillList().then(() => {
+    const loadLazyData = async function () {
+      await fillList().then(() => {
         guests.value.forEach((guest) => {
           guest.createdAt = new Date(guest.createdAt);
           guest.updatedAt = new Date(guest.updatedAt);
@@ -731,9 +732,9 @@ export default {
     };
 
     //removes guest from table rather than deleting
-    const removeGuest = async function () {
+    const removeGuest = async function (guestTableID) {
       loading.value = true;
-      await tableStore.fillOnlyTable(props.tableID);
+      await tableStore.fillOnlyTable(props.tableID || guestTableID);
       const { table } = storeToRefs(useTablesStore());
       const tablevalue = table.value;
       try {

@@ -24,6 +24,9 @@ export const useGuestsStore = defineStore({
     getGuestsCount() {
       return this.guests.length;
     },
+    getGuestTableStatus() {
+      return this.guest.table;
+    },
   },
   actions: {
     async fillGuestsRegistration(guid) {

@@ -16,6 +16,9 @@ import Message from "primevue/message";
 import TabMenu from "primevue/tabmenu";
 import Menubar from "primevue/menubar";
 import ProgressSpinner from "primevue/progressspinner";
+import Accordion from "primevue/accordion";
+import AccordionTab from "primevue/accordiontab";
+import Fieldset from "primevue/fieldset";
 
 //Form Component imports
 import Checkbox from "primevue/checkbox";
@@ -58,6 +61,9 @@ app.component("InputMask", InputMask);
 app.component("InputNumber", InputNumber);
 app.component("InputText", InputText);
 app.component("PickList", PickList);
+app.component("PrimeAccordion", Accordion);
+app.component("AccordionTab", AccordionTab);
+app.component("FieldSet", Fieldset);
 
 app.component("DataTable", DataTable);
 app.component("PrimeColumn", Column);

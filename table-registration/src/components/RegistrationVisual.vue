@@ -9,13 +9,219 @@
       >{{ messageText.text }}</PrimeMessage
     >
     <div class="registrations-visual" v-else>
-      <div
-        class="registration-details"
-        v-for="registration of registrations"
-        :key="registration"
+      <DataTable
+        class="p-datatable-sm"
+        :value="registrations"
+        responsiveLayout="stack"
+        :key="dataTableRender"
+        v-model:expandedRows="expandedRows"
+        @rowExpand="onRowExpand"
+        @rowCollapse="onRowCollapse"
+        :rows="10"
+        ref="dt"
+        stripedRows
+        v-model:filters="filters"
+        filterDisplay="menu"
+        :globalFilterFields="['organization', 'guid']"
+        :loading="loading"
+        showGridlines
+        paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+        :rowsPerPageOptions="[10, 20, 50]"
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
       >
-        <TableIcon :table="registration" />
-      </div>
+        <template #header>
+          <div style="text-align: left">
+            <PrimeButton
+              icon="pi pi-external-link"
+              label="Export"
+              @click="exportCSV($event)"
+            />
+            <PrimeButton
+              type="button"
+              icon="pi pi-filter-slash"
+              label="Clear"
+              class="p-button-outlined"
+              @click="clearFilters()"
+            />
+            <span class="p-input-icon-left">
+              <i class="pi pi-search" />
+              <InputText
+                title="Search all by keyword"
+                v-model="filters['global'].value"
+                placeholder="Keyword Search"
+              />
+            </span>
+          </div>
+        </template>
+        <template #empty> No registrations found. </template>
+        <template #loading> Loading registration data. Please wait. </template>
+        <PrimeColumn :expander="true" headerStyle="width: 3rem" />
+        <PrimeColumn field="guid" header="ID#" key="guid" class="guid">
+          <template #body="{ data }">
+            <router-link :to="`/admin/edit/${data.guid}`">{{
+              data.registrar
+            }}</router-link>
+          </template></PrimeColumn
+        >
+        <PrimeColumn
+          field="organization"
+          filterField="organization"
+          header="Organization"
+          key="organization"
+        >
+          <template #body="{ data }">
+            {{ lookup("organizations", data.organization) }}
+          </template>
+          <template #filter="{ filterModel }">
+            <DropDown
+              v-model="filterModel.value"
+              :options="organizations"
+              optionLabel="text"
+              placeholder="Any"
+              class="p-column-filter"
+              :showClear="true"
+            >
+              <template #value="slotProps">
+                <div v-if="slotProps.value">
+                  <div>{{ lookup("organizations", slotProps.value) }}</div>
+                </div>
+                <span v-else>
+                  {{ slotProps.placeholder }}
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="item">
+                  <div>{{ lookup("organizations", slotProps.option) }}</div>
+                </div>
+              </template>
+            </DropDown>
+          </template></PrimeColumn
+        >
+        <PrimeColumn
+          field="guestList"
+          header="Guest List:"
+          key="guestList"
+          :sortable="true"
+        >
+          <template #body="{ data }">
+            {{ data.guests.length }}
+          </template>
+          <template #filter="{ filterModel }">
+            <InputNumber
+              v-model="filterModel.value"
+              showButtons
+              buttonLayout="horizontal"
+              :step="1"
+              decrementButtonClass="p-button-danger"
+              incrementButtonClass="p-button-success"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+            />
+          </template>
+        </PrimeColumn>
+        <PrimeColumn
+          field="submitted"
+          header="Submitted?"
+          key="submitted"
+          dataType="boolean"
+        >
+          <template #body="{ data }"
+            ><span>
+              <i
+                class="pi pi-check-circle"
+                :class="{
+                  'true-icon pi-check-circle': data.submitted,
+                  'false-icon pi-times-circle': !data.submitted,
+                }"
+                style="font-size: 2rem"
+              ></i
+              ><br />{{ data.submitted ? " Submitted" : " Pending" }}</span
+            >
+          </template>
+          <template #filter="{ filterModel }">
+            <TriStateCheckbox v-model="filterModel.value" /> </template
+        ></PrimeColumn>
+        <PrimeColumn
+          field="seated"
+          header="All Guests Seated?"
+          key="seated"
+          dataType="boolean"
+        >
+          <template #body="{ data }"
+            ><span>
+              <i
+                class="pi pi-check-circle"
+                :class="{
+                  'true-icon pi-check-circle':
+                    data.status === data.guests.length,
+                  'false-icon pi-times-circle':
+                    data.status !== data.guests.length,
+                }"
+                style="font-size: 2rem"
+              ></i
+              ><br />
+              {{ data.status }} of {{ data.guests.length }} Guests Seated</span
+            >
+          </template>
+          <template #filter="{ filterModel }">
+            <TriStateCheckbox v-model="filterModel.value" /> </template
+        ></PrimeColumn>
+        <template #expansion="slotProps">
+          <div class="orders-subtable">
+            <h5>Guests for {{ slotProps.data.registrar }}</h5>
+            <DataTable
+              :value="Object.values(slotProps.data.details)"
+              responsiveLayout="scroll"
+            >
+              <PrimeColumn field="organization" header="Organization" sortable>
+                <template #body="{ data }">{{
+                  lookup("organizations", data.organization)
+                }}</template></PrimeColumn
+              >
+
+              <PrimeColumn field="name" header="Name" sortable>
+                <template #body="{ data }"
+                  >{{ data.firstname }} {{ data.lastname }}</template
+                ></PrimeColumn
+              >
+              <PrimeColumn
+                field="attendancetype"
+                header="Attendee Type"
+                sortable
+              >
+                <template #body="{ data }">{{
+                  lookup("attendancetypes", data.attendancetype)
+                }}</template>
+              </PrimeColumn>
+              <PrimeColumn
+                field="accessibility"
+                header="Accessibility Accomodations Required"
+                sortable
+              >
+                <template #body="{ data }">{{
+                  data.accessibility.length > 0 ? "Requires Accomodations" : ""
+                }}</template>
+              </PrimeColumn>
+              <PrimeColumn field="seated" header="Seated?" sortable>
+                <template #body="{ data }">{{
+                  data.table ? "Seated" : "Pending"
+                }}</template>
+              </PrimeColumn>
+              <PrimeColumn field="table" header="Edit Table">
+                <template #body="{ data }">
+                  {{ data.tabledetails ? data.tabledetails.tablename : "N/A" }}
+                  <PrimeButton
+                    icon="pi pi-pencil"
+                    :label="data.tabledetails ? 'Edit Table' : 'Add Table'"
+                    class="p-button-rounded p-button-success mr-2 edit-button"
+                    @click="editGuestTable(data)"
+                  />
+                </template>
+              </PrimeColumn>
+            </DataTable>
+          </div>
+        </template>
+      </DataTable>
     </div>
   </div>
 </template>
@@ -24,6 +230,7 @@
 import { useFinancialStore } from "../stores/financial";
 import { useTablesStore } from "../stores/tables";
 import { useAuthUserStore } from "../stores/users";
+import { useGuestsStore } from "../stores/guests";
 import TableIcon from "./icons/TableIcon.vue";
 import TableDisplay from "./common/TableDisplay.vue";
 import { storeToRefs } from "pinia";
@@ -34,9 +241,16 @@ import GuestPicker from "./inputs/GuestPicker.vue";
 export default {
   setup() {
     const financialStore = useFinancialStore();
+    const guestStore = useGuestsStore();
+    const tableStore = useTablesStore();
     const { registrations } = storeToRefs(useFinancialStore());
+    const { guests } = storeToRefs(useGuestsStore());
+    const { tables } = storeToRefs(useTablesStore());
 
     const registrationTables = ref({});
+    const dt = ref();
+    const dataTableRender = ref(0);
+    const expandedRows = ref([]);
 
     const columns = ref(formServices.get("tableSelection") || []);
     const organizations = ref(
@@ -50,9 +264,30 @@ export default {
     //Fill tables datatables with appropriate data based on props
     const fillList = async function () {
       financialStore.$reset;
+      guestStore.$reset;
       loading.value = true;
       try {
-        return await financialStore.fillAllRegistrations();
+        await guestStore.fillGuests().then(async () => {
+          return financialStore.fillAllRegistrations().then(() => {
+            registrations.value.forEach((registration) => {
+              registration.details = {};
+              registration.status = 0;
+              registration.guests.forEach((guest) => {
+                registration.details[guest] = guests.value.filter(
+                  (each) => each._id === guest
+                )[0];
+                registration.details[guest]["tabledetails"] =
+                  tables.value.filter(
+                    (each) => each._id === registration.details[guest]["table"]
+                  )[0];
+
+                registration.details[guest]["table"]
+                  ? (registration.status += 1)
+                  : null;
+              });
+            });
+          });
+        });
       } catch (error) {
         loading.value = false;
         console.warn(error);
@@ -67,25 +302,75 @@ export default {
       }
     };
 
-    const loadLazyData = () => {
-      fillList().then(() => {
-        registrations.value.forEach((registration) => {});
+    const loadLazyData = async function () {
+      await fillList();
+      /*
+      .then(() => {
+        registrations.value.forEach((registration) => {
+          registration.details = {};
+          registration.guests.forEach((guest) => {
+            registration.details[guest] = guests.value.filter(
+              (each) => each._id === guest
+            )[0];
+          });
+          console.log(registration);
+        });
       });
+      */
     };
 
     onMounted(() => {
       loadLazyData();
     });
 
+    //Helper Functions
+
+    const lookup = function (key, value) {
+      return formServices.lookup(key, value);
+    };
+
+    const exportCSV = () => {
+      dt.value.exportCSV();
+    };
+
+    //Define filters for table sorting and searching
+    const filters = ref(formServices.get("registrationFilters") || {});
+    const clearFilters = () => {
+      initFilters();
+    };
+    const initFilters = () => {
+      filters.value = formServices.get("registrationFilters") || {};
+    };
+
+    //define expanding rows
+    const onRowExpand = (event) => {
+      console.log("Row Expanded");
+    };
+    const onRowCollapse = (event) => {
+      console.log("Row Collapsed");
+    };
+
     return {
       fillList,
+      dt,
+      dataTableRender,
+      expandedRows,
+      lookup,
+      exportCSV,
+      filters,
+      clearFilters,
+      initFilters,
       loadLazyData,
       registrations,
+      guests,
+      tables,
       organizations,
       message,
       loading,
       messageText,
       columns,
+      onRowExpand,
+      onRowCollapse,
     };
   },
   components: {
@@ -99,6 +384,21 @@ export default {
 .registrations-visual {
   display: flex;
   flex-direction: row;
+  .registration-lists {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+  }
+}
+.table-display {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+
+  .table-details {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
 }
 </style>
 >

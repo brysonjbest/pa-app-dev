@@ -70,7 +70,6 @@ export default {
     const loadLazyData = () => {
       fillList().then(() => {
         tables.value.forEach((table) => {
-          console.log(table);
           table.status = computed(() => {
             if (table.guests.length >= table.tablecapacity) {
               return "full-table";
