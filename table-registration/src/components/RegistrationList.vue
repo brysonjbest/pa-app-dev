@@ -17,6 +17,7 @@
         :rows="10"
         ref="dt"
         stripedRows
+        exportFilename="Registration List"
         v-model:filters="filters"
         filterDisplay="menu"
         :globalFilterFields="[
@@ -379,6 +380,10 @@ export default {
     };
 
     const exportCSV = () => {
+      dt.value.value.map(
+        (each) =>
+          (each.organization = lookup("organizations", each.organization))
+      );
       dt.value.exportCSV();
     };
 
