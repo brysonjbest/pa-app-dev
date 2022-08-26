@@ -11,6 +11,7 @@
     <div class="registrations-visual" v-else>
       <DataTable
         class="p-datatable-sm"
+        exportFilename="Event List"
         :value="registrations"
         responsiveLayout="stack"
         :key="dataTableRender"
@@ -179,7 +180,7 @@
                 }}</template></PrimeColumn
               >
 
-              <PrimeColumn field="name" header="Name" sortable>
+              <PrimeColumn field="name" header="Name">
                 <template #body="{ data }"
                   >{{ data.firstname }} {{ data.lastname }}</template
                 ></PrimeColumn
@@ -198,26 +199,39 @@
                 header="Accessibility Accomodations Required"
                 sortable
               >
-                <template #body="{ data }">{{
-                  data.accessibility.length > 0 ? "Requires Accomodations" : ""
-                }}</template>
+                <template #body="{ data }">
+                  {{ lookupLoop("accessibilityoptions", data.accessibility) }}
+                </template>
               </PrimeColumn>
-              <PrimeColumn field="seated" header="Seated?" sortable>
-                <template #body="{ data }">{{
-                  data.table ? "Seated" : "Pending"
-                }}</template>
+              <PrimeColumn
+                field="tabledetails.tablename"
+                header="Seated?"
+                sortable
+              >
+                <template #body="{ data }">
+                  <router-link
+                    v-if="data.table"
+                    :to="`/admin/table/${data.table}`"
+                    >{{ data.tabledetails.tablename }}</router-link
+                  >
+                  <span v-else>Pending</span>
+                </template>
               </PrimeColumn>
               <PrimeColumn field="table" header="Edit Table">
                 <template #body="{ data }">
-                  {{ data.tabledetails ? data.tabledetails.tablename : "N/A" }}
-                  <PrimeButton
-                    icon="pi pi-pencil"
-                    :label="data.tabledetails ? 'Edit Table' : 'Add Table'"
-                    class="p-button-rounded p-button-success mr-2 edit-button"
-                    @click="editGuestTable(data)"
-                  />
+                  <span v-if="slotProps.data.submitted === false"
+                    >Must Submit Registration</span
+                  >
+                  <span v-else
+                    ><PrimeButton
+                      icon="pi pi-pencil"
+                      :label="data.tabledetails ? 'Edit Table' : 'Add Table'"
+                      class="p-button-rounded p-button-success mr-2 edit-button"
+                      @click="editGuestTable(data)"
+                  /></span>
                 </template>
               </PrimeColumn>
+              <PrimeDialog></PrimeDialog>
             </DataTable>
           </div>
         </template>
@@ -304,19 +318,6 @@ export default {
 
     const loadLazyData = async function () {
       await fillList();
-      /*
-      .then(() => {
-        registrations.value.forEach((registration) => {
-          registration.details = {};
-          registration.guests.forEach((guest) => {
-            registration.details[guest] = guests.value.filter(
-              (each) => each._id === guest
-            )[0];
-          });
-          console.log(registration);
-        });
-      });
-      */
     };
 
     onMounted(() => {
@@ -329,7 +330,23 @@ export default {
       return formServices.lookup(key, value);
     };
 
+    const lookupLoop = function (key, data) {
+      let list = "";
+      for (let each of data) {
+        if (list.length > 0) {
+          list += `, ${lookup(key, each)}`;
+        } else {
+          list = lookup(key, each);
+        }
+      }
+      return list;
+    };
+
     const exportCSV = () => {
+      dt.value.value.map(
+        (each) =>
+          (each.organization = lookup("organizations", each.organization))
+      );
       dt.value.exportCSV();
     };
 
@@ -356,6 +373,7 @@ export default {
       dataTableRender,
       expandedRows,
       lookup,
+      lookupLoop,
       exportCSV,
       filters,
       clearFilters,

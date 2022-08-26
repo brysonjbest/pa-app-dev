@@ -243,26 +243,27 @@
         >
         <PrimeColumn
           v-if="adminView"
-          field="assignedTable"
+          field="tabledetails.tablename"
           header="Table"
-          key="assignedTable"
+          key="tabledetails.tablename"
           dataType="boolean"
+          filterField="assignedTable"
+          sortable
         >
           <template #body="{ data }"
             ><span>
               <i
-                class="pi pi-check-circle"
                 :class="{
-                  'true-icon pi-check-circle': data.assignedTable,
-                  'false-icon pi-times-circle': !data.assignedTable,
+                  'true-icon': data.assignedTable,
+                  'false-icon pi pi-times-circle': !data.assignedTable,
                 }"
                 style="font-size: 2rem"
               ></i
               ><br />
               <div v-if="data.assignedTable">
-                <router-link :to="`/admin/table/${data.table}`"
-                  >Assigned</router-link
-                >
+                <router-link :to="`/admin/table/${data.table}`">{{
+                  data.tabledetails.tablename
+                }}</router-link>
               </div>
               <div v-else>Pending</div></span
             >
@@ -308,7 +309,7 @@
             /> </template
         ></PrimeColumn>
         <PrimeColumn
-          v-if="!isSubmitted() || adminView"
+          v-if="!isSubmitted() || adminView || tableID"
           :exportable="false"
           style="min-width: 8rem"
           header="Options:"
@@ -322,7 +323,9 @@
             />
             <PrimeButton
               icon="pi pi-trash"
-              :label="!tableID ? 'Delete' : 'Remove from Table'"
+              :label="
+                slotProps.data.table || tableID ? 'Remove from Table' : 'Delete'
+              "
               class="p-button-rounded p-button-warning delete-button"
               @click="confirmDeleteGuest(slotProps.data)"
             />
@@ -514,6 +517,7 @@ import { useGuestsStore } from "../stores/guests";
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
 import { useTablesStore } from "../stores/tables";
+import tableRoutes from "../services/api-routes.tables.js";
 
 export default {
   props: {
@@ -524,6 +528,8 @@ export default {
   setup(props) {
     const guestStore = useGuestsStore();
     const { guests } = storeToRefs(useGuestsStore());
+    const tables = ref();
+
     const columns = ref(formServices.get("guestSelection") || []);
     const organizationsFilter = ref(
       (formServices.get("organizations") || []).map((each) => each.value)
@@ -557,15 +563,31 @@ export default {
       guestStore.$reset;
       loading.value = true;
       try {
-        if (props.adminView) return await guestStore.fillGuests();
-        if (props.registrationID)
-          return await guestStore.fillGuestsRegistration(props.registrationID);
-        if (props.tableID)
-          return await guestStore.fillGuestsTable(props.tableID);
-        else
-          return (await guestStore.fillGuestsRegistration(user.guid))
-            ? guestStore.fillGuestsRegistration(user.guid)
-            : [];
+        tables.value = await (await tableRoutes.getAllTables()).data;
+        await new Promise((resolve) => setTimeout(resolve, 1))
+          .then(async () => {
+            if (props.adminView) return await guestStore.fillGuests();
+            if (props.registrationID)
+              return await guestStore.fillGuestsRegistration(
+                props.registrationID
+              );
+            if (props.tableID)
+              return await guestStore.fillGuestsTable(props.tableID);
+            else
+              return (await guestStore.fillGuestsRegistration(user.guid))
+                ? guestStore.fillGuestsRegistration(user.guid)
+                : [];
+          })
+          .then(() => {
+            guests.value.forEach((guest) => {
+              guest.createdAt = new Date(guest.createdAt);
+              guest.updatedAt = new Date(guest.updatedAt);
+              guest.assignedTable = guest.table ? true : false;
+              guest["tabledetails"] = tables.value.filter(
+                (each) => each._id === guest.table
+              )[0];
+            });
+          });
       } catch (error) {
         loading.value = false;
         console.warn(error);
@@ -581,13 +603,7 @@ export default {
     };
 
     const loadLazyData = async function () {
-      await fillList().then(() => {
-        guests.value.forEach((guest) => {
-          guest.createdAt = new Date(guest.createdAt);
-          guest.updatedAt = new Date(guest.updatedAt);
-          guest.assignedTable = guest.table ? true : false;
-        });
-      });
+      await fillList();
     };
 
     onMounted(() => {
