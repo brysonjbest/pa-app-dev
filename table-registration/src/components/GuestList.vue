@@ -11,6 +11,9 @@
       <DataTable
         class="p-datatable-sm"
         :value="guests"
+        :exportFilename="
+          registrationID ? `${registrationID} Guest List` : 'Guest List'
+        "
         responsiveLayout="stack"
         :paginator="adminView"
         :rows="10"
@@ -627,6 +630,27 @@ export default {
     //Helper Functions
 
     const exportCSV = () => {
+      dt.value.value.map((each) => {
+        const organization = {
+          organization: lookup("organizations", each.organization),
+        };
+        const dietary = {
+          dietary: lookupLoop("dietaryoptions", each.dietary),
+        };
+        const attendancetype = {
+          attendancetype: lookup("attendancetypes", each.attendancetype),
+        };
+        const accessibility = {
+          accessibility: lookupLoop("accessibilityoptions", each.accessibility),
+        };
+        each = Object.assign(
+          each,
+          organization,
+          attendancetype,
+          dietary,
+          accessibility
+        );
+      });
       dt.value.exportCSV();
     };
 
@@ -656,7 +680,7 @@ export default {
     const lookupLoop = function (key, data) {
       let list = "";
       for (let each of data) {
-        if (list.length > 0) {
+        if (list && list.length > 0) {
           list += `, ${lookup(key, each)}`;
         } else {
           list = lookup(key, each);
