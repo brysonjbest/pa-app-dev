@@ -231,7 +231,47 @@
                   /></span>
                 </template>
               </PrimeColumn>
-              <PrimeDialog></PrimeDialog>
+              <PrimeDialog
+                v-model:visible="tableDetailsDialog"
+                :style="{ width: '50rem', margin: '5rem' }"
+                header="Table Details"
+                :modal="true"
+                class="p-fluid registration-dialog"
+              >
+                <div class="dropdown">
+                  <label for="table">Table</label>
+                  <DropDown
+                    v-bind:class="{ 'p-invalid': v$.table.$error }"
+                    id="table"
+                    v-model="guest.table"
+                    :options="
+                      tables.filter(
+                        (each) => each.tablecapacity !== each.guests.length
+                      )
+                    "
+                    name="table"
+                    optionLabel="tablename"
+                    optionValue="_id"
+                    placeholder="Select the table."
+                  />
+                  <small v-if="v$.table.$error" class="p-error" id="table-help"
+                    >Please select the table.</small
+                  >
+                </div>
+                <template #footer>
+                  <PrimeButton
+                    label="Cancel"
+                    icon="pi pi-times"
+                    class="p-button-text"
+                    @click="tableDetailsDialog = false"
+                  />
+                  <PrimeButton
+                    label="Confirm Table"
+                    icon="pi pi-check"
+                    class="p-button-text"
+                    @click="editTable"
+                  /> </template
+              ></PrimeDialog>
             </DataTable>
           </div>
         </template>
@@ -251,6 +291,8 @@ import { storeToRefs } from "pinia";
 import { ref, onMounted, computed } from "vue";
 import formServices from "../services/settings.services";
 import GuestPicker from "./inputs/GuestPicker.vue";
+import useVuelidate from "@vuelidate/core";
+import { required } from "@vuelidate/validators";
 
 export default {
   setup() {
@@ -367,6 +409,81 @@ export default {
       console.log("Row Collapsed");
     };
 
+    //Working on adding 'add guest to table' popup to event-planning page.
+    //Dialog Controls
+    const tableDetailsDialog = ref(false);
+    const guest = ref({});
+
+    const editGuestTable = (prod) => {
+      console.log(prod, "this should be guest data");
+      guest.value = { ...prod };
+      tableDetailsDialog.value = true;
+    };
+
+    const hideDialog = () => {
+      tableDetailsDialog.value = false;
+    };
+
+    const { table } = storeToRefs(useTablesStore());
+
+    //Vuelidate Form Rules
+    const rules = {
+      table: { required },
+    };
+
+    const v$ = useVuelidate(rules, guest);
+
+    const editTable = async () => {
+      const isFormCorrect = await v$.value.$validate();
+      if (!isFormCorrect) return;
+
+      const tableGUID = guest.value.table;
+      const guestID = guest.value._id;
+      const tablevalue = { _id: tableGUID };
+      try {
+        loading.value = true;
+        if (guest.value.tabledetails != null) {
+          await guestStore.removeGuestFromTable(
+            guestID,
+            { table: null },
+            {
+              _id: guest.value.tabledetails._id,
+            }
+          );
+        }
+        await guestStore
+          .addGuestToTable(guestID, { table: tableGUID }, tablevalue)
+          .then(() => {
+            loading.value = false;
+            message.value = true;
+            messageText.value = {
+              severity: "success",
+              text: "Successfully updated guest and table.",
+            };
+          });
+      } catch (error) {
+        loading.value = false;
+        console.warn(error);
+        message.value = true;
+        messageText.value = {
+          severity: "error",
+          text: "Guest and table could not be updated.",
+        };
+      } finally {
+        await new Promise((resolve) => setTimeout(resolve, 1500))
+          .then(() => {
+            message.value = false;
+            tableDetailsDialog.value = false;
+            //tableStore.fillTables();
+          })
+          .then(() => {
+            loadLazyData();
+          });
+      }
+    };
+
+    //async addGuestToTable(id, guestData, table)
+
     return {
       fillList,
       dt,
@@ -389,6 +506,12 @@ export default {
       columns,
       onRowExpand,
       onRowCollapse,
+      tableDetailsDialog,
+      guest,
+      editGuestTable,
+      hideDialog,
+      v$,
+      editTable,
     };
   },
   components: {

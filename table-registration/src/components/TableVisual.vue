@@ -21,7 +21,7 @@ import { useAuthUserStore } from "../stores/users";
 import TableIcon from "./icons/TableIcon.vue";
 import TableDisplay from "./common/TableDisplay.vue";
 import { storeToRefs } from "pinia";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted, computed, onUpdated } from "vue";
 import formServices from "../services/settings.services";
 import GuestPicker from "./inputs/GuestPicker.vue";
 
