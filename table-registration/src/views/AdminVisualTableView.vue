@@ -27,6 +27,9 @@ const tableInfo = () => {
   tableInfoDialog.value = true;
 };
 
+const keyCount = ref(0);
+const keyAdd = () => keyCount.value++;
+
 userStore.login();
 </script>
 
@@ -44,8 +47,8 @@ userStore.login();
     />
     <NavMenu :title="''" :menuitems="navItems" />
 
-    <TableVisual />
+    <TableVisual :key="keyCount" />
 
-    <RegistrationVisual />
+    <RegistrationVisual v-on:addGuest="keyAdd" />
   </main>
 </template>

@@ -295,7 +295,8 @@ import useVuelidate from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
 export default {
-  setup() {
+  emits: ["addGuest"],
+  setup(props, { emit }) {
     const financialStore = useFinancialStore();
     const guestStore = useGuestsStore();
     const tableStore = useTablesStore();
@@ -475,14 +476,13 @@ export default {
             message.value = false;
             tableDetailsDialog.value = false;
             //tableStore.fillTables();
+            emit("addGuest");
           })
           .then(() => {
             loadLazyData();
           });
       }
     };
-
-    //async addGuestToTable(id, guestData, table)
 
     return {
       fillList,

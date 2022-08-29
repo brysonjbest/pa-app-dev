@@ -9,7 +9,7 @@
       >{{ messageText.text }}</PrimeMessage
     >
     <div v-else>
-      <TableDisplay :tables="tables" />
+      <TableDisplay :tables="tables" :key="key" />
     </div>
   </div>
 </template>
@@ -26,6 +26,9 @@ import formServices from "../services/settings.services";
 import GuestPicker from "./inputs/GuestPicker.vue";
 
 export default {
+  props: {
+    key: Number,
+  },
   setup() {
     const financialStore = useFinancialStore();
     const { registrations } = storeToRefs(useFinancialStore());
