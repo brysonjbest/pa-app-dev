@@ -16,6 +16,7 @@ export default {
   setup(props) {
     const messageStore = useMessageStore();
     const { message } = storeToRefs(useMessageStore());
+    const { registration } = storeToRefs(useFinancialStore());
     const activeMessage = ref(false);
     const loading = ref(false);
     const userStore = useAuthUserStore();
@@ -110,6 +111,7 @@ export default {
     return {
       userStore,
       financialStore,
+      registration,
       tableCount,
       guestCount,
       getRegistrar,
@@ -136,7 +138,9 @@ export default {
 
 <template>
   <main class="personal-registration">
-    <PageHeader class="pageheader" :footer="`Registration # ${id} `"
+    <PageHeader
+      class="pageheader"
+      :footer="`Registration # ${registration._id} `"
       ><span v-if="isSubmitted()">Submitted {{ dateSubmitted() }} by</span>
       <span v-else>In-progress registration for</span>
       {{ getRegistrar() }}</PageHeader

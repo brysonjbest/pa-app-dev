@@ -258,20 +258,19 @@
       >
         <div class="confirmation-content">
           <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-          <span v-if="guests.some((each) => each.tabledetails !== undefined)"
-            ><b
+          <p v-if="guests.some((each) => each.tabledetails !== undefined)">
+            <b
               >All guests must be unseated before this registration may be
               deleted.<br />Please remove all guests from their tables.</b
-            ></span
-          >
-          <span v-else-if="registration"
-            >Are you sure you want to delete registration #
-            <b>{{ registration.guid }}</b> for contact
-            {{ registration.primarycontact }}?<br />
+            >
+          </p>
+          <p v-else-if="registration">
+            Are you sure you want to delete {{ registration.primarycontact }}'s
+            registration?<br />
             This will delete all associated guests.<br /><b
               >This action cannot be undone.</b
-            ></span
-          >
+            >
+          </p>
         </div>
         <template #footer>
           <div v-if="guests.some((each) => each.tabledetails !== undefined)">
