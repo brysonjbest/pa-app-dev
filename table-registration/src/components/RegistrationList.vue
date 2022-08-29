@@ -227,7 +227,7 @@
               @click="editRegistration(slotProps.data)"
             />
             <PrimeButton
-              v-if="!slotProps.data.submitted"
+              v-if="!slotProps.data.submitted && !adminView"
               icon="pi pi-trash"
               label="Delete"
               class="p-button-rounded p-button-warning delete-button"
@@ -258,7 +258,13 @@
       >
         <div class="confirmation-content">
           <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-          <span v-if="registration"
+          <span v-if="guests.some((each) => each.tabledetails !== undefined)"
+            ><b
+              >All guests must be unseated before this registration may be
+              deleted.<br />Please remove all guests from their tables.</b
+            ></span
+          >
+          <span v-else-if="registration"
             >Are you sure you want to delete registration #
             <b>{{ registration.guid }}</b> for contact
             {{ registration.primarycontact }}?<br />
@@ -268,18 +274,28 @@
           >
         </div>
         <template #footer>
-          <PrimeButton
-            label="No"
-            icon="pi pi-times"
-            class="p-button-text"
-            @click="deleteRegistrationDialog = false"
-          />
-          <PrimeButton
-            label="Yes"
-            icon="pi pi-check"
-            class="p-button-text"
-            @click="deleteRegistration"
-          />
+          <div v-if="guests.some((each) => each.tabledetails !== undefined)">
+            <PrimeButton
+              label="Okay"
+              icon="pi pi-check"
+              class="p-button-text"
+              @click="deleteRegistrationDialog = false"
+            />
+          </div>
+          <div v-else>
+            <PrimeButton
+              label="No"
+              icon="pi pi-times"
+              class="p-button-text"
+              @click="deleteRegistrationDialog = false"
+            />
+            <PrimeButton
+              label="Yes"
+              icon="pi pi-check"
+              class="p-button-text"
+              @click="deleteRegistration"
+            />
+          </div>
         </template>
       </PrimeDialog>
     </div>
@@ -293,6 +309,7 @@ import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
+import { useGuestsStore } from "../stores/guests";
 import router from "../router";
 
 export default {
@@ -304,6 +321,7 @@ export default {
   setup(props) {
     const financialStore = useFinancialStore();
     const { registrations } = storeToRefs(useFinancialStore());
+    const { guests } = storeToRefs(useGuestsStore());
     const columns = ref(formServices.get("registrationSelection") || []);
     const organizations = ref(
       (formServices.get("organizations") || []).map((each) => each.value)
@@ -479,6 +497,7 @@ export default {
       columns,
       organizations,
       registrations,
+      guests,
       registration,
       isSubmitted,
       submitted,
