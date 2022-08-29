@@ -171,6 +171,7 @@ exports.generateTableSetup = async (req, res, next) => {
       await TableCounterModel.findByIdAndRemove({ _id: "tablename" });
     }
     await TableModel.deleteMany({});
+    await GuestModel.updateMany({}, { table: null });
     await TableCounterModel.create({ _id: "tablename", seq: 0, alpha: [] });
 
     const guestCount = await GuestModel.countDocuments({});
@@ -197,7 +198,9 @@ exports.generateTableSetup = async (req, res, next) => {
       );
     }
 
-    res.status(200);
+    const finalTables = await TableModel.find();
+
+    res.status(200).json(finalTables);
   } catch (err) {
     return next(err);
   }

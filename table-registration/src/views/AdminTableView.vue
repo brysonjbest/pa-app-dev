@@ -2,6 +2,7 @@
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
 import { useTablesStore } from "../stores/tables";
+import { useMessageStore } from "../stores/messages";
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import PageHeader from "../components/common/PageHeader.vue";
@@ -10,9 +11,14 @@ import NavMenu from "../components/common/NavMenu.vue";
 import TableList from "../components/TableList.vue";
 import formServices from "../services/settings.services";
 import InputTable from "../components/inputs/InputTable.vue";
+
 const userStore = useAuthUserStore();
 const financialStore = useFinancialStore();
 const tableStore = useTablesStore();
+const messageStore = useMessageStore();
+
+const { message } = storeToRefs(useMessageStore());
+const activeMessage = ref(false);
 
 const navItems = ref(formServices.get("navItems") || []);
 
@@ -31,8 +37,34 @@ const createTable = (data) => {
 const { table, tables } = storeToRefs(useTablesStore());
 const tableColumns = ["guid", "tablename", "tablecapacity"];
 
-const generateDefaultTables = () => {
-  return tableStore.generateNewEventTables();
+const keyCount = ref(0);
+const keyAdd = () => keyCount.value++;
+
+const generateDefaultTables = async () => {
+  try {
+    activeMessage.value = true;
+    messageStore.setMessage({
+      text: "Generating required tables...",
+      type: "info",
+      spinner: true,
+    });
+    // handle data submission
+    await tableStore.generateNewEventTables().then(() => {
+      messageStore.setMessage({
+        text: "Successfully generated tables!",
+        type: "success",
+      });
+    });
+  } catch (error) {
+    console.error(error);
+    activeMessage.value = true;
+    messageStore.setMessage({
+      text: "Tables could not be generated.",
+      type: "error",
+    });
+  } finally {
+    keyAdd();
+  }
 };
 
 //PrimeDialog controls
@@ -55,6 +87,18 @@ userStore.login();
 <template>
   <main>
     <PageHeader title="All Tables" subtitle="Manage PA Tables" />
+    <PrimeMessage
+      show
+      v-if="activeMessage"
+      :variant="message.type"
+      :life="5000"
+      :sticky="false"
+    >
+      <p>
+        {{ message.text }}
+      </p>
+    </PrimeMessage>
+
     <PrimeButton
       label="Table Count: "
       type="button"
@@ -108,6 +152,6 @@ userStore.login();
       {{ tableCountAll() }}
     </PrimeDialog>
     <NavMenu :title="''" :menuitems="navItems" />
-    <TableList :data="tables" :columns="tableColumns" />
+    <TableList :data="tables" :columns="tableColumns" :key="keyCount" />
   </main>
 </template>
