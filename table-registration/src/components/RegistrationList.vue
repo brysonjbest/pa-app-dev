@@ -258,14 +258,13 @@
       >
         <div class="confirmation-content">
           <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-          <span v-if="registration"
-            >Are you sure you want to delete registration #
-            <b>{{ registration.guid }}</b> for contact
-            {{ registration.primarycontact }}?<br />
+          <p v-if="registration">
+            Are you sure you want to delete {{ registration.primarycontact }}'s
+            registration?<br />
             This will delete all associated guests.<br /><b
               >This action cannot be undone.</b
-            ></span
-          >
+            >
+          </p>
         </div>
         <template #footer>
           <PrimeButton
