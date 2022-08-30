@@ -26,8 +26,31 @@ const tableCountAll = () => {
   return String(tableStore.getTablesCount);
 };
 
-const fillTables = () => {
-  return tableStore.fillTables();
+const fillTables = async () => {
+  try {
+    activeMessage.value = true;
+    messageStore.setMessage({
+      text: "Algorithmically filling tables...",
+      type: "info",
+      spinner: true,
+    });
+    // handle data submission
+    await tableStore.fillEventTables().then(() => {
+      messageStore.setMessage({
+        text: "Successfully filled tables!",
+        type: "success",
+      });
+    });
+  } catch (error) {
+    console.error(error);
+    activeMessage.value = true;
+    messageStore.setMessage({
+      text: "Tables could not be filled automatically.",
+      type: "error",
+    });
+  } finally {
+    keyAdd();
+  }
 };
 
 const createTable = (data) => {

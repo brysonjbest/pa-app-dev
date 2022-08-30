@@ -1,7 +1,9 @@
-import { defineStore } from "pinia";
+import { defineStore, storeToRefs } from "pinia";
+import { ref } from "vue";
 import tableRoutes from "../services/api-routes.tables.js";
 import { useFinancialStore } from "./financial";
 import { useGuestsStore } from "./guests";
+import formServices from "../services/settings.services";
 
 export const useTablesStore = defineStore({
   id: "tablesStore",
@@ -56,6 +58,76 @@ export const useTablesStore = defineStore({
       await tableRoutes.createDefaultArrangment();
     },
 
+    //Fully generates a seating plan based on organization and attendee role.
+    // Attempts to combine as many individuals to tables as possible.
+
+    async fillEventTables() {
+      await useFinancialStore().fillAllRegistrations();
+      await useGuestsStore().fillGuests();
+      const { registrations } = storeToRefs(useFinancialStore());
+      const { guests } = storeToRefs(useGuestsStore());
+      const tableList = {};
+
+      const roles = ref(
+        (formServices.get("attendancetypes") || []).map((each) => each.value)
+      );
+
+      registrations.value.sort((a, b) =>
+        a.organization > b.organization
+          ? 1
+          : b.organization > a.organization
+          ? -1
+          : 0
+      );
+
+      this.tables.map((table) => (table.full = false));
+
+      registrations.value.forEach((registration) => {
+        registration.details = [];
+        registration.guests.forEach((guest) => {
+          registration.details.push(
+            guests.value.filter((each) => each._id === guest)[0]
+          );
+        });
+        registration.details.map(
+          (guest) =>
+            (guest["order"] = roles.value.findIndex(
+              (each) => each === guest["attendancetype"]
+            ))
+        );
+
+        registration.details.sort((a, b) =>
+          a.order > b.order ? 1 : b.order > a.order ? -1 : 0
+        );
+        registration.details.forEach((guest) => {
+          this.tables.forEach((table) => {
+            if (table.full !== true) {
+              tableList[table._id] = tableList[table._id] || [];
+              if (!guest.seated) {
+                tableList[table._id].push(guest._id);
+                table.guests.push(guest);
+                guest.seated = true;
+
+                if (table.tablecapacity - table.guests.length === 0) {
+                  table.full = true;
+                }
+              }
+            }
+          });
+        });
+      });
+
+      this.tables.forEach(async (table) => {
+        table.guests.forEach(async (guest) => {
+          await useGuestsStore().addGuestToTable(
+            guest._id,
+            { table: table },
+            table
+          );
+        });
+      });
+    },
+
     async addTable() {
       const {
         tablename = "",
@@ -76,10 +148,8 @@ export const useTablesStore = defineStore({
 
     async registerTable(guid, tableData) {
       const id = guid || this.table._id;
-      console.log("this is guid", guid, "and this is tabledata", tableData);
       const newTable = await tableRoutes.updateTable(id, tableData);
       this.table = newTable.data;
-      console.log(newTable.data, "this is new table");
       return this.table;
     },
 
