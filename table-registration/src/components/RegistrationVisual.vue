@@ -1,7 +1,7 @@
 <!-- Guest Selector for Tables -->
 <template>
   <div>
-    <ProgressSpinner v-if="loading" />
+    <ProgressSpinner v-if="loading || multiloading" />
     <PrimeMessage
       v-else-if="message"
       :severity="messageText.severity"
@@ -167,6 +167,16 @@
           <template #filter="{ filterModel }">
             <TriStateCheckbox v-model="filterModel.value" /> </template
         ></PrimeColumn>
+        <PrimeColumn>
+          <template #body="{ data }">
+            <PrimeButton
+              icon="pi pi-pencil"
+              label="Bulk Seat Registration"
+              class="p-button-rounded p-button-success mr-2 edit-button"
+              @click="editRegistrationTable(data)"
+            />
+          </template>
+        </PrimeColumn>
         <template #expansion="slotProps">
           <div class="orders-subtable">
             <h5>Guests for {{ slotProps.data.registrar }}</h5>
@@ -246,7 +256,7 @@
                     v-model="guest.table"
                     :options="
                       tables.filter(
-                        (each) => each.tablecapacity !== each.guests.length
+                        (each) => each.tablecapacity > each.guests.length
                       )
                     "
                     name="table"
@@ -287,11 +297,9 @@
             <DropDown
               v-bind:class="{ 'p-invalid': v$.table.$error }"
               id="table"
-              v-model="guest.table"
+              v-model="registration.table"
               :options="
-                tables.filter(
-                  (each) => each.tablecapacity !== each.guests.length
-                )
+                tables.filter((each) => each.tablecapacity > each.guests.length)
               "
               name="table"
               optionLabel="tablename"
@@ -307,13 +315,13 @@
               label="Cancel"
               icon="pi pi-times"
               class="p-button-text"
-              @click="tableDetailsDialog = false"
+              @click="multiTableDialog = false"
             />
             <PrimeButton
               label="Confirm Table"
               icon="pi pi-check"
               class="p-button-text"
-              @click="editTable"
+              @click="multiSeat(registration.table)"
             /> </template
         ></PrimeDialog>
       </DataTable>
@@ -358,6 +366,7 @@ export default {
     let message = ref(false);
     const messageText = ref({ severity: null, text: "" });
     const loading = ref(false);
+    const multiloading = ref(false);
 
     //Fill tables datatables with appropriate data based on props
     const fillList = async function () {
@@ -454,16 +463,24 @@ export default {
     //Working on adding 'add guest to table' popup to event-planning page.
     //Dialog Controls
     const tableDetailsDialog = ref(false);
+    const multiTableDialog = ref(false);
     const guest = ref({});
+    const registration = ref({});
 
     const editGuestTable = (prod) => {
-      console.log(prod, "this should be guest data");
       guest.value = { ...prod };
       tableDetailsDialog.value = true;
     };
 
+    const editRegistrationTable = (prod) => {
+      registration.value = { ...prod };
+      // console.log(registration.value);
+      multiTableDialog.value = true;
+    };
+
     const hideDialog = () => {
       tableDetailsDialog.value = false;
+      multiTableDialog.value = false;
     };
 
     const { table } = storeToRefs(useTablesStore());
@@ -482,7 +499,7 @@ export default {
       const tableGUID = guest.value.table;
       const guestID = guest.value._id;
       const tablevalue = { _id: tableGUID };
-      console.log(guest.value, "this is guest value");
+      // console.log(guest.value, "this is guest value");
       try {
         loading.value = true;
         if (guest.value.tabledetails != null) {
@@ -530,6 +547,52 @@ export default {
       }
     };
 
+    const multiSeat = async (data) => {
+      const finalRegistration = registration.value.details;
+      const guests = Object.keys(finalRegistration);
+      const tablesList = tables.value.filter((each) => each["_id"] === data)[0];
+      const tableCapacity =
+        tablesList["tablecapacity"] - tablesList["guests"].length;
+
+      try {
+        multiloading.value = true;
+        let guestCount = 0;
+        for (let each of guests) {
+          if (guestCount < tableCapacity) {
+            guest.value = finalRegistration[each];
+            guest.value["table"] = data;
+            await editTable();
+            guestCount++;
+          }
+        }
+        multiloading.value = false;
+
+        message.value = true;
+        messageText.value = {
+          severity: "success",
+          text: "Successfully updated guests and table.",
+        };
+      } catch (error) {
+        multiloading.value = false;
+        console.warn(error);
+        message.value = true;
+        messageText.value = {
+          severity: "error",
+          text: "Bulk guests and table could not be updated.",
+        };
+      } finally {
+        await new Promise((resolve) => setTimeout(resolve, 1500))
+          .then(() => {
+            message.value = false;
+            multiTableDialog.value = false;
+            emit("addGuest");
+          })
+          .then(() => {
+            loadLazyData();
+          });
+      }
+    };
+
     return {
       fillList,
       dt,
@@ -558,6 +621,11 @@ export default {
       hideDialog,
       v$,
       editTable,
+      multiTableDialog,
+      editRegistrationTable,
+      registration,
+      multiSeat,
+      multiloading,
     };
   },
   components: {

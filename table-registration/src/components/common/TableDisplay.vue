@@ -14,7 +14,6 @@
       <div class="table-free-seats">
         {{ table.tablecapacity - table.guests.length }} Seats Free
       </div>
-      <br v-if="table.tablename === 'G1'" />
     </div>
   </div>
 </template>

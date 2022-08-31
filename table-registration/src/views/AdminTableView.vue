@@ -58,7 +58,6 @@ const createTable = (data) => {
 };
 
 const { table, tables } = storeToRefs(useTablesStore());
-const tableColumns = ["guid", "tablename", "tablecapacity"];
 
 const keyCount = ref(0);
 const keyAdd = () => keyCount.value++;
@@ -162,7 +161,7 @@ userStore.login();
       header="Add New Table"
       :modal="true"
       class="p-fluid"
-      @hide="fillTables()"
+      @hide="keyAdd()"
       ><InputTable :adminView="true" />
     </PrimeDialog>
 
@@ -175,6 +174,6 @@ userStore.login();
       {{ tableCountAll() }}
     </PrimeDialog>
     <NavMenu :title="''" :menuitems="navItems" />
-    <TableList :data="tables" :columns="tableColumns" :key="keyCount" />
+    <TableList :data="tables" :key="keyCount" />
   </main>
 </template>

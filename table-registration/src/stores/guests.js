@@ -85,7 +85,6 @@ export const useGuestsStore = defineStore({
     },
 
     async removeGuestFromTable(id, guestData, table) {
-      console.log(guestData, "this is guestData on remove");
       const tableStore = useTablesStore();
       await apiRoutes.updateGuest(id, guestData).then(() => {
         tableStore.registerTable(table._id, {
@@ -101,8 +100,6 @@ export const useGuestsStore = defineStore({
     },
 
     async addGuestToTable(id, guestData, table) {
-      console.log(guestData, "this is guestData on add");
-
       const tableStore = useTablesStore();
       await apiRoutes.updateGuest(id, guestData).then(() => {
         tableStore.registerTable(table._id, {

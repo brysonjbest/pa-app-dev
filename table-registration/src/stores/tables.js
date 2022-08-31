@@ -114,7 +114,8 @@ export const useTablesStore = defineStore({
               (table.guests.length >= 5 &&
                 (guest["attendancetype"] === "deputyminister" ||
                   guest["attendancetype"] === "minister")) ||
-              (orgCount >= 2 && !orgMap.includes(guest.organization))
+              (orgCount >= 2 && !orgMap.includes(guest.organization)) ||
+              table.tabletype === "Reserved"
             ) {
               table.full = true;
             }
