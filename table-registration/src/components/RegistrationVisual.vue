@@ -275,6 +275,47 @@
             </DataTable>
           </div>
         </template>
+        <PrimeDialog
+          v-model:visible="multiTableDialog"
+          :style="{ width: '50rem', margin: '5rem' }"
+          header="Table Details"
+          :modal="true"
+          class="p-fluid registration-dialog"
+        >
+          <div class="dropdown">
+            <label for="table">Table</label>
+            <DropDown
+              v-bind:class="{ 'p-invalid': v$.table.$error }"
+              id="table"
+              v-model="guest.table"
+              :options="
+                tables.filter(
+                  (each) => each.tablecapacity !== each.guests.length
+                )
+              "
+              name="table"
+              optionLabel="tablename"
+              optionValue="_id"
+              placeholder="Select the table."
+            />
+            <small v-if="v$.table.$error" class="p-error" id="table-help"
+              >Please select the table.</small
+            >
+          </div>
+          <template #footer>
+            <PrimeButton
+              label="Cancel"
+              icon="pi pi-times"
+              class="p-button-text"
+              @click="tableDetailsDialog = false"
+            />
+            <PrimeButton
+              label="Confirm Table"
+              icon="pi pi-check"
+              class="p-button-text"
+              @click="editTable"
+            /> </template
+        ></PrimeDialog>
       </DataTable>
     </div>
   </div>
@@ -441,19 +482,24 @@ export default {
       const tableGUID = guest.value.table;
       const guestID = guest.value._id;
       const tablevalue = { _id: tableGUID };
+      console.log(guest.value, "this is guest value");
       try {
         loading.value = true;
         if (guest.value.tabledetails != null) {
           await guestStore.removeGuestFromTable(
             guestID,
-            { table: null },
+            { table: null, organization: guest.value.organization },
             {
               _id: guest.value.tabledetails._id,
             }
           );
         }
         await guestStore
-          .addGuestToTable(guestID, { table: tableGUID }, tablevalue)
+          .addGuestToTable(
+            guestID,
+            { table: tableGUID, organization: guest.value.organization },
+            tablevalue
+          )
           .then(() => {
             loading.value = false;
             message.value = true;

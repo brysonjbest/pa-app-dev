@@ -85,19 +85,35 @@ export const useGuestsStore = defineStore({
     },
 
     async removeGuestFromTable(id, guestData, table) {
+      console.log(guestData, "this is guestData on remove");
       const tableStore = useTablesStore();
       await apiRoutes.updateGuest(id, guestData).then(() => {
         tableStore.registerTable(table._id, {
-          $pull: { guests: id },
+          $pull: {
+            guests: id,
+            organizations: {
+              organization: guestData.organization,
+              guestID: id,
+            },
+          },
         });
       });
     },
 
     async addGuestToTable(id, guestData, table) {
+      console.log(guestData, "this is guestData on add");
+
       const tableStore = useTablesStore();
       await apiRoutes.updateGuest(id, guestData).then(() => {
         tableStore.registerTable(table._id, {
-          $push: { guests: id },
+          $push: {
+            guests: id,
+            organizations: {
+              organization: guestData.organization,
+              guestID: id,
+            },
+          },
+          // $push: { organizations: guestData.organization },
         });
       });
     },

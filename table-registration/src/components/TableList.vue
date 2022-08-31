@@ -193,7 +193,16 @@
           class="organizations"
         >
           <template #body="{ data }">
-            {{ data.organizations.join(", ") }}
+            {{
+              [
+                ...new Set(
+                  data.organizations.map(
+                    (each) =>
+                      (each = lookup("organizations", each.organization))
+                  )
+                ),
+              ].join("\r\n")
+            }}
           </template>
           <template #filter="{ filterModel }">
             <InputText
@@ -500,6 +509,8 @@ export default {
 
 <style lang="scss">
 .p-datatable {
+  white-space: pre;
+
   .p-button {
     margin-left: 1em;
     margin-right: 1em;

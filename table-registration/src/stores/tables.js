@@ -66,11 +66,13 @@ export const useTablesStore = defineStore({
       await useGuestsStore().fillGuests();
       const { registrations } = storeToRefs(useFinancialStore());
       const { guests } = storeToRefs(useGuestsStore());
-      const tableList = {};
+      //const tableList = {};
 
       const roles = ref(
         (formServices.get("attendancetypes") || []).map((each) => each.value)
       );
+
+      //sort registrations alphabetically by organization
 
       registrations.value.sort((a, b) =>
         a.organization > b.organization
@@ -83,6 +85,7 @@ export const useTablesStore = defineStore({
       this.tables.map((table) => (table.full = false));
 
       registrations.value.forEach((registration) => {
+        if (!registration.submitted) return;
         registration.details = [];
         registration.guests.forEach((guest) => {
           registration.details.push(
@@ -101,11 +104,29 @@ export const useTablesStore = defineStore({
         );
         registration.details.forEach((guest) => {
           this.tables.forEach((table) => {
+            const orgMap = table.organizations.map(
+              (each) => (each = each.organization)
+            );
+            const orgCount = [...new Set(orgMap)].length;
+
+            //checks to verify if a ministry already exists on this table from a guest, and if so, does it match, and if not, if the space remaining is less than 5, the table is full
+            if (
+              (table.guests.length >= 5 &&
+                (guest["attendancetype"] === "deputyminister" ||
+                  guest["attendancetype"] === "minister")) ||
+              (orgCount >= 2 && !orgMap.includes(guest.organization))
+            ) {
+              table.full = true;
+            }
             if (table.full !== true) {
-              tableList[table._id] = tableList[table._id] || [];
+              //tableList[table._id] = tableList[table._id] || [];
               if (!guest.seated) {
-                tableList[table._id].push(guest._id);
+                //tableList[table._id].push(guest._id);
                 table.guests.push(guest);
+                table.organizations.push({
+                  organization: guest.organization,
+                  guestID: guest._id,
+                });
                 guest.seated = true;
 
                 if (table.tablecapacity - table.guests.length === 0) {
@@ -119,11 +140,13 @@ export const useTablesStore = defineStore({
 
       this.tables.forEach(async (table) => {
         table.guests.forEach(async (guest) => {
-          await useGuestsStore().addGuestToTable(
-            guest._id,
-            { table: table },
-            table
-          );
+          await useGuestsStore()
+            .addGuestToTable(guest._id, { table: table }, table)
+            .then(async () => {
+              this.updateTable(table._id, {
+                organizations: table.organizations,
+              });
+            });
         });
       });
     },

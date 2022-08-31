@@ -43,7 +43,7 @@ const TableSchema = new Schema(
       type: String,
       required: true,
     },
-    organizations: [{ type: String }],
+    organizations: [{ type: Object }],
   },
   { timestamps: true }
 );
