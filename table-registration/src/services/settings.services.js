@@ -71,7 +71,8 @@ const schemaData = {
   attendancetypes: [
     { value: "minister", text: "Minister" },
     { value: "deputyminister", text: "Deputy Minister" },
-    { value: "associateminister", text: "Associate/Assistant Deputy Minister" },
+    { value: "assistantminister", text: "Assistant Deputy Minister" },
+    { value: "associateminister", text: "Associate Deputy Minister" },
     { value: "finalist", text: "Finalist" },
     { value: "finalistguest", text: "Finalist Guest" },
     { value: "generalattendee", text: "General Attendee" },
