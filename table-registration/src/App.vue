@@ -19,6 +19,7 @@ export default {
       {
         label: "About",
         url: "https://premiersawards.gww.gov.bc.ca/",
+        class: "about-option",
       },
       {
         label: () => userStore.getUser.username || "Account",
@@ -76,9 +77,11 @@ export default {
     <div>
       <MenuBar id="navbar" :model="siteNav">
         <template #start>
-          <router-link to="/" id="page-title"
-            >Premier's Awards Event Registration
-          </router-link>
+          <div id="titlenav">
+            <router-link to="/" id="page-title"
+              >Premier's Awards Event Registration
+            </router-link>
+          </div>
         </template>
       </MenuBar>
     </div>
@@ -147,6 +150,10 @@ header {
   font-size: 1.3em;
   z-index: 9999 !important;
 }
+/* 
+#titlenav{
+fon
+} */
 
 #navbar .p-menuitem-text {
   color: white !important;
@@ -170,7 +177,7 @@ header {
   padding-top: 0.3125rem;
   padding-bottom: 0.3125rem;
   margin-right: 1rem;
-  font-size: 2rem;
+  font-size: 2vmax;
   line-height: inherit;
   white-space: nowrap;
   text-decoration: none;
@@ -197,5 +204,18 @@ header {
 .dropdown-account-item .p-menuitem-text {
   color: #343a40 !important;
   z-index: 9999 !important;
+}
+
+@media only screen and (max-width: 960px) {
+  .about-option {
+    display: none;
+  }
+  .p-menubar-button {
+    position: absolute;
+    right: 1vw;
+  }
+  .p-menubar-button i {
+    color: white;
+  }
 }
 </style>
