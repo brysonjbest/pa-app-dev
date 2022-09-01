@@ -119,8 +119,6 @@
             v-bind:class="{ 'p-invalid': v$.clientministry.$error }"
             id="clientministry"
             v-model="registration.clientministry"
-            :min="100"
-            :max="999"
             aria-placeholder="3 digit number"
             placeholder="3 digit number"
             :useGrouping="false"
@@ -153,8 +151,6 @@
             v-bind:class="{ 'p-invalid': v$.serviceline.$error }"
             id="serviceline"
             v-model="registration.serviceline"
-            :min="10000"
-            :max="99999"
             aria-placeholder="5 digit number"
             placeholder="5 digit number"
             :useGrouping="false"
@@ -172,8 +168,6 @@
             v-bind:class="{ 'p-invalid': v$.stob.$error }"
             id="stob"
             v-model="registration.stob"
-            :min="1000"
-            :max="9999"
             aria-placeholder="4 digit number"
             placeholder="4 digit number"
             :useGrouping="false"
@@ -224,6 +218,8 @@ import {
   minLength,
   maxLength,
   numeric,
+  minValue,
+  maxValue,
 } from "@vuelidate/validators";
 import { storeToRefs } from "pinia";
 import { useFinancialStore } from "../../stores/financial";
@@ -252,8 +248,8 @@ export default {
       clientministry: {
         required,
         numeric,
-        minLengthValue: minLength(3),
-        maxLengthValue: maxLength(3),
+        minValueValue: minValue(100),
+        maxValueValue: maxValue(999),
       },
       respcode: {
         required,
@@ -264,14 +260,14 @@ export default {
       serviceline: {
         required,
         numeric,
-        minLengthValue: minLength(5),
-        maxLengthValue: maxLength(5),
+        minValueValue: minValue(10000),
+        maxValueValue: maxValue(99999),
       },
       stob: {
         required,
         numeric,
-        minLengthValue: minLength(4),
-        maxLengthValue: maxLength(4),
+        minValueValue: minValue(1000),
+        maxValueValue: maxValue(9999),
       },
       project: {
         required,
