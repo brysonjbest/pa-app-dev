@@ -136,7 +136,7 @@ export default {
     };
 
     //fills user registration state on load of component
-    /*
+
     const fillList = async function () {
       const user = userStore.getUser;
       tableStore.$reset;
@@ -151,7 +151,6 @@ export default {
     };
 
     fillList();
-    */
 
     return {
       loading,

@@ -24,9 +24,9 @@ const createName = async function () {
   const alphaArray = result.alpha;
 
   const alphabetTables = Array.from("ABCDEFGHIJKLMNOPQRSTUVWXYZ");
-  //specific format for premier's awards seating
+  //specific format for premier's awards seating (additional tables added in case of surplus guests)
   const orderedTables = Array.from("AGBHCIDJEKFL");
-  const numericalTables = ["1", "2", "3", "4", "5", "6"];
+  const numericalTables = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10"];
   const totalTables = numericalTables
     .map((numeral) => orderedTables.map((each) => each + numeral))
     .flat();

@@ -38,6 +38,15 @@ export default {
     const tableStore = useTablesStore();
     const { tables } = storeToRefs(useTablesStore());
 
+    // console.log(tables.value, "this is original");
+
+    const computedTables = computed(() => {
+      console.log(tables.value, "this is tables");
+      return tables.value.sort((a, b) => a.tablename - b.tablename);
+    });
+
+    // console.log(tables, "this is modified");
+
     const columns = ref(formServices.get("tableSelection") || []);
     const organizations = ref(
       (formServices.get("organizations") || []).map((each) => each.value)
@@ -71,19 +80,36 @@ export default {
     };
 
     const loadLazyData = () => {
-      fillList().then(() => {
-        tables.value.forEach((table) => {
-          table.status = computed(() => {
-            if (table.guests.length >= table.tablecapacity) {
-              return "full-table";
+      fillList()
+        .then(() => {
+          tables.value.forEach((table) => {
+            table.status = computed(() => {
+              if (table.guests.length >= table.tablecapacity) {
+                return "full-table";
+              }
+              if (table.guests.length > 0) {
+                return "half-table";
+              }
+              return "empty-table";
+            });
+          });
+        })
+        .then(() => {
+          tables.value.sort((a, b) => {
+            const nameA = a.tablename[0];
+            const numberA = a.tablename[1];
+            const nameB = b.tablename[0];
+            const numberB = b.tablename[1];
+
+            if (numberA === numberB && nameA >= nameB) {
+              return 1;
             }
-            if (table.guests.length > 0) {
-              return "half-table";
+            if (nameA > nameB && numberA < numberB) {
+              return -1;
             }
-            return "empty-table";
+            return 0;
           });
         });
-      });
     };
 
     onMounted(() => {
@@ -101,6 +127,7 @@ export default {
       messageText,
       tableStore,
       columns,
+      computedTables,
     };
   },
   components: {
