@@ -83,6 +83,7 @@ export const useTablesStore = defineStore({
       );
 
       this.tables.map((table) => (table.full = false));
+      //Review if sorting necessary?
       this.tables.sort((a, b) => {
         const nameA = a.tablename[0];
         const numberA = a.tablename[1];
