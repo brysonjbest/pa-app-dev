@@ -83,10 +83,25 @@ export const useTablesStore = defineStore({
       );
 
       this.tables.map((table) => (table.full = false));
+      this.tables.sort((a, b) => {
+        const nameA = a.tablename[0];
+        const numberA = a.tablename[1];
+        const nameB = b.tablename[0];
+        const numberB = b.tablename[1];
+
+        if (numberA === numberB && nameA >= nameB) {
+          return 1;
+        }
+        if (nameA > nameB && numberA < numberB) {
+          return -1;
+        }
+        return 0;
+      });
 
       registrations.value.forEach((registration) => {
         if (!registration.submitted) return;
         registration.details = [];
+        registration.seated = 0;
         registration.guests.forEach((guest) => {
           registration.details.push(
             guests.value.filter((each) => each._id === guest)[0]
@@ -109,12 +124,12 @@ export const useTablesStore = defineStore({
             );
             const orgCount = [...new Set(orgMap)].length;
 
-            //checks to verify if a ministry already exists on this table from a guest, and if so, does it match, and if not, if the space remaining is less than 5, the table is full
+            //checks to verify if a ministry already exists on this table from a registration, and if so, does it match, and if not, if the space remaining is less than 5, the table is full
             if (
               (table.guests.length >= 5 &&
                 (guest["attendancetype"] === "deputyminister" ||
                   guest["attendancetype"] === "minister")) ||
-              (orgCount >= 2 && !orgMap.includes(guest.organization)) ||
+              //(orgCount >= 2 && !orgMap.includes(guest.organization)) ||
               table.tabletype === "Reserved"
             ) {
               table.full = true;
@@ -129,8 +144,12 @@ export const useTablesStore = defineStore({
                   guestID: guest._id,
                 });
                 guest.seated = true;
+                registration.seated++;
 
-                if (table.tablecapacity - table.guests.length === 0) {
+                if (
+                  table.tablecapacity - table.guests.length === 0 ||
+                  registration.seated === registration.guests.length
+                ) {
                   table.full = true;
                 }
               }

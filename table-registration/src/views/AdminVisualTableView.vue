@@ -49,6 +49,16 @@ userStore.login();
 
     <TableVisual :key="keyCount" />
 
-    <RegistrationVisual v-on:addGuest="keyAdd" />
+    <RegistrationVisual
+      v-on:addGuest="keyAdd"
+      class="registrations-visual-box"
+    />
   </main>
 </template>
+
+<style lang="scss" scoped>
+.registrations-visual-box {
+  display: flex;
+  justify-content: center;
+}
+</style>

@@ -14,6 +14,7 @@
         exportFilename="Event List"
         :value="registrations"
         responsiveLayout="stack"
+        breakpoint="780px"
         :key="dataTableRender"
         v-model:expandedRows="expandedRows"
         @rowExpand="onRowExpand"
