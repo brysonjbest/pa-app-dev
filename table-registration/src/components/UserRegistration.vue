@@ -84,7 +84,7 @@
 <script>
 import { useAuthUserStore } from "../stores/users";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import useVuelidate from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
 import { useMessageStore } from "../stores/messages";
@@ -108,9 +108,11 @@ export default {
 
     const v$ = useVuelidate(rules, user);
 
-    const validation = function () {
-      return !!this.user.guid && !!this.user.username;
-    };
+    const validation = computed(() => {
+      const valid =
+        user.value.email && user.value.firstname && user.value.lastname;
+      return valid;
+    });
 
     const isRegistered = function () {
       const currentUser = userStore.getUser;
