@@ -134,15 +134,14 @@
         </div>
         <div class="form-item number-field">
           <label for="respcode">RESP Code:</label>
-          <InputNumber
+          <InputText
             v-bind:class="{ 'p-invalid': v$.respcode.$error }"
             id="respcode"
-            v-model="registration.respcode"
-            :min="10000"
-            :max="99999"
+            v-model.trim="registration.respcode"
             aria-placeholder="5 digit number"
             placeholder="5 digit number"
             :useGrouping="false"
+            aria-describedby="respcode-help"
           />
           <small v-if="v$.respcode.$error" id="respcode-help" class="p-error"
             >Please enter the 5-digit RESP Code number.</small
@@ -185,15 +184,14 @@
         </div>
         <div class="form-item number-field">
           <label for="project">Project:</label>
-          <InputNumber
+          <InputText
             v-bind:class="{ 'p-invalid': v$.project.$error }"
             id="project"
             v-model="registration.project"
-            :min="1000000"
-            :max="9999999"
             aria-placeholder="7 digit number"
             placeholder="7 digit number"
             :useGrouping="false"
+            aria-describedby="project-help"
           />
           <small v-if="v$.project.$error" id="project-help" class="p-error"
             >Please enter the 7-digit project number.</small
@@ -219,7 +217,14 @@
 import { ref } from "vue";
 import formServices from "@/services/settings.services";
 import useVuelidate from "@vuelidate/core";
-import { required, email } from "@vuelidate/validators";
+import {
+  required,
+  email,
+  alphaNum,
+  minLength,
+  maxLength,
+  numeric,
+} from "@vuelidate/validators";
 import { storeToRefs } from "pinia";
 import { useFinancialStore } from "../../stores/financial";
 import { useAuthUserStore } from "../../stores/users";
@@ -244,11 +249,36 @@ export default {
       primarycontact: { required },
       primaryemail: { required, email },
       financialcontact: { required },
-      clientministry: { required },
-      respcode: { required },
-      serviceline: { required },
-      stob: { required },
-      project: { required },
+      clientministry: {
+        required,
+        numeric,
+        minLengthValue: minLength(3),
+        maxLengthValue: maxLength(3),
+      },
+      respcode: {
+        required,
+        alphaNum,
+        minLengthValue: minLength(5),
+        maxLengthValue: maxLength(5),
+      },
+      serviceline: {
+        required,
+        numeric,
+        minLengthValue: minLength(5),
+        maxLengthValue: maxLength(5),
+      },
+      stob: {
+        required,
+        numeric,
+        minLengthValue: minLength(4),
+        maxLengthValue: maxLength(4),
+      },
+      project: {
+        required,
+        alphaNum,
+        minLengthValue: minLength(7),
+        maxLengthValue: maxLength(7),
+      },
     };
 
     const v$ = useVuelidate(rules, registration);
