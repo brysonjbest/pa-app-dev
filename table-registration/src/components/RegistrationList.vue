@@ -39,7 +39,7 @@
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
       >
         <template v-if="adminView" #header>
-          <div style="text-align: left">
+          <div style="text-align: left" class="header-buttons">
             <PrimeButton
               icon="pi pi-external-link"
               label="Export"
@@ -219,20 +219,29 @@
           header="Options:"
         >
           <template #body="slotProps">
-            <PrimeButton
-              v-if="!slotProps.data.submitted"
-              label="Edit"
-              icon="pi pi-pencil"
-              class="p-button-rounded p-button-success mr-2 edit-button"
-              @click="editRegistration(slotProps.data)"
-            />
-            <PrimeButton
-              v-if="!slotProps.data.submitted && !adminView"
-              icon="pi pi-trash"
-              label="Delete"
-              class="p-button-rounded p-button-warning delete-button"
-              @click="confirmDeleteRegistration(slotProps.data)"
-            />
+            <div class="options-buttons">
+              <PrimeButton
+                v-if="!slotProps.data.submitted"
+                label="Edit"
+                icon="pi pi-pencil"
+                class="p-button-rounded p-button-success mr-2 edit-button"
+                @click="editRegistration(slotProps.data)"
+              />
+              <PrimeButton
+                v-if="!slotProps.data.submitted && !adminView"
+                icon="pi pi-trash"
+                label="Delete"
+                class="p-button-rounded p-button-warning delete-button"
+                @click="confirmDeleteRegistration(slotProps.data)"
+              />
+              <PrimeButton
+                v-if="adminView"
+                icon="pi pi-arrow-up-right"
+                label="View"
+                class="p-button-rounded p-button-info info-button"
+                @click="router.push(`/admin/edit/${slotProps.data.guid}`)"
+              />
+            </div>
           </template>
         </PrimeColumn>
       </DataTable>
@@ -520,6 +529,7 @@ export default {
       hideDialog,
       loadLazyData,
       tableCount,
+      router,
     };
   },
   components: { InputFinancial },
@@ -537,6 +547,18 @@ export default {
     .delete-button {
       margin: none;
     }
+  }
+  .header-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 1em;
+  }
+  .options-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25em;
   }
 
   .p-input-icon-left {

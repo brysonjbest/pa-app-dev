@@ -9,7 +9,7 @@
     >
     <div v-else>
       <DataTable
-        class="p-datatable-sm"
+        class="p-datatable-sm guests-datatable"
         :value="guests"
         :exportFilename="
           registrationID ? `${registrationID} Guest List` : 'Guest List'
@@ -36,7 +36,7 @@
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
       >
         <template #header>
-          <div style="text-align: left">
+          <div style="text-align: left" class="header-buttons">
             <PrimeButton
               icon="pi pi-external-link"
               label="Export"
@@ -62,7 +62,7 @@
         <template #empty> No guests found. </template>
         <template #loading> Loading guest data. Please wait. </template>
         <PrimeColumn
-          v-if="adminView"
+          v-if="userStore.getUser.role !== 'super-administrator'"
           field="registration"
           header="Registration"
           key="registration"
@@ -318,20 +318,33 @@
           header="Options:"
         >
           <template #body="slotProps">
-            <PrimeButton
-              icon="pi pi-pencil"
-              label="Edit"
-              class="p-button-rounded p-button-success mr-2 edit-button"
-              @click="editGuest(slotProps.data)"
-            />
-            <PrimeButton
-              icon="pi pi-trash"
-              :label="
-                slotProps.data.table || tableID ? 'Remove from Table' : 'Delete'
-              "
-              class="p-button-rounded p-button-warning delete-button"
-              @click="confirmDeleteGuest(slotProps.data)"
-            />
+            <div class="options-buttons">
+              <PrimeButton
+                icon="pi pi-pencil"
+                label="Edit"
+                class="p-button-rounded p-button-success mr-2 edit-button"
+                @click="editGuest(slotProps.data)"
+              />
+              <PrimeButton
+                icon="pi pi-trash"
+                :label="
+                  slotProps.data.table || tableID
+                    ? 'Remove from Table'
+                    : 'Delete'
+                "
+                class="p-button-rounded p-button-warning delete-button"
+                @click="confirmDeleteGuest(slotProps.data)"
+              />
+              <PrimeButton
+                v-if="adminView"
+                icon="pi pi-arrow-up-right"
+                label="View"
+                class="p-button-rounded p-button-info info-button"
+                @click="
+                  router.push(`/admin/edit/${slotProps.data.registration}`)
+                "
+              />
+            </div>
           </template>
         </PrimeColumn>
       </DataTable>
@@ -519,8 +532,11 @@ import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../stores/guests";
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
+
 import { useTablesStore } from "../stores/tables";
 import tableRoutes from "../services/api-routes.tables.js";
+
+import router from "../router";
 
 export default {
   props: {
@@ -681,7 +697,7 @@ export default {
       let list = "";
       for (let each of data) {
         if (list && list.length > 0) {
-          list += `, ${lookup(key, each)}`;
+          list += `\r\n${lookup(key, each)}`;
         } else {
           list = lookup(key, each);
         }
@@ -841,26 +857,47 @@ export default {
       hideDialog,
       saveGuest,
       loadLazyData,
+      router,
+      userStore,
     };
   },
 };
 </script>
 
-<style scoped>
-.p-datatable-sm tr td {
-  font-size: 16px;
-  padding: 0.3rem;
-}
+<style lang="scss" scoped>
+.guests-datatable {
+  white-space: pre;
+  .p-datatable-sm tr td {
+    font-size: 16px;
+    padding: 0.3rem;
+  }
+  .header-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 1em;
+  }
+  .options-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25em;
+  }
+  .guid {
+    line-break: anywhere;
+  }
+  .p-datatable-wrapper {
+    tr {
+      white-space: pre;
+    }
+  }
+  .p-datatable-wrapper {
+    line-height: 1rem;
+  }
 
-.guid {
-  line-break: anywhere;
-}
-.p-datatable-wrapper {
-  line-height: 1rem;
-}
-
-.checkbox-group {
-  display: flex;
-  flex-wrap: wrap;
+  .checkbox-group {
+    display: flex;
+    flex-wrap: wrap;
+  }
 }
 </style>
