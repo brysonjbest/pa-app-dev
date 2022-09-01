@@ -41,6 +41,10 @@ export default {
       return financialStore.getRegistration.submitted;
     };
 
+    const isCompleted = () => {
+      return financialStore.getCompleted;
+    };
+
     const dateSubmitted = () => {
       const date = new Date(financialStore.getRegistration.updatedAt);
       return date.toLocaleDateString("en-US", {
@@ -130,6 +134,7 @@ export default {
       activeMessage,
       message,
       loading,
+      isCompleted,
     };
   },
   components: { GuestList, RegistrationList, InputGuest, PageHeader },
@@ -217,7 +222,16 @@ export default {
         header="Confirm Submission"
         :modal="true"
         class="p-fluid"
-        ><div v-if="!isSubmitted() && !activeMessage">
+      >
+        <div v-if="!isCompleted() && !isAdmin()">
+          <p>
+            There are currently missing fields on your registration.
+            <br />
+            Please update the registration details and ensure that all fields
+            are completed.
+          </p>
+        </div>
+        <div v-else-if="!isSubmitted() && !activeMessage">
           <p>
             Are you sure you wish to submit your event-registration?<br />
             You will not be able to revise your submission once completed.
@@ -238,7 +252,9 @@ export default {
           </p>
         </div>
         <PrimeButton
-          v-if="!isSubmitted() && !activeMessage"
+          v-if="
+            !isSubmitted() && !activeMessage && (isCompleted() || isAdmin())
+          "
           type="button"
           label="Confirm submit registration"
           icon="pi pi-ticket"
