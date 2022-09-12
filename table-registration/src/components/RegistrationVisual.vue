@@ -22,6 +22,8 @@
         :rows="10"
         ref="dt"
         stripedRows
+        sortField="organization"
+        :sortOrder="1"
         v-model:filters="filters"
         filterDisplay="menu"
         :globalFilterFields="['organization', 'guid']"
@@ -70,6 +72,7 @@
           filterField="organization"
           header="Organization"
           key="organization"
+          :sortable="true"
         >
           <template #body="{ data }">
             {{ lookup("organizations", data.organization) }}
@@ -376,7 +379,7 @@ export default {
       loading.value = true;
       try {
         await guestStore.fillGuests().then(async () => {
-          return financialStore.fillAllRegistrations().then(() => {
+          await financialStore.fillAllRegistrations().then(() => {
             registrations.value.forEach((registration) => {
               registration.details = {};
               registration.status = 0;
