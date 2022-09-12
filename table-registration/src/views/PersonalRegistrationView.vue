@@ -19,6 +19,7 @@ export default {
     const { registration } = storeToRefs(useFinancialStore());
     const activeMessage = ref(false);
     const loading = ref(false);
+    const ministerApproval = ref(false);
     const userStore = useAuthUserStore();
     userStore.login();
     const financialStore = useFinancialStore();
@@ -116,6 +117,7 @@ export default {
       userStore,
       financialStore,
       registration,
+      ministerApproval,
       tableCount,
       guestCount,
       getRegistrar,
@@ -154,11 +156,11 @@ export default {
       <div>
         <PrimeCard id="registration-info">
           <template #content>
-            Please ensure that the registration information on this page is
-            complete prior to submitting your registration for the event. If you
-            cannot complete the registration at this time, your current progress
-            will remain saved here until you are ready to complete your
-            submission.
+            Please ensure that all registration and guest information on this
+            page is complete prior to submitting your registration for the
+            event. If you cannot complete the registration at this time, your
+            current progress will remain saved here until you are ready to
+            complete your submission.
           </template></PrimeCard
         >
       </div>
@@ -170,43 +172,78 @@ export default {
         :registrationID="id"
         :detailsView="false"
       />
-
-      <div class="registration-buttons">
-        <PrimeButton
-          type="button"
-          label="Tables"
-          icon="pi pi-ticket"
-          class="p-button-warning"
-          :badge="tableCount()"
-          @click="tableInfo()"
-          badgeClass="p-badge-danger"
-        />
-        <PrimeButton
-          type="button"
-          label="Total Guests"
-          icon="pi pi-users"
-          class="p-button-warning"
-          :badge="guestCount()"
-          @click="guestInfo()"
-          badgeClass="p-badge-danger"
-        />
-        <PrimeButton
-          v-if="!isSubmitted()"
-          label="Add Guests"
-          icon="pi pi-pencil"
-          class="p-button-rounded p-button-success mr-2"
-          @click="addGuest()"
-        />
+      <div>
+        <PrimeCard id="guest-seating-info">
+          <template #content>
+            <div class="registration-guest-info">
+              <span id="guest-registration-info"
+                >Please note that guests will be sorted to tables in the order
+                that they are added.</span
+              >
+              <div class="registration-buttons">
+                <PrimeButton
+                  type="button"
+                  label="Table Information"
+                  icon="pi pi-ticket"
+                  class="p-button-warning"
+                  :badge="tableCount()"
+                  @click="tableInfo()"
+                  badgeClass="p-badge-danger"
+                />
+                <PrimeButton
+                  type="button"
+                  label="Guest Information"
+                  icon="pi pi-users"
+                  class="p-button-warning"
+                  :badge="guestCount()"
+                  @click="guestInfo()"
+                  badgeClass="p-badge-danger"
+                />
+                <PrimeButton
+                  v-if="!isSubmitted()"
+                  label="Add Guests"
+                  icon="pi pi-pencil"
+                  class="p-button-rounded p-button-success mr-2"
+                  @click="addGuest()"
+                />
+              </div>
+            </div>
+          </template>
+        </PrimeCard>
       </div>
       <PrimeDialog
         v-model:visible="tableInfoDialog"
         header="Table Information"
         :modal="true"
         class="p-fluid"
-        >Warning regarding table charges:<br />
+        >The current number of tables required based on your guest list is:
+        {{ tableCount() }}.
+        <ul>
+          <li>The cost per table is $500, and each table seats 10 people.</li>
+          <li>
+            Payment for tables is conducted through a Journal Voucher process
+            with each ministry using the financial coding submitted in the
+            registration information. Payment will be reconciled following the
+            provincial ceremony.
+          </li>
+          <li>
+            Each ministry is encouraged to purchase a minimum of one table (or
+            up to three tables for large ministries ).
+          </li>
+          <li>
+            Requests for four or more tables will be assessed based on total
+            number of tables requested to ensure participation from all
+            ministries is accommodated.
+          </li>
+          <li>
+            Ministries are responsible for their employees' travel and
+            associated accommodation for the provincial ceremony .
+          </li>
+        </ul>
+
+        <br /><b>Warning regarding table charges:</b><br />
         Please be aware that half tables may not be able to be accomodated, and
         you may be charged the full table amount. <br />
-        Current table count: {{ tableCount() }}
       </PrimeDialog>
 
       <PrimeDialog
@@ -215,6 +252,35 @@ export default {
         :modal="true"
         class="p-fluid"
         >Total Number of Guests: {{ guestCount() }}.
+
+        <ul>
+          <li>
+            For individual categories: Emerging Leader, Leadership, and Legacy
+            finalists – ensure the finalist and their spouse (or alternate
+            immediate family member) are both included in this registration.
+          </li>
+          <li>
+            All Ministers are invited by the Premier’s Office as part of the
+            Premier’s Awards program; in most cases, Ministers will be seated
+            with their respective ministry.
+          </li>
+          <ul>
+            <li>
+              Upon Minister RSVPs, the Premier’s Awards program will work with
+              each Ministry Contact to ensure the Minister is accounted for in
+              table numbers.
+            </li>
+          </ul>
+
+          <li>
+            Ministry Contacts must ensure all Executive who plan to attend (DM,
+            ADM, etc.) are included in this registration.
+          </li>
+          <li>
+            Ministry Contacts must ensure that all invited external partners are
+            included in this registration.
+          </li>
+        </ul>
       </PrimeDialog>
 
       <PrimeDialog
@@ -233,15 +299,48 @@ export default {
         </div>
         <div v-else-if="!isSubmitted() && !activeMessage">
           <p>
-            Are you sure you wish to submit your event-registration?<br />
-            You will not be able to revise your submission once completed.
+            <b>Are you sure you wish to submit your event registration?</b> You
+            will not be able to revise your submission once completed.
           </p>
+          <ul>
+            <li>
+              Changes after the deadline cannot be guaranteed due to impact on
+              remaining planning requirements.
+            </li>
+            <li>
+              Any request for changes after submission must be sent via email to
+              <a href="mailto: PremiersAwards@gov.bc.ca"
+                >PremiersAwards@gov.bc.ca</a
+              >.
+            </li>
+            <li>
+              Please ensure to submit change requests with complete contact
+              information to avoid oversights of important information, and to
+              ensure attendee name tags for entry into the ceremony are
+              accurate.
+            </li>
+          </ul>
           <p>
             Please be aware that half tables may not be able to be accomodated,
-            and you may be charged the full table amount.<br />
+            and you may be charged the full table amount.
+          </p>
+          <p>
             Guests submitted on this registration: {{ guestCount() }}.<br />
             Total tables required for this number of guests: {{ tableCount() }}
           </p>
+          <div id="minister-approval-checkbox">
+            <CheckBox
+              id="minister-approval"
+              name="minister-approval"
+              value="ministerapproval"
+              v-model="ministerApproval"
+              :binary="true"
+            />
+            <label for="minister-approval"
+              >Check this box to confirm approval has been obtained by the
+              ministry's Deputy Minister's office.</label
+            >
+          </div>
         </div>
         <div v-else-if="isSubmitted() && isAdmin() && !activeMessage">
           <p>
@@ -255,6 +354,7 @@ export default {
           v-if="
             !isSubmitted() && !activeMessage && (isCompleted() || isAdmin())
           "
+          :disabled="!ministerApproval"
           type="button"
           label="Confirm submit registration"
           icon="pi pi-ticket"
@@ -339,16 +439,39 @@ export default {
       padding: 1rem;
     }
   }
-  .registration-buttons {
-    display: flex;
-    justify-content: flex-end;
-    padding: 1rem;
-    gap: 1rem;
+
+  #guest-seating-info {
+    .p-card-content {
+      padding: 0;
+    }
   }
+  .registration-guest-info {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    #guest-registration-info {
+      display: flex;
+      justify-content: flex-start;
+      flex-wrap: wrap;
+    }
+    .registration-buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 1rem;
+    }
+  }
+
   .submission-buttons {
     display: flex;
     justify-content: flex-end;
     padding: 1rem;
   }
+}
+#minister-approval-checkbox {
+  padding: 1rem;
+  display: flex;
+  gap: 1rem;
 }
 </style>
