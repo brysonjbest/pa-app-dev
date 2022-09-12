@@ -183,7 +183,7 @@ fon
   padding-top: 0.3125rem;
   padding-bottom: 0.3125rem;
   margin-right: 1rem;
-  font-size: 2vmax;
+  font-size: 20px;
   line-height: inherit;
   white-space: nowrap;
   text-decoration: none;
@@ -222,6 +222,10 @@ fon
   }
   .p-menubar-button i {
     color: white;
+  }
+
+  #page-title {
+    font-size: 2vmax;
   }
 }
 </style>

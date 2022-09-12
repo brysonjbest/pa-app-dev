@@ -62,7 +62,7 @@
         <template #empty> No guests found. </template>
         <template #loading> Loading guest data. Please wait. </template>
         <PrimeColumn
-          v-if="userStore.getUser.role !== 'super-administrator'"
+          v-if="userStore.getUser.role === 'super-administrator'"
           field="registration"
           header="Registration"
           key="registration"
@@ -244,6 +244,9 @@
             </DropDown>
           </template></PrimeColumn
         >
+        <PrimeColumn v-if="adminView" field="notes" header="Notes:" key="notes">
+          <template #body="{ data }"> {{ data.notes }}</template></PrimeColumn
+        >
         <PrimeColumn
           v-if="adminView"
           field="tabledetails.tablename"
@@ -336,7 +339,7 @@
                 @click="confirmDeleteGuest(slotProps.data)"
               />
               <PrimeButton
-                v-if="adminView"
+                v-if="adminView && !registrationID"
                 icon="pi pi-arrow-up-right"
                 label="View"
                 class="p-button-rounded p-button-info info-button"
@@ -463,6 +466,16 @@
             />
             <label :for="each.key">{{ each.text }}</label>
           </div>
+        </div>
+        <div class="field-text" v-if="adminView">
+          <label for="guest-notes">Notes:</label>
+          <InputText
+            id="lastname"
+            v-model.trim="guest.notes"
+            name="guestnotes"
+            title="Notes"
+            autofocus
+          />
         </div>
 
         <template #footer>

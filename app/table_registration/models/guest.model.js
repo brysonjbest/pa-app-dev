@@ -49,6 +49,9 @@ const GuestSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Table",
     },
+    notes: {
+      type: String,
+    },
   },
   { timestamps: true }
 );
