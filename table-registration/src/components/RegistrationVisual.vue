@@ -649,15 +649,5 @@ export default {
     gap: 1rem;
   }
 }
-.table-display {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-
-  .table-details {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-}
 </style>
 >

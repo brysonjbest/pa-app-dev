@@ -19,6 +19,7 @@ import ProgressSpinner from "primevue/progressspinner";
 import Accordion from "primevue/accordion";
 import AccordionTab from "primevue/accordiontab";
 import Fieldset from "primevue/fieldset";
+import Tooltip from "primevue/tooltip";
 
 //Form Component imports
 import Checkbox from "primevue/checkbox";
@@ -54,6 +55,7 @@ app.component("PrimeMessage", Message);
 app.component("TabMenu", TabMenu);
 app.component("MenuBar", Menubar);
 app.component("ProgressSpinner", ProgressSpinner);
+app.directive("tooltip", Tooltip);
 
 app.component("DropDown", Dropdown);
 app.component("CheckBox", Checkbox);

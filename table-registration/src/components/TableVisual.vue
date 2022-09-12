@@ -35,6 +35,10 @@ export default {
 
     const registrationTables = ref({});
 
+    const lookupKey = function (key, value) {
+      return formServices.lookup(key, value);
+    };
+
     const tableStore = useTablesStore();
     const { tables } = storeToRefs(useTablesStore());
 
@@ -91,6 +95,17 @@ export default {
                 return "half-table";
               }
               return "empty-table";
+            });
+            table.registrationOrganizations = computed(() => {
+              const newTableData = table.organizations.map(
+                (x) => x.organization
+              );
+              const dataSet = new Set(newTableData);
+              const newArray = Array.from(dataSet);
+              const formattedArray = newArray
+                .map((x) => (x ? lookupKey("organizations", x) : ""))
+                .join("\r\n");
+              return formattedArray;
             });
           });
         })
