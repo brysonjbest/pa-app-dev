@@ -62,7 +62,7 @@
         <template #empty> No guests found. </template>
         <template #loading> Loading guest data. Please wait. </template>
         <PrimeColumn
-          v-if="userStore.getUser.role !== 'super-administrator'"
+          v-if="userStore.getUser.role === 'super-administrator'"
           field="registration"
           header="Registration"
           key="registration"
