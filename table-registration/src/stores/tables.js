@@ -83,7 +83,7 @@ export const useTablesStore = defineStore({
       );
 
       this.tables.map((table) => (table.full = false));
-      //Review if sorting necessary?
+      //Review if sorting necessary? Currently sorts into alpha order - this keeps ministry registrations together
       this.tables.sort((a, b) => {
         const nameA = a.tablename[0];
         const numberA = a.tablename[1];
@@ -126,13 +126,7 @@ export const useTablesStore = defineStore({
             const orgCount = [...new Set(orgMap)].length;
 
             //checks to verify if a ministry already exists on this table from a registration, and if so, does it match, and if not, if the space remaining is less than 5, the table is full
-            if (
-              (table.guests.length >= 5 &&
-                (guest["attendancetype"] === "deputyminister" ||
-                  guest["attendancetype"] === "minister")) ||
-              //(orgCount >= 2 && !orgMap.includes(guest.organization)) ||
-              table.tabletype === "Reserved"
-            ) {
+            if (table.tabletype === "Reserved") {
               table.full = true;
             }
             if (table.full !== true) {
