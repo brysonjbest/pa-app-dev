@@ -14,6 +14,7 @@ export const useGuestsStore = defineStore({
         organization: "",
         accessibility: [],
         dietary: [],
+        notes: "",
       },
       guests: [],
     };

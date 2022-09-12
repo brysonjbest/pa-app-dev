@@ -177,8 +177,9 @@ export default {
           <template #content>
             <div class="registration-guest-info">
               <span id="guest-registration-info"
-                >Please note that guests will be sorted to tables in the order
-                that they are added.</span
+                >Please note that guests will automatically be sorted to tables
+                first by attendance type, and then in the order that they are
+                added.</span
               >
               <div class="registration-buttons">
                 <PrimeButton
@@ -393,7 +394,7 @@ export default {
       /></PrimeDialog>
       <GuestList
         id="personal-registration-guests-table"
-        :adminView="false"
+        :adminView="false || isAdmin()"
         :registrationID="id"
       />
       <div class="submission-buttons">
