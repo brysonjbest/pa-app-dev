@@ -165,7 +165,7 @@ const router = createRouter({
     },
     {
       path: "/admin/settings",
-      name: "admin",
+      name: "admin-settings",
       component: () => import("../views/AdminSettingsView.vue"),
       beforeEnter: authorizeSuperAdmin,
     },

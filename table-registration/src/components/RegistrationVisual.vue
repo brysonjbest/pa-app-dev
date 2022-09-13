@@ -60,7 +60,7 @@
         <template #empty> No registrations found. </template>
         <template #loading> Loading registration data. Please wait. </template>
         <PrimeColumn
-          header="View Guests"
+          header="Guests"
           :expander="true"
           headerStyle="width: 3rem"
         />
@@ -108,7 +108,7 @@
         >
         <PrimeColumn
           field="guestList"
-          header="Guest List:"
+          header="Guest List"
           key="guestList"
           :sortable="true"
         >
@@ -175,7 +175,7 @@
           <template #filter="{ filterModel }">
             <TriStateCheckbox v-model="filterModel.value" /> </template
         ></PrimeColumn>
-        <PrimeColumn header="Options:">
+        <PrimeColumn header="Options">
           <template #body="{ data }">
             <PrimeButton
               icon="pi pi-pencil"

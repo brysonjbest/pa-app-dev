@@ -26,33 +26,6 @@ const tableCountAll = () => {
   return String(tableStore.getTablesCount);
 };
 
-const fillTables = async () => {
-  try {
-    activeMessage.value = true;
-    messageStore.setMessage({
-      text: "Algorithmically filling tables...",
-      type: "info",
-      spinner: true,
-    });
-    // handle data submission
-    await tableStore.fillEventTables().then(() => {
-      messageStore.setMessage({
-        text: "Successfully filled tables!",
-        type: "success",
-      });
-    });
-  } catch (error) {
-    console.error(error);
-    activeMessage.value = true;
-    messageStore.setMessage({
-      text: "Tables could not be filled automatically.",
-      type: "error",
-    });
-  } finally {
-    keyAdd();
-  }
-};
-
 const createTable = (data) => {
   return tableStore.addTable(data);
 };
@@ -61,33 +34,6 @@ const { table, tables } = storeToRefs(useTablesStore());
 
 const keyCount = ref(0);
 const keyAdd = () => keyCount.value++;
-
-const generateDefaultTables = async () => {
-  try {
-    activeMessage.value = true;
-    messageStore.setMessage({
-      text: "Generating required tables...",
-      type: "info",
-      spinner: true,
-    });
-    // handle data submission
-    await tableStore.generateNewEventTables().then(() => {
-      messageStore.setMessage({
-        text: "Successfully generated tables!",
-        type: "success",
-      });
-    });
-  } catch (error) {
-    console.error(error);
-    activeMessage.value = true;
-    messageStore.setMessage({
-      text: "Tables could not be generated.",
-      type: "error",
-    });
-  } finally {
-    keyAdd();
-  }
-};
 
 //PrimeDialog controls
 
@@ -120,41 +66,26 @@ userStore.login();
         {{ message.text }}
       </p>
     </PrimeMessage>
+    <div id="table-management-buttons">
+      <PrimeButton
+        label="Table Count: "
+        type="button"
+        icon="pi pi-ticket"
+        class="p-button-warning"
+        :badge="tableCountAll()"
+        @click="tableInfo()"
+        badgeClass="p-badge-danger"
+      />
 
-    <PrimeButton
-      label="Table Count: "
-      type="button"
-      icon="pi pi-ticket"
-      class="p-button-warning"
-      :badge="tableCountAll()"
-      @click="tableInfo()"
-      badgeClass="p-badge-danger"
-    />
-
-    <PrimeButton
-      label="Generate Default Layout: "
-      type="button"
-      icon="pi pi-ticket"
-      class="p-button"
-      @click="generateDefaultTables()"
-    />
-
-    <PrimeButton
-      label="Fill Tables: "
-      type="button"
-      icon="pi pi-ticket"
-      class="p-button"
-      @click="fillTables()"
-    />
-
-    <PrimeButton
-      label="Add New Table"
-      type="button"
-      icon="pi pi-ticket"
-      class="p-button-warning"
-      @click="addTable()"
-      badgeClass="p-badge-danger"
-    />
+      <PrimeButton
+        label="Add New Table"
+        type="button"
+        icon="pi pi-ticket"
+        class="p-button-warning"
+        @click="addTable()"
+        badgeClass="p-badge-danger"
+      />
+    </div>
 
     <PrimeDialog
       v-model:visible="addTableDialog"
@@ -177,3 +108,9 @@ userStore.login();
     <TableList :data="tables" :key="keyCount" />
   </main>
 </template>
+<style lang="scss" scoped>
+#table-management-buttons {
+  display: flex;
+  justify-content: space-between;
+}
+</style>

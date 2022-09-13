@@ -234,4 +234,11 @@ fon
     font-size: 2vmax;
   }
 }
+
+@media only screen and (max-width: 440px) {
+  main {
+    margin-left: 0;
+    margin-right: 0;
+  }
+}
 </style>

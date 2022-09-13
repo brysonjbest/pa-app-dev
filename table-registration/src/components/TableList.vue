@@ -9,7 +9,7 @@
     >
     <div v-else>
       <DataTable
-        class="p-datatable-sm"
+        class="p-datatable-sm table-data-view"
         :value="tables"
         responsiveLayout="stack"
         :key="dataTableRender"
@@ -188,7 +188,7 @@
 
         <PrimeColumn
           field="organizations"
-          header="Organizations Present"
+          header="Organizations"
           key="organizations"
           class="organizations"
         >
@@ -507,9 +507,16 @@ export default {
 };
 </script>
 
-<style lang="scss">
-.p-datatable {
+<style lang="scss" scoped>
+.table-data-view {
   white-space: pre;
+
+  .p-datatable-header {
+    div {
+      display: flex;
+      flex-wrap: wrap;
+    }
+  }
 
   .p-button {
     margin-left: 1em;

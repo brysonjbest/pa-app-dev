@@ -157,11 +157,22 @@ userStore.login();
           </ol>
         </template>
       </PrimeCard>
-      <PrimeCard id="eventDateSettings">
+      <PrimeCard id="eventDateSettings" v-if="userStore.isSuperAdmin">
         <template #subtitle>
           <h1>Event Date Settings</h1>
         </template>
-        <template #content> </template>
+        <template #content><h3>Update application dates.</h3></template>
+      </PrimeCard>
+      <PrimeCard id="totalResetSettings" v-if="userStore.isSuperAdmin">
+        <template #subtitle>
+          <h1>Database Reset</h1>
+        </template>
+        <template #content
+          ><h3>
+            Reset database by deleting all current reservations, guests, tables
+            and users with registrar status.
+          </h3></template
+        >
       </PrimeCard>
     </div>
 
