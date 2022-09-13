@@ -110,12 +110,12 @@ const authorizeAdmin = async (to, from, next) => {
   else next();
 };
 
-// const authorizeSuperAdmin = async (to, from, next) => {
-//   const { role = "" } = (await getUserData()) || {};
-//   if (!["super-administrator"].includes(role))
-//     return next({ name: "unauthorized" });
-//   else next();
-// };
+const authorizeSuperAdmin = async (to, from, next) => {
+  const { role = "" } = (await getUserData()) || {};
+  if (!["super-administrator"].includes(role))
+    return next({ name: "unauthorized" });
+  else next();
+};
 
 /**
  * Retrieve user role for route authorization
@@ -162,6 +162,12 @@ const router = createRouter({
       name: "admin",
       component: () => import("../views/AdminRegistrationView.vue"),
       beforeEnter: authorizeAdmin,
+    },
+    {
+      path: "/admin/settings",
+      name: "admin",
+      component: () => import("../views/AdminSettingsView.vue"),
+      beforeEnter: authorizeSuperAdmin,
     },
     {
       path: "/create/registration",
