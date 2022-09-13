@@ -4,6 +4,7 @@ import { useFinancialStore } from "../stores/financial";
 import { useTablesStore } from "../stores/tables";
 import { useGuestsStore } from "../stores/guests";
 import { useMessageStore } from "../stores/messages";
+import { useSettingsStore } from "../stores/settings";
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import PageHeader from "../components/common/PageHeader.vue";
@@ -12,6 +13,7 @@ import formServices from "../services/settings.services";
 const userStore = useAuthUserStore();
 const financialStore = useFinancialStore();
 const guestStore = useGuestsStore();
+const settingsStore = useSettingsStore();
 const fullTableReset = ref(false);
 const tableAssignment = ref(false);
 const defaultLayoutGenerated = ref(false);
@@ -19,11 +21,14 @@ const defaultLayoutGenerated = ref(false);
 const tableStore = useTablesStore();
 const messageStore = useMessageStore();
 const { message } = storeToRefs(useMessageStore());
+const { settings } = storeToRefs(useSettingsStore());
 const activeMessage = ref(false);
 
 const toggleMessage = () => {
   activeMessage.value = false;
 };
+
+const updateEventDates = async () => {};
 
 //Table Management Functions - Generate and Fill the default layout
 const fillTables = async () => {
@@ -101,6 +106,7 @@ const fillConfirmation = () => {
 };
 
 userStore.login();
+settingsStore.fillSettings().then(() => {});
 </script>
 
 <template>
@@ -161,7 +167,51 @@ userStore.login();
         <template #subtitle>
           <h1>Event Date Settings</h1>
         </template>
-        <template #content><h3>Update application dates.</h3></template>
+        <template #content
+          ><h3>Update application dates.</h3>
+          <form class="event-dates-form" @submit="onSubmit">
+            <div class="text-field">
+              <label for="event-year">Current Event Year:</label>
+              <InputNumber
+                id="event-year"
+                type="event-year"
+                :useGrouping="false"
+                :min="2022"
+                :max="2100"
+                aria-describedby="event-year-help"
+                v-model="settings.year"
+                placeholder="Current Event Year"
+              />
+            </div>
+            <div class="date-field">
+              <label for="salesopen">Sales Open Date:</label>
+              <PrimeCalendar
+                id="salesopen"
+                v-model="settings.salesopen"
+                dateFormat="mm/dd/yy"
+                placeholder="mm/dd/yyyy"
+                :showTime="true"
+                :showSeconds="true"
+                hourFormat="12"
+              />
+            </div>
+            <div class="date-field">
+              <label for="salesclose">Sales Close Date:</label>
+              <PrimeCalendar
+                id="salesclose"
+                v-model="settings.salesclose"
+                dateFormat="mm/dd/yy"
+                placeholder="mm/dd/yyyy"
+                :showTime="true"
+                :showSeconds="true"
+                hourFormat="12"
+              />
+            </div>
+            <PrimeButton type="submit" label="primary" class="p-button-raised"
+              >Update Event Dates</PrimeButton
+            >
+          </form></template
+        >
       </PrimeCard>
       <PrimeCard id="totalResetSettings" v-if="userStore.isSuperAdmin">
         <template #subtitle>
