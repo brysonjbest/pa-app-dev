@@ -7,6 +7,8 @@ import { useMessageStore } from "../stores/messages";
 import { useSettingsStore } from "../stores/settings";
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
+import useVuelidate from "@vuelidate/core";
+import { required } from "@vuelidate/validators";
 import PageHeader from "../components/common/PageHeader.vue";
 import formServices from "../services/settings.services";
 
@@ -24,11 +26,47 @@ const { message } = storeToRefs(useMessageStore());
 const { settings } = storeToRefs(useSettingsStore());
 const activeMessage = ref(false);
 
+const dateRules = {
+  year: { required },
+  salesopen: { required },
+  salesclose: { required },
+};
+
+const v$ = useVuelidate(dateRules, settings);
+
 const toggleMessage = () => {
   activeMessage.value = false;
 };
 
-const updateEventDates = async () => {};
+//Date management update
+const updateEventDates = async function (event) {
+  event.preventDefault();
+  const isFormCorrect = await v$.value.$validate();
+  if (!isFormCorrect) return;
+  try {
+    activeMessage.value = true;
+    messageStore.setMessage({
+      text: "Updating Dates...",
+      type: "info",
+      spinner: true,
+    });
+    settingsStore.updateSettings(settings).then(() => {
+      messageStore.setMessage({
+        text: "Successfully Updated Dates!",
+        type: "success",
+      });
+    });
+  } catch (error) {
+    console.error(error);
+    activeMessage.value = true;
+    messageStore.setMessage({
+      text: "Dates could not be updated.",
+      type: "error",
+    });
+  } finally {
+    setTimeout(() => (activeMessage.value = false), 1500);
+  }
+};
 
 //Table Management Functions - Generate and Fill the default layout
 const fillTables = async () => {
@@ -106,7 +144,10 @@ const fillConfirmation = () => {
 };
 
 userStore.login();
-settingsStore.fillSettings().then(() => {});
+settingsStore.fillSettings().then(() => {
+  settings.value.salesopen = new Date(settings.value.salesopen);
+  settings.value.salesclose = new Date(settings.value.salesclose);
+});
 </script>
 
 <template>
@@ -169,7 +210,7 @@ settingsStore.fillSettings().then(() => {});
         </template>
         <template #content
           ><h3>Update application dates.</h3>
-          <form class="event-dates-form" @submit="onSubmit">
+          <form class="event-dates-form" @submit="updateEventDates">
             <div class="text-field">
               <label for="event-year">Current Event Year:</label>
               <InputNumber
@@ -178,10 +219,14 @@ settingsStore.fillSettings().then(() => {});
                 :useGrouping="false"
                 :min="2022"
                 :max="2100"
+                :allowEmpty="false"
                 aria-describedby="event-year-help"
                 v-model="settings.year"
                 placeholder="Current Event Year"
               />
+              <small v-if="v$.year.$error" class="p-error" id="event-year-help"
+                >Please select the event year.</small
+              >
             </div>
             <div class="date-field">
               <label for="salesopen">Sales Open Date:</label>
@@ -193,7 +238,15 @@ settingsStore.fillSettings().then(() => {});
                 :showTime="true"
                 :showSeconds="true"
                 hourFormat="12"
+                aria-describedby="salesopen-help"
               />
+              <small
+                v-if="v$.salesopen.$error"
+                class="p-error"
+                id="salesopen-help"
+                >Please select the date and time for table sales to open to
+                public.</small
+              >
             </div>
             <div class="date-field">
               <label for="salesclose">Sales Close Date:</label>
@@ -205,7 +258,15 @@ settingsStore.fillSettings().then(() => {});
                 :showTime="true"
                 :showSeconds="true"
                 hourFormat="12"
+                aria-describedby="salesclose-help"
               />
+              <small
+                v-if="v$.salesclose.$error"
+                class="p-error"
+                id="salesclose-help"
+                >Please select the date and time for table sales to close to
+                public.</small
+              >
             </div>
             <PrimeButton type="submit" label="primary" class="p-button-raised"
               >Update Event Dates</PrimeButton

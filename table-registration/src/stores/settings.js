@@ -17,6 +17,18 @@ export const useSettingsStore = defineStore({
     getSettings() {
       return this.settings;
     },
+    getisSalesOpen() {
+      let status = false;
+      const now = new Date();
+      if (
+        now > new Date(this.settings.salesopen) &&
+        now < new Date(this.settings.salesclose)
+      ) {
+        status = true;
+      }
+      console.log(status);
+      return status;
+    },
   },
   actions: {
     async fillSettings() {

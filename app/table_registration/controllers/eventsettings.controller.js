@@ -46,7 +46,7 @@ exports.getSettings = async (req, res, next) => {
 
 exports.updateSettings = async (req, res, next) => {
   try {
-    const data = req.body;
+    const data = req.body._object.settings;
 
     // look up setting exists
     const result = await EventSettingsModel.exists({ _id: "globalSettings" });
