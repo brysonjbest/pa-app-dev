@@ -109,7 +109,8 @@
           field="guestList"
           header="Guest List"
           key="guestList"
-          :sortable="true"
+          filterField="guestList"
+          sortable
         >
           <template #body="{ data }">
             {{ data.guests.length }}
@@ -153,6 +154,7 @@
           field="seated"
           header="All Guests Seated?"
           key="seated"
+          filterField="allAssigned"
           dataType="boolean"
         >
           <template #body="{ data }"
@@ -399,6 +401,11 @@ export default {
                   ? (registration.status += 1)
                   : null;
               });
+              registration.allAssigned =
+                registration.status >= registration.guests.length
+                  ? true
+                  : false;
+              registration.guestList = registration.guests.length;
             });
           });
         });

@@ -180,6 +180,11 @@ const schemaData = {
       operator: FilterOperator.AND,
       constraints: [{ value: null, matchMode: FilterMatchMode.DATE_IS }],
     },
+    guestList: {
+      operator: FilterOperator.AND,
+      constraints: [{ value: null, matchMode: FilterMatchMode.EQUALS }],
+    },
+    allAssigned: { value: null, matchMode: FilterMatchMode.EQUALS },
   },
   guestFilters: {
     global: { value: null, matchMode: FilterMatchMode.CONTAINS },
