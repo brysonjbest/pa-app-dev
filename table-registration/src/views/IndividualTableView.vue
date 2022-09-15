@@ -123,6 +123,8 @@ export default {
 
       <PrimeDialog
         v-model:visible="addGuestDialog"
+        :style="{ width: '90vw' }"
+        position="bottom"
         header="Add a new Guest"
         :modal="true"
         class="p-fluid"

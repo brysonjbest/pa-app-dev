@@ -12,7 +12,8 @@
         class="p-datatable-sm"
         :value="guests"
         :paginator="true"
-        responsiveLayout="scroll"
+        responsiveLayout="stack"
+        breakpoint="450px"
         :rows="10"
         ref="dt"
         stripedRows
