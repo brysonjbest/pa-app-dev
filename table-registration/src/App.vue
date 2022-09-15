@@ -75,7 +75,7 @@ export default {
           {
             label: "Event Settings",
             to: "/admin/settings",
-            visible: () => userStore.isSuperAdmin,
+            visible: () => userStore.isAdmin,
             class: "dropdown-account-item",
           },
         ],

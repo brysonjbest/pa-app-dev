@@ -480,6 +480,9 @@
             title="Notes"
             autofocus
           />
+          <small class="p-error" id="guest-notes-help"
+            >Notes field visible to admin only.</small
+          >
         </div>
 
         <template #footer>
