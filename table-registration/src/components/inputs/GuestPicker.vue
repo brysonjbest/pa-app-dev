@@ -195,7 +195,7 @@ export default {
         }
         await guestStore.addGuestToTable(
           guestID,
-          { table: tableGUID },
+          { table: tableGUID, organization: guest.organization },
           tablevalue
         );
       } catch (error) {
