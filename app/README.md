@@ -1,8 +1,12 @@
-# pa-app
+# Premier's Awards Nomination and Table Registration Application
 
-> Premier's Awards Registration Application
+> User application for submitting and managing Premier's Awards nominations and ceremony table registrations.
 
-## Build Setup
+## Deployment
+
+### API NodeJS Setup
+
+### Frontend Veu Build Setup
 
 ``` bash
 # install dependencies

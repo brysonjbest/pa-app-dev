@@ -45,14 +45,14 @@ const tableRegRouter = require("./table_registration/routes/index-tableregistrat
  */
 
 const allowedOrigins =
-  process.env.NODE_ENV === "production"
-    ? ["https://premiersawards.gww.gov.bc.ca", "http://pa-app-node", "pa.apps.silver.devops.gov.bc.ca", "http://pa-node"]
-    : [
-        "http://localhost:3000",
-        "http://localhost:3001",
-        "http://localhost:3002",
-        "http://localhost",
-      ];
+  process.env.NODE_ENV === "local"
+      ? [
+          "http://localhost:3000",
+          "http://localhost:3001",
+          "http://localhost:3002",
+          "http://localhost",
+      ]
+      : [process.env.APP_BASE_URL];
 
 const corsConfig = {
   origin: function (origin, callback) {
@@ -96,7 +96,6 @@ tableReg.use(express.urlencoded({ extended: true }));
 tableReg.use(cors(corsConfig));
 tableReg.use(history());
 tableReg.get("/", tableRegRouter);
-//console.log('Serving tableregistration files');
 tableReg.use(
   "/",
   express.static(path.join(__dirname, "table_registration/views"))
@@ -159,4 +158,5 @@ tableReg.listen(3002, () => {
 api.listen(3001, () => {
   console.log(`API server is running on port 3001.`);
   console.log(`Run mode: ${process.env.NODE_ENV}`);
+  console.log(`Base URL: ${process.env.APP_BASE_URL}`);
 });
