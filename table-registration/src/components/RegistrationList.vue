@@ -13,7 +13,7 @@
         :value="registrations"
         responsiveLayout="stack"
         :key="dataTableRender"
-        :paginator="adminView"
+        :paginator="adminView && !registrationID"
         :rows="10"
         ref="dt"
         stripedRows
@@ -126,7 +126,7 @@
             /> </template
         ></PrimeColumn>
         <PrimeColumn
-          v-if="adminView"
+          v-if="adminView && !registrationID"
           field="guestCount"
           dataType="numeric"
           header="Guest Count:"
@@ -213,7 +213,7 @@
             /> </template
         ></PrimeColumn>
         <PrimeColumn
-          v-if="!isSubmitted() || adminView"
+          v-if="(!isSubmitted() && settingsStore.getIsSalesOpen) || adminView"
           :exportable="false"
           style="min-width: 8rem"
           header="Options:"
@@ -228,14 +228,17 @@
                 @click="editRegistration(slotProps.data)"
               />
               <PrimeButton
-                v-if="!slotProps.data.submitted && !adminView"
+                v-if="
+                  !slotProps.data.submitted &&
+                  (!adminView || (adminView && registrationID))
+                "
                 icon="pi pi-trash"
                 label="Delete"
                 class="p-button-rounded p-button-warning delete-button"
                 @click="confirmDeleteRegistration(slotProps.data)"
               />
               <PrimeButton
-                v-if="adminView"
+                v-if="adminView && !registrationID"
                 icon="pi pi-arrow-up-right"
                 label="View"
                 class="p-button-rounded p-button-info info-button"
@@ -318,6 +321,7 @@ import { storeToRefs } from "pinia";
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
 import { useGuestsStore } from "../stores/guests";
+import { useSettingsStore } from "../stores/settings";
 import router from "../router";
 
 export default {
@@ -328,6 +332,7 @@ export default {
   },
   setup(props) {
     const financialStore = useFinancialStore();
+    const settingsStore = useSettingsStore();
     const { registrations } = storeToRefs(useFinancialStore());
     const { guests } = storeToRefs(useGuestsStore());
     const columns = ref(formServices.get("registrationSelection") || []);
@@ -360,13 +365,17 @@ export default {
       financialStore.$reset;
       loading.value = true;
       try {
-        if (props.adminView) return await financialStore.fillAllRegistrations();
-        if (props.registrationID)
+        if (props.registrationID) {
           return await financialStore.fill(props.registrationID);
-        else
+        } else if (props.adminView) {
+          return await financialStore.fillAllRegistrations();
+        } else {
           return (await financialStore.fill(user.guid))
             ? financialStore.fill(user.guid)
             : [];
+        }
+
+        //if (props.adminView) return await financialStore.fillAllRegistrations();
       } catch (error) {
         loading.value = false;
         console.warn(error);
@@ -505,6 +514,7 @@ export default {
       columns,
       organizations,
       registrations,
+      settingsStore,
       guests,
       registration,
       isSubmitted,

@@ -315,7 +315,11 @@
             /> </template
         ></PrimeColumn>
         <PrimeColumn
-          v-if="!isSubmitted() || adminView || tableID"
+          v-if="
+            (!isSubmitted() && settingsStore.getIsSalesOpen) ||
+            adminView ||
+            tableID
+          "
           :exportable="false"
           style="min-width: 8rem"
           header="Options:"
@@ -545,6 +549,7 @@ import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../stores/guests";
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
+import { useSettingsStore } from "../stores/settings";
 
 import { useTablesStore } from "../stores/tables";
 import tableRoutes from "../services/api-routes.tables.js";
@@ -559,6 +564,7 @@ export default {
   },
   setup(props) {
     const guestStore = useGuestsStore();
+    const settingsStore = useSettingsStore();
     const { guests } = storeToRefs(useGuestsStore());
     const tables = ref();
 
@@ -598,11 +604,11 @@ export default {
         tables.value = await (await tableRoutes.getAllTables()).data;
         await new Promise((resolve) => setTimeout(resolve, 1))
           .then(async () => {
-            if (props.adminView) return await guestStore.fillGuests();
             if (props.registrationID)
               return await guestStore.fillGuestsRegistration(
                 props.registrationID
               );
+            if (props.adminView) return await guestStore.fillGuests();
             if (props.tableID)
               return await guestStore.fillGuestsTable(props.tableID);
             else
@@ -837,6 +843,7 @@ export default {
     };
     return {
       columns,
+      settingsStore,
       v$,
       dt,
       filters,

@@ -17,7 +17,7 @@ export const useSettingsStore = defineStore({
     getSettings() {
       return this.settings;
     },
-    getisSalesOpen() {
+    getIsSalesOpen() {
       let status = false;
       const now = new Date();
       if (
@@ -26,7 +26,7 @@ export const useSettingsStore = defineStore({
       ) {
         status = true;
       }
-      console.log(status);
+      console.log(status, "this is sales open status; true means they open");
       return status;
     },
   },

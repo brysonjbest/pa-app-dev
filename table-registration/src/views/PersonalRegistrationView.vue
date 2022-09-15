@@ -7,6 +7,7 @@ import { useAuthUserStore } from "../stores/users";
 import { useMessageStore } from "../stores/messages";
 import { storeToRefs } from "pinia";
 import { useFinancialStore } from "../stores/financial";
+import { useSettingsStore } from "../stores/settings";
 import { ref } from "vue";
 
 export default {
@@ -15,6 +16,8 @@ export default {
   },
   setup(props) {
     const messageStore = useMessageStore();
+    const settingsStore = useSettingsStore();
+    const { settings } = storeToRefs(useSettingsStore());
     const { message } = storeToRefs(useMessageStore());
     const { registration } = storeToRefs(useFinancialStore());
     const activeMessage = ref(false);
@@ -116,6 +119,8 @@ export default {
     return {
       userStore,
       financialStore,
+      settingsStore,
+      settings,
       registration,
       ministerApproval,
       tableCount,
@@ -152,8 +157,8 @@ export default {
       <span v-else>In-progress registration for</span>
       {{ getRegistrar() }}</PageHeader
     >
-    <div v-if="!isAdmin() & !isSubmitted()">
-      <div>
+    <div v-if="!isAdmin()">
+      <div v-if="!isSubmitted() && settingsStore.getIsSalesOpen">
         <PrimeCard id="registration-info">
           <template #content>
             Please ensure that all registration and guest information on this
@@ -164,6 +169,30 @@ export default {
           </template></PrimeCard
         >
       </div>
+      <div v-if="isSubmitted() && settingsStore.getIsSalesOpen">
+        <PrimeCard id="registration-info">
+          <template #content>
+            Your registration has been submitted. Any request for changes after
+            submission and any other questions should be sent via email to
+            <a href="mailto: PremiersAwards@gov.bc.ca"
+              >PremiersAwards@gov.bc.ca</a
+            >.
+          </template></PrimeCard
+        >
+      </div>
+      <div v-if="!settingsStore.getIsSalesOpen">
+        <PrimeCard id="sales-closed-info">
+          <template #content>
+            Registrations for {{ settings.year }} are currently closed. Any
+            request for changes after submission, inquiries regarding
+            outstanding registrations, or any other questions should be sent via
+            email to
+            <a href="mailto: PremiersAwards@gov.bc.ca"
+              >PremiersAwards@gov.bc.ca</a
+            >.
+          </template></PrimeCard
+        >
+      </div>
     </div>
     <ProgressSpinner v-if="loading" />
     <div v-else class="page-body">
@@ -171,6 +200,7 @@ export default {
         id="personal-registration-table"
         :registrationID="id"
         :detailsView="false"
+        :adminView="false || isAdmin()"
       />
       <div>
         <PrimeCard id="guest-seating-info">
@@ -201,7 +231,10 @@ export default {
                   badgeClass="p-badge-danger"
                 />
                 <PrimeButton
-                  v-if="!isSubmitted()"
+                  v-if="
+                    !isSubmitted() &&
+                    (settingsStore.getIsSalesOpen || isAdmin())
+                  "
                   label="Add Guests"
                   icon="pi pi-pencil"
                   class="p-button-rounded p-button-success mr-2"
@@ -399,7 +432,11 @@ export default {
       />
       <div class="submission-buttons">
         <PrimeButton
-          v-if="!isSubmitted() && (guestCount() >= 5 || isAdmin())"
+          v-if="
+            !isSubmitted() &&
+            (settingsStore.getIsSalesOpen || isAdmin()) &&
+            (guestCount() >= 5 || isAdmin())
+          "
           type="button"
           label="Submit Registration"
           icon="pi pi-ticket"

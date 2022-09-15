@@ -1,14 +1,17 @@
 <script>
 import { ref } from "vue";
 import { useAuthUserStore } from "./stores/users";
+import { useSettingsStore } from "./stores/settings";
 
 export default {
   setup() {
     const userStore = useAuthUserStore();
+    const settingsStore = useSettingsStore();
     const user = userStore.getUser || null;
     const username = user.username;
     const menu = ref();
 
+    settingsStore.fillSettings();
     userStore.login();
 
     const siteNav = ref([
