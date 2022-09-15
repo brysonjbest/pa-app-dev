@@ -305,3 +305,30 @@ exports.deleteTable = async (req, res, next) => {
     return next(err);
   }
 };
+
+/**
+ * Removes all tables, registrations, and guests.
+ *
+ * @param req
+ * @param res
+ * @param next
+ * @src public
+ */
+
+exports.deleteAll = async (req, res, next) => {
+  try {
+    await TableModel.deleteMany({})
+      .then(async () => {
+        await RegistrationModel.deleteMany({});
+      })
+      .then(async () => {
+        await GuestModel.deleteMany({});
+      });
+
+    const finalTables = await TableModel.find();
+
+    res.status(200).json(finalTables);
+  } catch (err) {
+    return next(err);
+  }
+};

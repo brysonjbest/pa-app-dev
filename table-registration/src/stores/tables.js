@@ -207,5 +207,8 @@ export const useTablesStore = defineStore({
     async deleteTable(id) {
       await tableRoutes.deleteTable(id);
     },
+    async deleteAll() {
+      await tableRoutes.deleteAll();
+    },
   },
 });

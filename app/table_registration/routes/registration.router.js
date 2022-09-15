@@ -39,6 +39,7 @@ router.get(
 router.post("/seating", tableController.createTable);
 router.post("/seating/delete/:id", tableController.deleteTable);
 router.post("/seating/generate", tableController.generateTableSetup);
+router.post("/seating/deleteall", tableController.deleteAll);
 router.post("/seating/:id", tableController.updateTable);
 
 router.get("/seating", tableController.getAllTables);

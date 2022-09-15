@@ -18,6 +18,7 @@ const guestStore = useGuestsStore();
 const settingsStore = useSettingsStore();
 const fullTableReset = ref(false);
 const tableAssignment = ref(false);
+const fullDatabaseReset = ref(false);
 const defaultLayoutGenerated = ref(false);
 
 const tableStore = useTablesStore();
@@ -131,9 +132,36 @@ const generateDefaultTables = async () => {
   }
 };
 
+//Database Reset function
+const resetDatabase = async () => {
+  try {
+    activeMessage.value = true;
+    messageStore.setMessage({
+      text: "Wiping Database...",
+      type: "info",
+      spinner: true,
+    });
+    // handle data submission
+    await tableStore.deleteAll().then(() => {
+      messageStore.setMessage({
+        text: "Successfully deleted registration, guest and table data!",
+        type: "success",
+      });
+    });
+  } catch (error) {
+    console.error(error);
+    activeMessage.value = true;
+    messageStore.setMessage({
+      text: "Data could not be deleted.",
+      type: "error",
+    });
+  }
+};
+
 //Dialog Controls
 const resetDialog = ref(false);
 const fillDialog = ref(false);
+const databaseResetDialog = ref(false);
 
 const resetConfirmation = () => {
   resetDialog.value = true;
@@ -141,6 +169,10 @@ const resetConfirmation = () => {
 
 const fillConfirmation = () => {
   fillDialog.value = true;
+};
+
+const resetDatabaseConfirmation = () => {
+  databaseResetDialog.value = true;
 };
 
 userStore.login();
@@ -280,10 +312,16 @@ settingsStore.fillSettings().then(() => {
         </template>
         <template #content
           ><h3>
-            Reset database by deleting all current reservations, guests, tables
-            and users with registrar status.
-          </h3></template
-        >
+            Reset database by deleting all current reservations, guests, and
+            tables. Users should be manually managed.
+          </h3>
+          <PrimeButton
+            label="Reset Everything"
+            type="button"
+            icon="pi pi-exclamation-circle"
+            class="p-button-danger"
+            @click="resetDatabaseConfirmation()"
+        /></template>
       </PrimeCard>
     </div>
 
@@ -382,6 +420,64 @@ settingsStore.fillSettings().then(() => {
         @click="fillTables()"
         class="p-button-success"
         badgeClass="p-badge-success"
+      />
+
+      <PrimeMessage
+        show
+        v-if="activeMessage"
+        :variant="message.type"
+        :closable="false"
+      >
+        <p>
+          {{ message.text }}
+        </p>
+      </PrimeMessage>
+    </PrimeDialog>
+    <PrimeDialog
+      v-model:visible="databaseResetDialog"
+      header="Confirm Total Database Reset"
+      :modal="true"
+      class="p-fluid"
+      @hide="toggleMessage()"
+    >
+      <div v-if="!activeMessage">
+        <p>This will completely reset the database for a fresh event year.</p>
+        <p>
+          <b
+            >WARNING: This action CANNOT be undone. Please proceed with
+            caution.</b
+          >
+        </p>
+        <p>
+          All current reservations, guests, and tables will be removed from the
+          event database.
+        </p>
+        <div id="reset-database-checkbox">
+          <CheckBox
+            id="reset-database"
+            name="reset-database"
+            value="fullDatabaseReset"
+            v-model="fullDatabaseReset"
+            :binary="true"
+          />
+          <label for="reset-database"
+            ><b
+              >Please confirm that you wish to reset the database for the
+              Premier's Awards Event and you understand that this action CANNOT
+              be undone.</b
+            ></label
+          >
+        </div>
+      </div>
+
+      <PrimeButton
+        v-if="!activeMessage"
+        :disabled="!fullDatabaseReset"
+        type="button"
+        label="Confirm Database Reset"
+        @click="resetDatabase()"
+        class="p-button-danger"
+        badgeClass="p-badge-danger"
       />
 
       <PrimeMessage

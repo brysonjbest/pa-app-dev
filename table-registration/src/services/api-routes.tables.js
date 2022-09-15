@@ -26,5 +26,8 @@ class SeatingDataService {
   deleteTable(id) {
     return api.post(`/tables/seating/delete/${id}`);
   }
+  deleteAll() {
+    return api.post(`/tables/seating/deleteall`);
+  }
 }
 export default new SeatingDataService();
