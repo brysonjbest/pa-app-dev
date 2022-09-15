@@ -187,10 +187,5 @@ export default {
     flex-direction: row;
     justify-content: center;
   }
-  // border: solid black;
-}
-
-#standard-tables-section {
-  // border: solid black;
 }
 </style>

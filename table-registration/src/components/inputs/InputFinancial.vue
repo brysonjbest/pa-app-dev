@@ -301,7 +301,7 @@ export default {
             : userGUID.username;
 
         register.registerFinancialInformation(this.registration).then((res) => {
-          console.log(res);
+          //console.log(res);
           this.$forceUpdate;
           loading.value = false;
           message.value = true;
