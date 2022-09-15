@@ -18,6 +18,7 @@
         :key="dataTableRender"
         v-model:expandedRows="expandedRows"
         :rows="10"
+        :paginator="true"
         ref="dt"
         stripedRows
         sortField="organization"
