@@ -1,7 +1,7 @@
 <template>
   <main>
     <PageHeader
-      :subtitle="`Welcome to the registration system for the ${year} Premier's Awards.`"
+      :subtitle="`Welcome to the registration system for the ${settings.year} Premier's Awards.`"
       :content="userGreeting"
     />
     <div v-if="isRegistrar()">
@@ -30,8 +30,9 @@
 <script setup>
 import { useAuthUserStore } from "../stores/users";
 import { ref, computed } from "vue";
-import settings from "../services/settings.services";
+import { useSettingsStore } from "../stores/settings";
 import PageHeader from "../components/common/PageHeader.vue";
+import { storeToRefs } from "pinia";
 
 const userStore = useAuthUserStore();
 
@@ -43,5 +44,5 @@ const userGreeting = computed(() =>
   isRegistrar() ? `You are logged in as ${userStore.getUser.username}.` : ""
 );
 
-const year = ref(settings.get("year") || "");
+const { settings } = storeToRefs(useSettingsStore());
 </script>
