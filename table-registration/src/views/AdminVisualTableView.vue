@@ -13,6 +13,9 @@ import RegistrationVisual from "../components/RegistrationVisual.vue";
 const userStore = useAuthUserStore();
 const financialStore = useFinancialStore();
 
+const tableVisualLoaded = ref(false);
+const tableVisualLoad = () => (tableVisualLoaded.value = true);
+
 const navItems = ref(formServices.get("navItems") || []);
 
 const tableCountAll = () => {
@@ -47,9 +50,10 @@ userStore.login();
     />
     <NavMenu :title="''" :menuitems="navItems" />
 
-    <TableVisual :key="keyCount" />
+    <TableVisual v-on:loadedTables="tableVisualLoad" :key="keyCount" />
 
     <RegistrationVisual
+      v-if="tableVisualLoaded"
       v-on:addGuest="keyAdd"
       class="registrations-visual-box"
     />

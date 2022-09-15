@@ -29,7 +29,8 @@ export default {
   props: {
     key: Number,
   },
-  setup() {
+  emits: ["loadedTables"],
+  setup(props, { emit }) {
     const financialStore = useFinancialStore();
     const { registrations } = storeToRefs(useFinancialStore());
 
@@ -78,8 +79,11 @@ export default {
           text: "Could not fetch tables and/or registrations.",
         };
       } finally {
-        loading.value = false;
-        setTimeout(() => (message.value = false), 1500);
+        await new Promise((resolve) => setTimeout(resolve, 1)).then(() => {
+          loading.value = false;
+          message.value = false;
+          emit("loadedTables");
+        });
       }
     };
 
