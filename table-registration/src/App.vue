@@ -73,6 +73,12 @@ export default {
             class: "dropdown-account-item",
           },
           {
+            label: "Event Planner",
+            to: "/admin/tables/event/planning",
+            visible: () => userStore.isAdmin,
+            class: "dropdown-account-item",
+          },
+          {
             label: "Event Settings",
             to: "/admin/settings",
             visible: () => userStore.isAdmin,

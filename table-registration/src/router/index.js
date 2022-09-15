@@ -224,7 +224,7 @@ const router = createRouter({
       beforeEnter: authorizeAdmin,
     },
 
-    //tables view event testing
+    //tables view event planning
 
     {
       path: "/admin/tables/event/planning",
