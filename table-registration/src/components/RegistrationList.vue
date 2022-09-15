@@ -38,7 +38,7 @@
         :rowsPerPageOptions="[10, 20, 50]"
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
       >
-        <template v-if="adminView" #header>
+        <template v-if="adminView && !registrationID" #header>
           <div style="text-align: left" class="header-buttons">
             <PrimeButton
               icon="pi pi-external-link"

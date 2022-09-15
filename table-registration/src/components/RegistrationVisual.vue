@@ -17,8 +17,6 @@
         breakpoint="780px"
         :key="dataTableRender"
         v-model:expandedRows="expandedRows"
-        @rowExpand="onRowExpand"
-        @rowCollapse="onRowCollapse"
         :rows="10"
         ref="dt"
         stripedRows
@@ -460,14 +458,6 @@ export default {
       filters.value = formServices.get("registrationFilters") || {};
     };
 
-    //define expanding rows
-    const onRowExpand = (event) => {
-      console.log("Row Expanded");
-    };
-    const onRowCollapse = (event) => {
-      console.log("Row Collapsed");
-    };
-
     //Working on adding 'add guest to table' popup to event-planning page.
     //Dialog Controls
     const tableDetailsDialog = ref(false);
@@ -621,8 +611,6 @@ export default {
       loading,
       messageText,
       columns,
-      onRowExpand,
-      onRowCollapse,
       tableDetailsDialog,
       guest,
       editGuestTable,

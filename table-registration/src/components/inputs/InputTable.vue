@@ -109,7 +109,7 @@ export default {
         tableStore
           .registerTableHandler(this.table)
           .then((res) => {
-            console.log(res);
+            //console.log(res);
             this.$forceUpdate;
             loading.value = false;
             message.value = true;
@@ -140,7 +140,7 @@ export default {
     const fillList = async function () {
       const user = userStore.getUser;
       tableStore.$reset;
-      console.log(props.tableID, "this is tableID");
+      //console.log(props.tableID, "this is tableID");
 
       if (props.tableID) return await tableStore.fillOnlyTable(props.tableID);
       if (props.adminView) return await tableStore.fillTables();

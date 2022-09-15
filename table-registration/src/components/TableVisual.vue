@@ -45,7 +45,7 @@ export default {
     // console.log(tables.value, "this is original");
 
     const computedTables = computed(() => {
-      console.log(tables.value, "this is tables");
+      // console.log(tables.value, "this is tables");
       return tables.value.sort((a, b) => a.tablename - b.tablename);
     });
 

@@ -204,9 +204,9 @@ settingsStore.fillSettings().then(() => {
         <template #content>
           <h3>
             Use these settings to:<br />
-            (1) reset and generate a new table layout.
+            (1) Reset and generate a new table layout.
             <br />
-            (2) fill tables based on a sorting algorithim.
+            (2) Fill tables based on a sorting algorithim.
           </h3>
           <ol>
             <li>
@@ -315,9 +315,9 @@ settingsStore.fillSettings().then(() => {
         <template #content
           ><h3>
             Reset database by deleting all current:<br />
-            (1) reservations,<br />
-            (2) guests, and<br />
-            (3) tables.<br />
+            (1) Reservations,<br />
+            (2) Guests, and<br />
+            (3) Tables.<br />
             Users should be manually managed.
           </h3>
           <PrimeButton
@@ -501,7 +501,7 @@ settingsStore.fillSettings().then(() => {
 <style lang="scss">
 #siteSettings {
   display: flex;
-  //flex-direction: column;
+  flex-direction: column;
   flex-wrap: wrap;
   gap: 1rem;
   .p-card-subtitle {

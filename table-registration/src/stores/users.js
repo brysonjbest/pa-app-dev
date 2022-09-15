@@ -68,7 +68,7 @@ export const useAuthUserStore = defineStore({
       }
     },
     async logout() {
-      console.log("this is logout");
+      //console.log("this is logout");
       await UsersDataService.logout();
       localStorage.clear();
       this.user = null;
