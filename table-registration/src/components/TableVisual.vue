@@ -8,8 +8,15 @@
       :closable="false"
       >{{ messageText.text }}</PrimeMessage
     >
-    <div v-else>
-      <TableDisplay :tables="tables" :key="key" />
+    <div v-else id="visual-table-list">
+      <div v-if="specialTables.length > 0" id="special-tables-section">
+        <h4>Named/Specialty Tables</h4>
+        <TableDisplay :tables="specialTables" :key="key" />
+      </div>
+      <div id="standard-tables-section">
+        <h4>Standard Table Layout</h4>
+        <TableDisplay :tables="standardTables" :key="key" />
+      </div>
     </div>
   </div>
 </template>
@@ -42,6 +49,8 @@ export default {
 
     const tableStore = useTablesStore();
     const { tables } = storeToRefs(useTablesStore());
+    const specialTables = ref([]);
+    const standardTables = ref([]);
 
     // console.log(tables.value, "this is original");
 
@@ -128,6 +137,13 @@ export default {
             }
             return 0;
           });
+          tables.value.forEach((table, index, arr) => {
+            if (table.tablename.length > 2) {
+              specialTables.value.push(table);
+            } else {
+              standardTables.value.push(table);
+            }
+          });
         });
     };
 
@@ -139,6 +155,8 @@ export default {
       fillList,
       loadLazyData,
       tables,
+      specialTables,
+      standardTables,
       registrations,
       organizations,
       message,
@@ -156,4 +174,23 @@ export default {
   },
 };
 </script>
-<style></style>
+<style lang="scss" scoped>
+#visual-table-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.5em;
+}
+#special-tables-section {
+  .table-display {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+  // border: solid black;
+}
+
+#standard-tables-section {
+  // border: solid black;
+}
+</style>
