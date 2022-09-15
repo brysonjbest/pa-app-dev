@@ -9,6 +9,8 @@ export default {
     const username = user.username;
     const menu = ref();
 
+    userStore.login();
+
     const siteNav = ref([
       {
         label: "Home",
@@ -17,6 +19,7 @@ export default {
       {
         label: "About",
         url: "https://premiersawards.gww.gov.bc.ca/",
+        class: "about-option",
       },
       {
         label: () => userStore.getUser.username || "Account",
@@ -27,25 +30,19 @@ export default {
           {
             label: "Create Account",
             to: "/register/",
-            visible: () => !userStore.isAuthenticated,
-            class: "dropdown-account-item",
-          },
-          {
-            label: "Login",
-            to: "/login/",
-            visible: () => !userStore.isAuthenticated,
+            visible: () => !userStore.isAuthenticated || !userStore.isRegistrar,
             class: "dropdown-account-item",
           },
           {
             label: "My Registration",
             to: "/create/registration/",
-            visible: () => userStore.isAuthenticated,
+            visible: () => userStore.isRegistrar,
             class: "dropdown-account-item",
           },
           {
             label: "Update Profile",
             to: "/user/update/",
-            visible: () => userStore.isAuthenticated,
+            visible: () => userStore.isRegistrar,
             class: "dropdown-account-item",
           },
           {
@@ -70,8 +67,6 @@ export default {
       },
     ]);
 
-    userStore.login();
-
     return { siteNav, username, menu };
   },
 };
@@ -80,13 +75,15 @@ export default {
 <template>
   <header>
     <div>
-      <Menubar id="navbar" :model="siteNav">
+      <MenuBar id="navbar" :model="siteNav">
         <template #start>
-          <router-link to="/" id="page-title"
-            >Premier's Awards Event Registration
-          </router-link>
+          <div id="titlenav">
+            <router-link to="/" id="page-title"
+              >Premier's Awards Event Registration
+            </router-link>
+          </div>
         </template>
-      </Menubar>
+      </MenuBar>
     </div>
   </header>
 
@@ -98,10 +95,13 @@ export default {
 @import "primevue/resources/primevue.min.css";
 @import "primeicons/primeicons.css";
 @import "/node_modules/primeflex/primeflex.css";
+@import "./assets/_theme.scss"; /* Originally from "primevue/resources/themes/md-light-indigo/theme.css" */
 
 /* Theme Choices: */
 
-@import "primevue/resources/themes/nova/theme.css";
+/* @import "primevue/resources/themes/nova/theme.css"; */
+
+/* @import "primevue/resources/themes/md-light-indigo/theme.css"; */
 
 /* @import "primevue/resources/themes/nova-alt/theme.css"; */
 
@@ -113,13 +113,16 @@ export default {
 
 /* @import "primevue/resources/themes/lara-light-teal/theme.css"; */
 html {
-  font-size: 16px;
+  font-size: 12px;
 }
 
 main {
-  margin-top: 80px;
+  margin-top: 4em;
   padding-bottom: 300px;
+  margin-left: 2em;
+  margin-right: 2em;
 }
+
 #app {
   font-family: "Avenir", Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
@@ -144,6 +147,27 @@ header {
   color: white !important;
   background-color: #343a40;
   top: 0;
+  font-size: 1.3em;
+  z-index: 9999 !important;
+}
+/* 
+#titlenav{
+fon
+} */
+
+#navbar .p-menuitem-text {
+  color: white !important;
+}
+
+#navbar .p-submenu-list {
+  z-index: 9999 !important;
+}
+
+#navbar .p-submenu-list .p-menuitem-text {
+  color: black !important;
+}
+#navbar .p-submenu-list .p-menuitem-link {
+  font-size: 0.9em;
 }
 
 #page-title {
@@ -153,27 +177,23 @@ header {
   padding-top: 0.3125rem;
   padding-bottom: 0.3125rem;
   margin-right: 1rem;
-  font-size: 1.25rem;
+  font-size: 20px;
   line-height: inherit;
   white-space: nowrap;
   text-decoration: none;
   background-color: transparent;
 }
 
-.p-menuitem-text {
-  color: white !important;
-}
-
 .dropdown-account {
   position: absolute !important;
   right: 10px;
   z-index: 9999 !important;
-  background-color: #116fbf;
+  background-color: rgba(21, 162, 184, 0.92);
 }
 
 .dropdown-account:hover {
   color: #343a40 !important;
-  background-color: #116fbf;
+  background-color: rgba(21, 162, 184, 0.92);
 }
 
 .p-submenu-list {
@@ -184,5 +204,22 @@ header {
 .dropdown-account-item .p-menuitem-text {
   color: #343a40 !important;
   z-index: 9999 !important;
+}
+
+@media only screen and (max-width: 960px) {
+  .about-option {
+    display: none;
+  }
+  .p-menubar-button {
+    position: absolute;
+    right: 1vw;
+  }
+  .p-menubar-button i {
+    color: white;
+  }
+
+  #page-title {
+    font-size: 2vmax;
+  }
 }
 </style>

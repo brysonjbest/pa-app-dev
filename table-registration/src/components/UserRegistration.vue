@@ -1,6 +1,6 @@
 <template>
   <div>
-    <Message show v-if="user && isRegistered" variant="info" :closable="false">
+    <PrimeMessage show v-if="isRegistered()" variant="info" :closable="false">
       <p v-if="user.role === 'inactive'">
         Your registration is currently under review. Please check back regularly
         for updates.
@@ -9,8 +9,8 @@
         You are currently registered as a(n) <b>{{ user.role }}</b
         >.
       </p>
-    </Message>
-    <Message
+    </PrimeMessage>
+    <PrimeMessage
       show
       v-if="activeMessage"
       :variant="message.type"
@@ -20,13 +20,14 @@
       <p>
         {{ message.text }}
       </p>
-    </Message>
+    </PrimeMessage>
 
-    <Card v-if="user && (!isRegistered || edit)">
+    <PrimeCard v-if="!isRegistered() || edit">
       <template #content>
         <form>
           <InputText
             id="input-user-register-username"
+            title="username"
             :disabled="true"
             :value="user.username"
           >
@@ -34,6 +35,7 @@
 
           <InputText
             id="input-user-register-firstname"
+            title="first name"
             v-model="user.firstname"
             placeholder="Enter user's given name"
           >
@@ -41,46 +43,48 @@
 
           <InputText
             id="input-user-register-lastname"
+            title="last name"
             v-model="user.lastname"
             placeholder="Enter user's last name"
           />
 
           <InputText
             type="email"
+            title="email address"
             id="input-user-register-email"
             v-model="user.email"
             placeholder="Enter user's email"
           >
           </InputText>
-          <Button
+          <PrimeButton
             v-if="edit"
             @click="update"
             :disabled="!validation"
             class="m-2"
             type="button"
             variant="info"
-            >Update</Button
+            >Update</PrimeButton
           >
 
-          <Button
+          <PrimeButton
             v-else
             @click="register"
             :disabled="!validation"
             class="m-2"
             type="button"
             variant="info"
-            >Register</Button
+            >Register</PrimeButton
           >
         </form>
       </template>
-    </Card>
+    </PrimeCard>
   </div>
 </template>
 
 <script>
 import { useAuthUserStore } from "../stores/users";
 import { storeToRefs } from "pinia";
-import { ref } from "vue";
+import { ref, computed } from "vue";
 import useVuelidate from "@vuelidate/core";
 import { required, email } from "@vuelidate/validators";
 import { useMessageStore } from "../stores/messages";
@@ -90,7 +94,7 @@ export default {
   props: {
     edit: Boolean,
   },
-  setup(props) {
+  setup() {
     const userStore = useAuthUserStore();
     const messageStore = useMessageStore();
     const { message } = storeToRefs(useMessageStore());
@@ -102,17 +106,17 @@ export default {
       email: { required, email },
     };
 
-    const edit = props.edit || false;
-
     const v$ = useVuelidate(rules, user);
 
-    const validation = function () {
-      return !!this.user.guid && !!this.user.username;
-    };
+    const validation = computed(() => {
+      const valid =
+        user.value.email && user.value.firstname && user.value.lastname;
+      return valid;
+    });
 
     const isRegistered = function () {
       const currentUser = userStore.getUser;
-      return this.mode === "register" && !!currentUser.role;
+      return currentUser.role;
     };
 
     const register = async function () {
@@ -124,10 +128,11 @@ export default {
           spinner: true,
         });
         // handle data submission
-        const response = await apiRoutesUsers.registerUser(user.value);
-        messageStore.setMessage({
-          text: "Successfully registered user!",
-          type: "success",
+        await apiRoutesUsers.registerUser(user.value).then(() => {
+          messageStore.setMessage({
+            text: "Successfully registered user!",
+            type: "success",
+          });
         });
       } catch (err) {
         console.error(err);
@@ -149,10 +154,7 @@ export default {
         });
 
         // handle data submission
-        const response = await apiRoutesUsers.updateUser(
-          user.value.guid,
-          user.value
-        );
+        await apiRoutesUsers.updateUser(user.value.guid, user.value);
         messageStore.setMessage({
           text: "Successfully updated user!",
           type: "success",
@@ -171,7 +173,6 @@ export default {
       user,
       message,
       rules,
-      edit,
       v$,
       isRegistered,
       validation,

@@ -10,8 +10,9 @@ import axios from "axios";
 const api = axios.create({
   baseURL:
     process.env.NODE_ENV === "production"
-      ? "https://premiersawards.gww.gov.bc.ca/eventregistration/api"
+      ? "https://engagement.gww.gov.bc.ca/"
       : "http://localhost:3001",
+  // baseURL: "http://localhost:3001",
   headers: {
     "Content-Type": "application/json",
     dataType: "json",

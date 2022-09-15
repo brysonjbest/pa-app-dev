@@ -1,6 +1,13 @@
 <template>
   <div>
-    <div>
+    <ProgressSpinner v-if="loading" />
+    <PrimeMessage
+      v-else-if="message"
+      :severity="messageText.severity"
+      :closable="false"
+      >{{ messageText.text }}</PrimeMessage
+    >
+    <div v-else>
       <DataTable
         class="p-datatable-sm"
         :value="registrations"
@@ -10,6 +17,7 @@
         :rows="10"
         ref="dt"
         stripedRows
+        exportFilename="Registration List"
         v-model:filters="filters"
         filterDisplay="menu"
         :globalFilterFields="[
@@ -31,13 +39,13 @@
         currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
       >
         <template v-if="adminView" #header>
-          <div style="text-align: left">
-            <Button
+          <div style="text-align: left" class="header-buttons">
+            <PrimeButton
               icon="pi pi-external-link"
               label="Export"
               @click="exportCSV($event)"
             />
-            <Button
+            <PrimeButton
               type="button"
               icon="pi pi-filter-slash"
               label="Clear"
@@ -47,6 +55,7 @@
             <span class="p-input-icon-left">
               <i class="pi pi-search" />
               <InputText
+                title="Search all by keyword"
                 v-model="filters['global'].value"
                 placeholder="Keyword Search"
               />
@@ -55,7 +64,7 @@
         </template>
         <template #empty> No registrations found. </template>
         <template #loading> Loading registration data. Please wait. </template>
-        <Column
+        <PrimeColumn
           v-if="adminView"
           field="guid"
           header="ID#"
@@ -66,21 +75,43 @@
             <router-link :to="`/admin/edit/${data.guid}`">{{
               data.registrar
             }}</router-link>
-          </template></Column
+          </template></PrimeColumn
         >
-        <Column field="organization" header="Organization" key="organization">
+        <PrimeColumn
+          field="organization"
+          filterField="organization"
+          header="Organization"
+          key="organization"
+        >
           <template #body="{ data }">
             {{ lookup("organizations", data.organization) }}
           </template>
           <template #filter="{ filterModel }">
-            <InputText
-              type="text"
+            <DropDown
               v-model="filterModel.value"
+              :options="organizations"
+              optionLabel="text"
+              placeholder="Any"
               class="p-column-filter"
-              placeholder="Search by organization"
-            /> </template
-        ></Column>
-        <Column
+              :showClear="true"
+            >
+              <template #value="slotProps">
+                <div v-if="slotProps.value">
+                  <div>{{ lookup("organizations", slotProps.value) }}</div>
+                </div>
+                <span v-else>
+                  {{ slotProps.placeholder }}
+                </span>
+              </template>
+              <template #option="slotProps">
+                <div class="item">
+                  <div>{{ lookup("organizations", slotProps.option) }}</div>
+                </div>
+              </template>
+            </DropDown>
+          </template></PrimeColumn
+        >
+        <PrimeColumn
           v-for="col of filter(columns)"
           :field="col.field"
           :header="col.text"
@@ -93,50 +124,61 @@
               class="p-column-filter"
               :placeholder="`Search by ${col.field}`"
             /> </template
-        ></Column>
-        <Column
+        ></PrimeColumn>
+        <PrimeColumn
           v-if="adminView"
-          field="tables"
-          header="Table Count:"
-          key="tables"
+          field="guestCount"
+          dataType="numeric"
+          header="Guest Count:"
+          key="guestCount"
           :sortable="true"
         >
           <template #body="{ data }">
-            {{ tableCount(data.guests.length) }}
+            <span>{{ data.guestCount }}</span>
           </template>
           <template #filter="{ filterModel }">
-            <InputText
-              type="text"
+            <InputNumber
               v-model="filterModel.value"
-              class="p-column-filter"
-              placeholder="Search by Number of Tables"
-            /> </template
-        ></Column>
-        <Column
+              showButtons
+              buttonLayout="horizontal"
+              :step="1"
+              decrementButtonClass="p-button-danger"
+              incrementButtonClass="p-button-success"
+              incrementButtonIcon="pi pi-plus"
+              decrementButtonIcon="pi pi-minus"
+            />
+          </template>
+        </PrimeColumn>
+        <PrimeColumn
           v-if="adminView"
           field="submitted"
           header="Submitted?"
           key="submitted"
+          dataType="boolean"
         >
-          <template #body="{ data }">
-            <i
-              class="pi pi-check-circle"
-              :class="{
-                'true-icon pi-check-circle': data.submitted,
-                'false-icon pi-times-circle': !data.submitted,
-              }"
-              style="font-size: 2rem"
-            ></i>
+          <template #body="{ data }"
+            ><span>
+              <i
+                class="pi pi-check-circle"
+                :class="{
+                  'true-icon pi-check-circle': data.submitted,
+                  'false-icon pi-times-circle': !data.submitted,
+                }"
+                style="font-size: 2rem"
+              ></i
+              ><br />{{ data.submitted ? " Submitted" : " Pending" }}</span
+            >
           </template>
           <template #filter="{ filterModel }">
             <TriStateCheckbox v-model="filterModel.value" /> </template
-        ></Column>
-        <Column
+        ></PrimeColumn>
+        <PrimeColumn
           v-if="adminView"
           field="createdAt"
           header="Created:"
           key="createdAt"
           :sortable="true"
+          dataType="date"
         >
           <template #body="{ data }">
             {{ formatDate(data.createdAt) }},<br />{{
@@ -144,65 +186,80 @@
             }}
           </template>
           <template #filter="{ filterModel }">
-            <InputText
-              type="text"
+            <PrimeCalendar
               v-model="filterModel.value"
-              class="p-column-filter"
-              placeholder="Search by Date Created"
+              dateFormat="mm/dd/yy"
+              placeholder="mm/dd/yyyy"
             /> </template
-        ></Column>
+        ></PrimeColumn>
 
-        <Column
+        <PrimeColumn
           v-if="adminView"
           field="updatedAt"
           header="Updated:"
           key="updatedAt"
           :sortable="true"
+          dataType="date"
         >
           <template #body="{ data }">
             {{ formatDate(data.updatedAt) }},<br />
             {{ formatTime(data.updatedAt) }}
           </template>
           <template #filter="{ filterModel }">
-            <InputText
-              type="text"
+            <PrimeCalendar
               v-model="filterModel.value"
-              class="p-column-filter"
-              placeholder="Search by Date Updated"
+              dateFormat="mm/dd/yy"
+              placeholder="mm/dd/yyyy"
             /> </template
-        ></Column>
-        <Column v-if="!detailsView" :exportable="false" style="min-width: 8rem">
+        ></PrimeColumn>
+        <PrimeColumn
+          v-if="!isSubmitted() || adminView"
+          :exportable="false"
+          style="min-width: 8rem"
+          header="Options:"
+        >
           <template #body="slotProps">
-            <Button
-              v-if="!slotProps.data.submitted"
-              icon="pi pi-pencil"
-              class="p-button-rounded p-button-success mr-2"
-              @click="editRegistration(slotProps.data)"
-            />
-            <Button
-              v-if="!slotProps.data.submitted"
-              icon="pi pi-trash"
-              class="p-button-rounded p-button-warning"
-              @click="confirmDeleteRegistration(slotProps.data)"
-            />
+            <div class="options-buttons">
+              <PrimeButton
+                v-if="!slotProps.data.submitted"
+                label="Edit"
+                icon="pi pi-pencil"
+                class="p-button-rounded p-button-success mr-2 edit-button"
+                @click="editRegistration(slotProps.data)"
+              />
+              <PrimeButton
+                v-if="!slotProps.data.submitted"
+                icon="pi pi-trash"
+                label="Delete"
+                class="p-button-rounded p-button-warning delete-button"
+                @click="confirmDeleteRegistration(slotProps.data)"
+              />
+              <PrimeButton
+                v-if="adminView"
+                icon="pi pi-arrow-up-right"
+                label="View"
+                class="p-button-rounded p-button-info info-button"
+                @click="router.push(`/admin/edit/${slotProps.data.guid}`)"
+              />
+            </div>
           </template>
-        </Column>
+        </PrimeColumn>
       </DataTable>
     </div>
     <div>
-      <Dialog
+      <PrimeDialog
         v-model:visible="registrationDialog"
-        :style="{ width: '450px' }"
+        :style="{ width: '50rem', margin: '5rem' }"
         header="Registration Details"
         :modal="true"
-        class="p-fluid"
+        class="p-fluid registration-dialog"
         @hide="() => loadLazyData()"
         ><InputFinancial
           :registrationID="registration.guid"
           :adminView="adminView"
           :detailsView="detailsView"
-      /></Dialog>
-      <Dialog
+      /></PrimeDialog>
+      <PrimeDialog
         v-model:visible="deleteRegistrationDialog"
         :style="{ width: '450px' }"
         header="Confirm"
@@ -210,28 +267,29 @@
       >
         <div class="confirmation-content">
           <i class="pi pi-exclamation-triangle mr-3" style="font-size: 2rem" />
-          <span v-if="registration"
-            >Are you sure you want to delete registration #
-            <b>{{ registration.guid }}</b> for contact
-            {{ registration.primarycontact }}? This will delete all associated
-            guests.</span
-          >
+          <p v-if="registration">
+            Are you sure you want to delete {{ registration.primarycontact }}'s
+            registration?<br />
+            This will delete all associated guests.<br /><b
+              >This action cannot be undone.</b
+            >
+          </p>
         </div>
         <template #footer>
-          <Button
+          <PrimeButton
             label="No"
             icon="pi pi-times"
             class="p-button-text"
             @click="deleteRegistrationDialog = false"
           />
-          <Button
+          <PrimeButton
             label="Yes"
             icon="pi pi-check"
             class="p-button-text"
             @click="deleteRegistration"
           />
         </template>
-      </Dialog>
+      </PrimeDialog>
     </div>
   </div>
 </template>
@@ -243,7 +301,7 @@ import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
-import router from "../router/index.js";
+import router from "../router";
 
 export default {
   props: {
@@ -255,13 +313,17 @@ export default {
     const financialStore = useFinancialStore();
     const { registrations } = storeToRefs(useFinancialStore());
     const columns = ref(formServices.get("registrationSelection") || []);
-    const organizations = ref(formServices.get("organizations") || []);
+    const organizations = ref(
+      (formServices.get("organizations") || []).map((each) => each.value)
+    );
     const dataTableRender = ref(0);
     const userStore = useAuthUserStore();
-    const detailsView = props.detailsView || false;
-    const adminView = props.adminView || false;
-    const registrationID = props.registrationID || null;
+    //const detailsView = props.detailsView || false;
+    //const adminView = props.adminView || false;
     const dt = ref();
+
+    let message = ref(false);
+    const messageText = ref({ severity: null, text: "" });
 
     //Define filters for table sorting and searching
     const filters = ref(formServices.get("registrationFilters") || {});
@@ -272,24 +334,43 @@ export default {
       filters.value = formServices.get("registrationFilters") || {};
     };
 
-    const loading = ref(true);
+    const loading = ref(false);
 
     //Fill registration table with appropriate data based on props
     const fillList = async function () {
       const user = userStore.getUser;
       financialStore.$reset;
-      loading.value = false;
-      if (props.adminView) return await financialStore.fillAllRegistrations();
-      if (props.registrationID)
-        return await financialStore.fill(props.registrationID);
-      else
-        return (await financialStore.fill(user.guid))
-          ? financialStore.fill(user.guid)
-          : [];
+      loading.value = true;
+      try {
+        if (props.adminView) return await financialStore.fillAllRegistrations();
+        if (props.registrationID)
+          return await financialStore.fill(props.registrationID);
+        else
+          return (await financialStore.fill(user.guid))
+            ? financialStore.fill(user.guid)
+            : [];
+      } catch (error) {
+        loading.value = false;
+        console.warn(error);
+        message.value = true;
+        messageText.value = {
+          severity: "error",
+          text: "Could not fetch registrations.",
+        };
+      } finally {
+        loading.value = false;
+        setTimeout(() => (message.value = false), 1500);
+      }
     };
 
     const loadLazyData = () => {
-      fillList();
+      fillList().then(() => {
+        registrations.value.forEach((registration) => {
+          registration.createdAt = new Date(registration.createdAt);
+          registration.updatedAt = new Date(registration.updatedAt);
+          registration.guestCount = Number(registration.guests.length);
+        });
+      });
     };
 
     onMounted(() => {
@@ -307,6 +388,10 @@ export default {
     };
 
     const exportCSV = () => {
+      dt.value.value.map(
+        (each) =>
+          (each.organization = lookup("organizations", each.organization))
+      );
       dt.value.exportCSV();
     };
 
@@ -341,7 +426,7 @@ export default {
       return tableCount;
     };
 
-    //Dialog Controls
+    //PrimeDialog Controls
 
     const registration = ref({});
     const submitted = ref(false);
@@ -365,21 +450,37 @@ export default {
     //Registration Information Controls
 
     const deleteRegistration = async function () {
-      financialStore
-        .deleteRegistration(registration.value["_id"])
+      loading.value = true;
+      try {
+        financialStore
+          .deleteRegistration(registration.value["_id"])
+          .then(fillList())
+          .then(() => {
+            loading.value = false;
+            message.value = true;
+            messageText.value = {
+              severity: "success",
+              text: "Successfully deleted registration and all connected guests.",
+            };
+          });
+      } catch (error) {
+        loading.value = false;
+        console.warn(error);
+        message.value = true;
+        messageText.value = {
+          severity: "error",
+          text: "Could not delete registration.",
+        };
+      } finally {
+        deleteRegistrationDialog.value = false;
 
-        .then(() => {})
-        .then(fillList())
-        .catch((error) => {
-          console.log(error);
-          // error.response.status Check status code
-        })
-        .finally(() => {
-          deleteRegistrationDialog.value = false;
-          registration.value = {};
-          loadLazyData();
-          //Perform action in always
+        await new Promise((resolve) => setTimeout(resolve, 1500)).then(() => {
+          message.value = false;
+          if (props.registrationID) router.push("/admin");
+          else if (!props.adminView) router.push("/");
+          else fillList();
         });
+      }
     };
 
     return {
@@ -389,13 +490,13 @@ export default {
       registration,
       isSubmitted,
       submitted,
-      detailsView,
-      adminView,
       registrationDialog,
       deleteRegistrationDialog,
       dataTableRender,
       filters,
       loading,
+      message,
+      messageText,
       dt,
       clearFilters,
       exportCSV,
@@ -409,8 +510,41 @@ export default {
       hideDialog,
       loadLazyData,
       tableCount,
+      router,
     };
   },
   components: { InputFinancial },
 };
 </script>
+
+<style lang="scss">
+.p-datatable {
+  .p-button {
+    margin-left: 1em;
+    margin-right: 1em;
+    .edit-button {
+      margin: 2em;
+    }
+    .delete-button {
+      margin: none;
+    }
+  }
+  .header-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+    gap: 1em;
+  }
+  .options-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25em;
+  }
+
+  .p-input-icon-left {
+    margin-left: 1em;
+    margin-right: 1em;
+  }
+}
+</style>

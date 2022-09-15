@@ -1,7 +1,6 @@
 import { defineStore } from "pinia";
 import apiRoutes from "../services/api-routes.services";
 import { useFinancialStore } from "./financial";
-import { useAuthUserStore } from "./users";
 
 export const useGuestsStore = defineStore({
   id: "guestsStore",
@@ -15,6 +14,7 @@ export const useGuestsStore = defineStore({
         organization: "",
         accessibility: [],
         dietary: [],
+        notes: "",
       },
       guests: [],
     };
