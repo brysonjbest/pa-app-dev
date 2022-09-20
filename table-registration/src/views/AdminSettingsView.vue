@@ -10,7 +10,6 @@ import { storeToRefs } from "pinia";
 import useVuelidate from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 import PageHeader from "../components/common/PageHeader.vue";
-import formServices from "../services/settings.services";
 
 const userStore = useAuthUserStore();
 const financialStore = useFinancialStore();
@@ -132,7 +131,7 @@ const generateDefaultTables = async () => {
   }
 };
 
-//Database Reset function
+//Database Reset
 const resetDatabase = async () => {
   try {
     activeMessage.value = true;

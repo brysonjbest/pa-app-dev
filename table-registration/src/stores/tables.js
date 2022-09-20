@@ -119,9 +119,9 @@ export const useTablesStore = defineStore({
         );
         registration.details.forEach((guest) => {
           this.tables.forEach((table) => {
-            const orgMap = table.organizations.map(
-              (each) => (each = each.organization)
-            );
+            // const orgMap = table.organizations.map(
+            //   (each) => (each = each.organization)
+            // );
             //const orgCount = [...new Set(orgMap)].length;
 
             //if table type is reserved, will not seat anyone automatically at this table.

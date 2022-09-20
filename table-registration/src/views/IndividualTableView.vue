@@ -1,6 +1,5 @@
 <script>
 import GuestList from "../components/GuestList.vue";
-import RegistrationList from "../components/RegistrationList.vue";
 import TableList from "../components/TableList.vue";
 import PageHeader from "../components/common/PageHeader.vue";
 import GuestPicker from "../components/inputs/GuestPicker.vue";
@@ -16,7 +15,6 @@ export default {
     id: String,
   },
   setup(props) {
-    const messageStore = useMessageStore();
     const { message } = storeToRefs(useMessageStore());
     const activeMessage = ref(false);
     const loading = ref(false);
@@ -76,7 +74,6 @@ export default {
   },
   components: {
     GuestList,
-    RegistrationList,
     PageHeader,
     TableList,
     GuestPicker,

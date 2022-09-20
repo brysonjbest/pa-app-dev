@@ -26,7 +26,6 @@ export default {
       },
       {
         label: () => userStore.getUser.username || "Account",
-        // label: username || "Account",
         class: "dropdown-account",
         icon: "pi pi-user",
         items: [
@@ -112,27 +111,11 @@ export default {
 </template>
 
 <style>
-/* @import "@/assets/base.css"; */
 @import "primevue/resources/primevue.min.css";
 @import "primeicons/primeicons.css";
 @import "/node_modules/primeflex/primeflex.css";
 @import "./assets/_theme.scss"; /* Originally from "primevue/resources/themes/md-light-indigo/theme.css" */
 
-/* Theme Choices: */
-
-/* @import "primevue/resources/themes/nova/theme.css"; */
-
-/* @import "primevue/resources/themes/md-light-indigo/theme.css"; */
-
-/* @import "primevue/resources/themes/nova-alt/theme.css"; */
-
-/* @import "primevue/resources/themes/nova-accent/theme.css"; */
-
-/* @import "primevue/resources/themes/nova-vue/theme.css"; */
-
-/* @import "primevue/resources/themes/rhea/theme.css"; */
-
-/* @import "primevue/resources/themes/lara-light-teal/theme.css"; */
 html {
   font-size: 12px;
 }
@@ -152,9 +135,7 @@ main {
 }
 
 #app {
-  /* max-width: 1280px; */
   margin: 0 auto;
-  /* padding: 2rem; */
 }
 
 header {
@@ -171,10 +152,6 @@ header {
   font-size: 1.3em;
   z-index: 9999 !important;
 }
-/* 
-#titlenav{
-fon
-} */
 
 #navbar .p-menuitem-text {
   color: white !important;

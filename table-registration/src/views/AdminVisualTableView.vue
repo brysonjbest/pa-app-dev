@@ -1,17 +1,14 @@
 <script setup>
 import { useAuthUserStore } from "../stores/users";
-import { useFinancialStore } from "../stores/financial";
 import { useTablesStore } from "../stores/tables";
 import { ref } from "vue";
 import PageHeader from "../components/common/PageHeader.vue";
-import RegistrationList from "../components/RegistrationList.vue";
 import NavMenu from "../components/common/NavMenu.vue";
 import TableVisual from "../components/TableVisual.vue";
 import formServices from "../services/settings.services";
 import RegistrationVisual from "../components/RegistrationVisual.vue";
 
 const userStore = useAuthUserStore();
-const financialStore = useFinancialStore();
 
 const tableVisualLoaded = ref(false);
 const tableVisualLoad = () => (tableVisualLoaded.value = true);

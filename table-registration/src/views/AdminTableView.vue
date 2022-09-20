@@ -1,21 +1,17 @@
 <script setup>
 import { useAuthUserStore } from "../stores/users";
-import { useFinancialStore } from "../stores/financial";
 import { useTablesStore } from "../stores/tables";
 import { useMessageStore } from "../stores/messages";
 import { ref } from "vue";
 import { storeToRefs } from "pinia";
 import PageHeader from "../components/common/PageHeader.vue";
-import RegistrationList from "../components/RegistrationList.vue";
 import NavMenu from "../components/common/NavMenu.vue";
 import TableList from "../components/TableList.vue";
 import formServices from "../services/settings.services";
 import InputTable from "../components/inputs/InputTable.vue";
 
 const userStore = useAuthUserStore();
-const financialStore = useFinancialStore();
 const tableStore = useTablesStore();
-const messageStore = useMessageStore();
 
 const { message } = storeToRefs(useMessageStore());
 const activeMessage = ref(false);
@@ -24,10 +20,6 @@ const navItems = ref(formServices.get("navItems") || []);
 
 const tableCountAll = () => {
   return String(tableStore.getTablesCount);
-};
-
-const createTable = (data) => {
-  return tableStore.addTable(data);
 };
 
 const { table, tables } = storeToRefs(useTablesStore());

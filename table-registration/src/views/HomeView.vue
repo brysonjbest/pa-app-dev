@@ -55,7 +55,7 @@
 
 <script setup>
 import { useAuthUserStore } from "../stores/users";
-import { ref, computed } from "vue";
+import { computed } from "vue";
 import { useSettingsStore } from "../stores/settings";
 import PageHeader from "../components/common/PageHeader.vue";
 import { storeToRefs } from "pinia";

@@ -188,15 +188,6 @@
               @click="editUser(slotProps.data)"
               >Edit</PrimeButton
             >
-            <!-- <PrimeButton
-            v-if="
-              slotProps.data.role !== 'super-administrator' &&
-              userStore.getUser.role === 'super-administrator'
-            "
-            icon="pi pi-trash"
-            class="p-button-rounded p-button-warning"
-            @click="confirmDeleteRegistration(slotProps.data)"
-          /> -->
             <router-link to="/user/update">
               <PrimeButton
                 v-if="selfAssignment(slotProps.data.guid)"
@@ -316,14 +307,9 @@ export default {
         userStore.$reset;
         await userStore.getUsers();
         loading.value = false;
-        // loading = false;
       } catch (err) {
         loading.value = false;
         console.warn(err);
-        // await this.$store.dispatch("handleError", {
-        //   text: "An error occurred. Users could not be retrieved",
-        //   type: "danger",
-        // });
       }
     };
     const lookup = function (key, value) {
@@ -370,11 +356,6 @@ export default {
       userDialog.value = true;
     };
 
-    // const confirmDeleteGuest = (prod) => {
-    //   user.value = { ...prod };
-    //   deleteUserDialog.value = true;
-    // };
-
     const hideDialog = () => {
       userDialog.value = false;
       submitted.value = false;
@@ -393,7 +374,6 @@ export default {
         .then(load())
         .catch((error) => {
           console.log(error);
-          // error.response.status Check status code
         })
         .finally(() => {
           load();
@@ -410,7 +390,6 @@ export default {
         .then(load())
         .catch((error) => {
           console.log(error);
-          // error.response.status Check status code
         })
         .finally(() => {
           load();

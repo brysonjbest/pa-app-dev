@@ -1,3 +1,4 @@
+<!-- Guest display table. -->
 <template>
   <div>
     <ProgressSpinner v-if="loading" />
@@ -770,7 +771,6 @@ export default {
         .then(fillList())
         .catch((error) => {
           console.log(error);
-          // error.response.status Check status code
         })
         .finally(() => {
           loadLazyData();
