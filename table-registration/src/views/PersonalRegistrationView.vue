@@ -236,7 +236,7 @@ export default {
                     (settingsStore.getIsSalesOpen || isAdmin())
                   "
                   label="Add Guests"
-                  icon="pi pi-pencil"
+                  icon="pi pi-user-plus"
                   class="p-button-rounded p-button-success mr-2"
                   @click="addGuest()"
                 />
@@ -391,8 +391,8 @@ export default {
           :disabled="!ministerApproval"
           type="button"
           label="Confirm submit registration"
-          icon="pi pi-ticket"
-          class="p-button-warning"
+          icon="pi pi-send"
+          class="p-button-primary"
           @click="toggleRegistration()"
           badgeClass="p-badge-danger"
         />
@@ -400,8 +400,8 @@ export default {
           v-if="isSubmitted() && isAdmin() && !activeMessage"
           type="button"
           label="Re-open registration"
-          icon="pi pi-ticket"
-          class="p-button-warning"
+          icon="pi pi-undo"
+          class="p-button-danger"
           @click="toggleRegistration()"
           badgeClass="p-badge-danger"
         />
@@ -439,8 +439,8 @@ export default {
           "
           type="button"
           label="Submit Registration"
-          icon="pi pi-ticket"
-          class="p-button-warning"
+          icon="pi pi-send"
+          class="p-button-primary"
           @click="submitRegistration()"
           badgeClass="p-badge-danger"
         />
@@ -448,8 +448,8 @@ export default {
           v-if="isSubmitted() && isAdmin()"
           type="button"
           label="Unsubmit Registration"
-          icon="pi pi-ticket"
-          class="p-button-warning"
+          icon="pi pi-undo"
+          class="p-button-danger"
           @click="submitRegistration()"
           badgeClass="p-badge-danger"
         />

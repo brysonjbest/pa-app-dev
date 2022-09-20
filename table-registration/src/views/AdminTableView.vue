@@ -72,8 +72,8 @@ userStore.login();
       <PrimeButton
         label="Add New Table"
         type="button"
-        icon="pi pi-ticket"
-        class="p-button-warning"
+        icon="pi pi-plus-circle"
+        class="p-button-success"
         @click="addTable()"
         badgeClass="p-badge-danger"
       />
