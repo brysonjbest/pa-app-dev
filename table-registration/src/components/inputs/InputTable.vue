@@ -97,7 +97,7 @@ export default {
     let message = ref(false);
     const messageText = ref({ severity: null, text: "" });
 
-    //registers user if all form fields valid
+    //registers table if all form fields valid
     const onSubmit = async function (event) {
       event.preventDefault();
       const isFormCorrect = await this.v$.$validate();
@@ -108,8 +108,7 @@ export default {
 
         tableStore
           .registerTableHandler(this.table)
-          .then((res) => {
-            //console.log(res);
+          .then(() => {
             this.$forceUpdate;
             loading.value = false;
             message.value = true;
@@ -135,12 +134,11 @@ export default {
       }
     };
 
-    //fills user registration state on load of component
+    //fills table state on load of component
 
     const fillList = async function () {
       const user = userStore.getUser;
       tableStore.$reset;
-      //console.log(props.tableID, "this is tableID");
 
       if (props.tableID) return await tableStore.fillOnlyTable(props.tableID);
       if (props.adminView) return await tableStore.fillTables();
@@ -159,7 +157,6 @@ export default {
       table,
       v$,
       tabletypes,
-      //fillList,
       onSubmit,
     };
   },

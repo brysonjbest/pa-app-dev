@@ -1,4 +1,4 @@
-<!-- PageHeader Common Component -->
+<!-- Table Icon Common Component -->
 <template>
   <div class="table-icon">
     <i :class="tableClass"></i>
@@ -18,6 +18,7 @@ export default {
     const emptyIcon = "pi pi-circle empty-table";
     const defaultIcon = "pi pi-circle-fill default-table";
 
+    //Apply conditional styling based on table status
     const tableClass = computed(() => {
       if (props.table.status === "full-table") {
         return fullIcon;

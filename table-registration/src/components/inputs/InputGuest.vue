@@ -1,5 +1,4 @@
-<!-- input one by one, a separate component will show the list updating dynamically -->
-<!-- Provides initial registration of financial details -->
+<!-- Provides initial registration of guest details -->
 <template>
   <div>
     <ProgressSpinner v-if="loading" />

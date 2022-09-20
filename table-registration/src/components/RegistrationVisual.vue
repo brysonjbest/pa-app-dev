@@ -350,7 +350,7 @@ import { required } from "@vuelidate/validators";
 
 export default {
   emits: ["addGuest"],
-  setup({ emit }) {
+  setup(props, { emit }) {
     const financialStore = useFinancialStore();
     const guestStore = useGuestsStore();
     const { registrations } = storeToRefs(useFinancialStore());

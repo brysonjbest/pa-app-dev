@@ -1,3 +1,4 @@
+<!-- List of all guests with option to add to a table. -->
 <template>
   <div>
     <ProgressSpinner v-if="loading" />
@@ -109,10 +110,9 @@
 <script>
 import formServices from "../../services/settings.services";
 import apiRoutes from "../../services/api-routes.services";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../../stores/guests";
-import { useAuthUserStore } from "../../stores/users";
 import { useFinancialStore } from "../../stores/financial";
 import { useTablesStore } from "../../stores/tables";
 
@@ -130,10 +130,9 @@ export default {
     const loading = ref(false);
     let message = ref(false);
     const messageText = ref({ severity: null, text: "" });
-    const financialStore = useFinancialStore();
     const tableStore = useTablesStore();
 
-    //Conditionally Fill DataList
+    //Get all guest data
     const fillList = async function () {
       loading.value = true;
       try {
