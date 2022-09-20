@@ -318,7 +318,6 @@ import formServices from "../services/settings.services";
 import InputTable from "./inputs/InputTable.vue";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
-import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
 import { useTablesStore } from "../stores/tables";
 import router from "../router";
@@ -340,7 +339,6 @@ export default {
       (formServices.get("organizations") || []).map((each) => each.value)
     );
     const dataTableRender = ref(0);
-    const userStore = useAuthUserStore();
     const dt = ref();
 
     let message = ref(false);
@@ -359,7 +357,6 @@ export default {
 
     //Fill tables datatables with appropriate data based on props
     const fillList = async function () {
-      const user = userStore.getUser;
       financialStore.$reset;
       loading.value = true;
       try {

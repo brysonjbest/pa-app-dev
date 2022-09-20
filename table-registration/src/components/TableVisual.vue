@@ -24,13 +24,10 @@
 <script>
 import { useFinancialStore } from "../stores/financial";
 import { useTablesStore } from "../stores/tables";
-import { useAuthUserStore } from "../stores/users";
-import TableIcon from "./icons/TableIcon.vue";
 import TableDisplay from "./common/TableDisplay.vue";
 import { storeToRefs } from "pinia";
-import { ref, onMounted, computed, onUpdated } from "vue";
+import { ref, onMounted, computed } from "vue";
 import formServices from "../services/settings.services";
-import GuestPicker from "./inputs/GuestPicker.vue";
 
 export default {
   props: {
@@ -41,8 +38,6 @@ export default {
     const financialStore = useFinancialStore();
     const { registrations } = storeToRefs(useFinancialStore());
 
-    const registrationTables = ref({});
-
     const lookupKey = function (key, value) {
       return formServices.lookup(key, value);
     };
@@ -52,14 +47,9 @@ export default {
     const specialTables = ref([]);
     const standardTables = ref([]);
 
-    // console.log(tables.value, "this is original");
-
     const computedTables = computed(() => {
-      // console.log(tables.value, "this is tables");
       return tables.value.sort((a, b) => a.tablename - b.tablename);
     });
-
-    // console.log(tables, "this is modified");
 
     const columns = ref(formServices.get("tableSelection") || []);
     const organizations = ref(
@@ -70,7 +60,7 @@ export default {
     const messageText = ref({ severity: null, text: "" });
     const loading = ref(false);
 
-    //Fill tables datatables with appropriate data based on props
+    //Fill tables with all tables and registrations
     const fillList = async function () {
       financialStore.$reset;
       tableStore.$reset;
@@ -96,6 +86,7 @@ export default {
       }
     };
 
+    //After table fill, append additional information and sort based on table data
     const loadLazyData = () => {
       fillList()
         .then(() => {
@@ -137,7 +128,7 @@ export default {
             }
             return 0;
           });
-          tables.value.forEach((table, index, arr) => {
+          tables.value.forEach((table) => {
             if (table.tablename.length > 2) {
               specialTables.value.push(table);
             } else {
@@ -168,9 +159,7 @@ export default {
     };
   },
   components: {
-    TableIcon,
     TableDisplay,
-    GuestPicker,
   },
 };
 </script>
