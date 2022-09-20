@@ -1,4 +1,4 @@
-<!-- Guest Selector for Tables -->
+<!-- Nested layout of registrations with guests for use in the event-planning page  -->
 <template>
   <div>
     <ProgressSpinner v-if="loading || multiloading" />
@@ -341,28 +341,22 @@
 <script>
 import { useFinancialStore } from "../stores/financial";
 import { useTablesStore } from "../stores/tables";
-import { useAuthUserStore } from "../stores/users";
 import { useGuestsStore } from "../stores/guests";
-import TableIcon from "./icons/TableIcon.vue";
-import TableDisplay from "./common/TableDisplay.vue";
 import { storeToRefs } from "pinia";
-import { ref, onMounted, computed } from "vue";
+import { ref, onMounted } from "vue";
 import formServices from "../services/settings.services";
-import GuestPicker from "./inputs/GuestPicker.vue";
 import useVuelidate from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
 
 export default {
   emits: ["addGuest"],
-  setup(props, { emit }) {
+  setup({ emit }) {
     const financialStore = useFinancialStore();
     const guestStore = useGuestsStore();
-    const tableStore = useTablesStore();
     const { registrations } = storeToRefs(useFinancialStore());
     const { guests } = storeToRefs(useGuestsStore());
     const { tables } = storeToRefs(useTablesStore());
 
-    const registrationTables = ref({});
     const dt = ref();
     const dataTableRender = ref(0);
     const expandedRows = ref([]);
@@ -377,7 +371,7 @@ export default {
     const loading = ref(false);
     const multiloading = ref(false);
 
-    //Fill tables datatables with appropriate data based on props
+    //Fill tables with full registration and guest details
     const fillList = async function () {
       financialStore.$reset;
       guestStore.$reset;
@@ -466,7 +460,6 @@ export default {
       filters.value = formServices.get("registrationFilters") || {};
     };
 
-    //Working on adding 'add guest to table' popup to event-planning page.
     //Dialog Controls
     const tableDetailsDialog = ref(false);
     const multiTableDialog = ref(false);
@@ -489,14 +482,14 @@ export default {
       multiTableDialog.value = false;
     };
 
-    const { table } = storeToRefs(useTablesStore());
-
     //Vuelidate Form Rules
     const rules = {
       table: { required },
     };
 
     const v$ = useVuelidate(rules, guest);
+
+    //Manages individual guest assignment to event tables
 
     const editTable = async () => {
       const isFormCorrect = await v$.value.$validate();
@@ -505,7 +498,6 @@ export default {
       const tableGUID = guest.value.table;
       const guestID = guest.value._id;
       const tablevalue = { _id: tableGUID };
-      // console.log(guest.value, "this is guest value");
       try {
         loading.value = true;
         if (guest.value.tabledetails != null) {
@@ -544,7 +536,6 @@ export default {
           .then(() => {
             message.value = false;
             tableDetailsDialog.value = false;
-            //tableStore.fillTables();
             emit("addGuest");
           })
           .then(() => {
@@ -552,6 +543,8 @@ export default {
           });
       }
     };
+
+    //Loops individual guest assignment over a registration until the selected table is filled
 
     const multiSeat = async (data) => {
       const finalRegistration = registration.value.details;
@@ -631,11 +624,6 @@ export default {
       multiSeat,
       multiloading,
     };
-  },
-  components: {
-    TableIcon,
-    TableDisplay,
-    GuestPicker,
   },
 };
 </script>
