@@ -128,7 +128,6 @@
 </template>
 
 <script>
-//import TablesDataService from "@/services/TablesDataService";
 import formServices from "@/services/settings.services";
 import useVuelidate from "@vuelidate/core";
 import { required } from "@vuelidate/validators";
@@ -238,13 +237,11 @@ export default {
   padding: 0px 0.5em;
 }
 .guest-registration-form {
-  // width: 90%;
   padding: 1rem;
 
   .guest-registration-selections {
     display: flex;
     flex-direction: column;
-    // align-items: center;
     flex-wrap: wrap;
     gap: 1rem;
   }

@@ -373,7 +373,6 @@ export default {
 
 <style lang="scss">
 .financial-registration-form {
-  // width: 90%;
   padding: 1rem;
 
   .financial-form-selections {
@@ -384,7 +383,6 @@ export default {
     gap: 1rem;
 
     .form-item {
-      // flex-grow: 1;
       margin: 0 10px;
     }
     .form-break {

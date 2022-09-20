@@ -2,10 +2,7 @@ import { defineStore } from "pinia";
 import { useMessageStore } from "./messages";
 import UsersDataService from "../services/api-routes.users";
 
-//update error setting/remove if not in use
-
 export const useAuthUserStore = defineStore({
-  // convert to a function
   id: "auth/user",
   state: () => {
     return {
@@ -68,7 +65,6 @@ export const useAuthUserStore = defineStore({
       }
     },
     async logout() {
-      //console.log("this is logout");
       await UsersDataService.logout();
       localStorage.clear();
       this.user = null;
@@ -106,42 +102,6 @@ export const useAuthUserStore = defineStore({
       });
     },
 
-    /*
-    async getUsers() {
-      const message = useMessageStore();
-      message.resetMessage();
-      return await UsersDataService.getAllUsers().then((response) => {
-        const { data = [] } = response || {};
-        return data.map((user) => {
-          const {
-            _id = null,
-            role = "",
-            guid = "",
-            username = "",
-            firstname = "",
-            lastname = "",
-            email = "",
-            createdAt = "",
-            updatedAt = "",
-          } = user || {};
-          const updatedTS = new Date(updatedAt);
-          const createdTS = new Date(createdAt);
-          return {
-            id: _id,
-            role: role,
-            guid: guid,
-            username: username,
-            firstname: firstname,
-            lastname: lastname,
-            email: email,
-            created: createdTS,
-            updated: updatedTS,
-          };
-        });
-      });
-    },
-    */
-
     async getUsers() {
       this.users = await (await UsersDataService.getAllUsers()).data;
     },
@@ -175,7 +135,6 @@ export const useAuthUserStore = defineStore({
     },
 
     async refresh(accessToken) {
-      //   this.status.loggedIn = true;
       this.user = { ...this.user, accessToken: accessToken };
     },
 
@@ -183,7 +142,6 @@ export const useAuthUserStore = defineStore({
       this.user = user;
     },
 
-    // easily reset state using `$reset`
     clearUser() {
       this.$reset();
     },

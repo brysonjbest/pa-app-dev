@@ -7,8 +7,6 @@
 import { FilterMatchMode, FilterOperator } from "primevue/api";
 
 const schemaData = {
-  year: "2022",
-  defaultNumberOfTables: 72,
   navItems: [
     {
       label: "Registrations",

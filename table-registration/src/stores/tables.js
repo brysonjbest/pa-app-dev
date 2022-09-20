@@ -39,7 +39,6 @@ export const useTablesStore = defineStore({
     },
 
     async fillTables() {
-      //this.guests = await tableRoutes.getGuestByRegistration(registrationID);
       this.tables = await (await tableRoutes.getAllTables()).data;
     },
 
@@ -83,7 +82,7 @@ export const useTablesStore = defineStore({
       );
 
       this.tables.map((table) => (table.full = false));
-      //Review if sorting necessary? Currently sorts into alpha order - this keeps ministry registrations together
+      //Sorts into alpha order - this keeps ministry registrations together
       this.tables.sort((a, b) => {
         const nameA = a.tablename[0];
         const numberA = a.tablename[1];
@@ -123,16 +122,14 @@ export const useTablesStore = defineStore({
             const orgMap = table.organizations.map(
               (each) => (each = each.organization)
             );
-            const orgCount = [...new Set(orgMap)].length;
+            //const orgCount = [...new Set(orgMap)].length;
 
-            //checks to verify if a ministry already exists on this table from a registration, and if so, does it match, and if not, if the space remaining is less than 5, the table is full
+            //if table type is reserved, will not seat anyone automatically at this table.
             if (table.tabletype === "Reserved") {
               table.full = true;
             }
             if (table.full !== true) {
-              //tableList[table._id] = tableList[table._id] || [];
               if (!guest.seated) {
-                //tableList[table._id].push(guest._id);
                 table.guests.push(guest);
                 table.organizations.push({
                   organization: guest.organization,

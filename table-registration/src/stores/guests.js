@@ -45,7 +45,6 @@ export const useGuestsStore = defineStore({
     },
 
     async fillGuests() {
-      //this.guests = await apiRoutes.getGuestByRegistration(registrationID);
       this.guests = await (await apiRoutes.getAllGuests()).data;
     },
 
@@ -54,11 +53,6 @@ export const useGuestsStore = defineStore({
       this.guest.registration = await registrationData.getId;
     },
     async addGuestList() {
-      // const userData = useAuthUserStore();
-      // this.guest.registration = await userData.getId;
-      // const registrationData = useFinancialStore();
-      // this.guest.registration = await registrationData.getId;
-
       const {
         registration = "",
         guid = "",
@@ -111,7 +105,6 @@ export const useGuestsStore = defineStore({
               guestID: id,
             },
           },
-          // $push: { organizations: guestData.organization },
         });
       });
     },
@@ -129,7 +122,6 @@ export const useGuestsStore = defineStore({
     },
 
     async registerGuest(guestData) {
-      // await apiRoutes.createGuest(guestData);
       const financialStore = useFinancialStore();
       const newGuest = await apiRoutes.createGuest(guestData);
       const id = newGuest.data._id;
