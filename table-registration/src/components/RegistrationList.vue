@@ -1,3 +1,4 @@
+<!-- Registration Display table -->
 <template>
   <div>
     <ProgressSpinner v-if="loading" />
@@ -341,8 +342,6 @@ export default {
     );
     const dataTableRender = ref(0);
     const userStore = useAuthUserStore();
-    //const detailsView = props.detailsView || false;
-    //const adminView = props.adminView || false;
     const dt = ref();
 
     let message = ref(false);
@@ -355,6 +354,9 @@ export default {
     };
     const initFilters = () => {
       filters.value = formServices.get("registrationFilters") || {};
+    };
+    const filter = function (data) {
+      return data.filter((item) => item.field !== "organization");
     };
 
     const loading = ref(false);
@@ -374,8 +376,6 @@ export default {
             ? financialStore.fill(user.guid)
             : [];
         }
-
-        //if (props.adminView) return await financialStore.fillAllRegistrations();
       } catch (error) {
         loading.value = false;
         console.warn(error);
@@ -390,6 +390,7 @@ export default {
       }
     };
 
+    //Format data after load
     const loadLazyData = () => {
       fillList().then(() => {
         registrations.value.forEach((registration) => {
@@ -404,11 +405,11 @@ export default {
       loadLazyData();
     });
 
+    //Helper Functions
+
     const isSubmitted = function () {
       return financialStore.getRegistration.submitted;
     };
-
-    //Helper Functions
 
     const lookup = function (key, value) {
       return formServices.lookup(key, value);
@@ -439,10 +440,6 @@ export default {
         hour: "2-digit",
         minute: "2-digit",
       });
-    };
-
-    const filter = function (data) {
-      return data.filter((item) => item.field !== "organization");
     };
 
     const tableCount = function (data) {

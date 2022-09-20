@@ -1,3 +1,4 @@
+<!-- Handle user registration -->
 <template>
   <div>
     <PrimeMessage show v-if="isRegistered()" variant="info" :closable="false">
@@ -100,6 +101,8 @@ export default {
     const { message } = storeToRefs(useMessageStore());
     const activeMessage = ref(false);
     const { user } = storeToRefs(useAuthUserStore());
+
+    //Submission rules and validation
     const rules = {
       firstname: { required },
       lastname: { required },
@@ -113,6 +116,8 @@ export default {
         user.value.email && user.value.firstname && user.value.lastname;
       return valid;
     });
+
+    //Data check and handling
 
     const isRegistered = function () {
       const currentUser = userStore.getUser;

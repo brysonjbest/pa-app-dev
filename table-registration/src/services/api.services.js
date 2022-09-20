@@ -12,7 +12,6 @@ const api = axios.create({
     process.env.NODE_ENV === "production"
       ? "https://engagement.gww.gov.bc.ca/"
       : "http://localhost:3001",
-  // baseURL: "http://localhost:3001",
   headers: {
     "Content-Type": "application/json",
     dataType: "json",

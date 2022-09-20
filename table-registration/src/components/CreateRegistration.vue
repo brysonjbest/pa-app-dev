@@ -1,3 +1,4 @@
+<!-- Handles new event registrations -->
 <template>
   <div>
     <PrimeCard>
@@ -50,28 +51,6 @@ export default {
           type: "danger",
         });
       });
-
-    /* WorkingVersion
-
-    financialStore
-      .createRegistration(guid)
-      .then(function (data) {
-        if (data) router.push(`/edit/${data.guid}`);
-      })
-      .catch(() => {
-        financialStore
-          .fill(guid)
-          .then(() => router.push(`/registration/${guid}`));
-      })
-      .catch((err) => {
-        console.error(err);
-        messages.setMessage({
-          text: "Registration could not be created. Please contact the site administrator for assistance",
-          type: "danger",
-        });
-      });
-
-      */
   },
 };
 </script>

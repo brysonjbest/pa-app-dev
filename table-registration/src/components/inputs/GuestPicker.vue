@@ -113,7 +113,6 @@ import apiRoutes from "../../services/api-routes.services";
 import { ref, onMounted } from "vue";
 import { storeToRefs } from "pinia";
 import { useGuestsStore } from "../../stores/guests";
-import { useFinancialStore } from "../../stores/financial";
 import { useTablesStore } from "../../stores/tables";
 
 export default {
