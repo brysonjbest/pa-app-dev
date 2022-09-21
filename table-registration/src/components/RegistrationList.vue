@@ -67,13 +67,13 @@
         <template #loading> Loading registration data. Please wait. </template>
         <PrimeColumn
           v-if="adminView"
-          field="guid"
+          field="_id"
           header="ID#"
-          key="guid"
-          class="guid"
+          key="_id"
+          class="_id"
         >
           <template #body="{ data }">
-            <router-link :to="`/admin/edit/${data.guid}`">{{
+            <router-link :to="`/admin/edit/${data._id}`">{{
               data.registrar
             }}</router-link>
           </template></PrimeColumn
@@ -149,6 +149,8 @@
               decrementButtonIcon="pi pi-minus"
             />
           </template>
+        </PrimeColumn>
+        <PrimeColumn :hidden="true" field="tables" header="Tables" key="tables">
         </PrimeColumn>
         <PrimeColumn
           v-if="adminView"
@@ -323,6 +325,7 @@ import { useAuthUserStore } from "../stores/users";
 import { useFinancialStore } from "../stores/financial";
 import { useGuestsStore } from "../stores/guests";
 import { useSettingsStore } from "../stores/settings";
+import { useTablesStore } from "../stores/tables";
 import router from "../router";
 
 export default {
@@ -336,6 +339,7 @@ export default {
     const settingsStore = useSettingsStore();
     const { registrations } = storeToRefs(useFinancialStore());
     const { guests } = storeToRefs(useGuestsStore());
+    const { tables } = storeToRefs(useTablesStore());
     const columns = ref(formServices.get("registrationSelection") || []);
     const organizations = ref(
       (formServices.get("organizations") || []).map((each) => each.value)
@@ -415,12 +419,56 @@ export default {
       return formServices.lookup(key, value);
     };
 
-    const exportCSV = () => {
-      dt.value.value.map(
-        (each) =>
-          (each.organization = lookup("organizations", each.organization))
-      );
-      dt.value.exportCSV();
+    //Custom export loads guest and table data to inform tables on each registration on export only
+
+    const exportCSV = async () => {
+      await useTablesStore().fillTables();
+      await useGuestsStore()
+        .fillGuests()
+        .then(() => {
+          registrations.value.forEach((registration) => {
+            registration.details = {};
+            registration.status = 0;
+            registration.guests.forEach((guest) => {
+              registration.details[guest] = guests.value.filter(
+                (each) => each._id === guest
+              )[0];
+              registration.details[guest]["tabledetails"] = tables.value.filter(
+                (each) => each._id === registration.details[guest]["table"]
+              )[0];
+            });
+          });
+        })
+        .then(() => {
+          dt.value.value.map((each) => {
+            const organization = {
+              organization: lookup("organizations", each.organization),
+            };
+            const tableList = [];
+            each.guests.forEach((guest) => {
+              const guestDetails = guests.value.filter(
+                (each) => each._id === guest
+              );
+              const tableDetails = guestDetails.map((each) =>
+                each["tabledetails"] ? each["tabledetails"] : null
+              );
+              const tableNames = tableDetails.map((each) =>
+                each ? each["tablename"] : null
+              );
+              tableNames[0] ? tableList.push(tableNames[0]) : null;
+            });
+            const finalTables = new Set(tableList);
+            let tableString = "";
+            finalTables.forEach((value) => (tableString += `${value} `));
+            const tables = {
+              tables: tableString,
+            };
+            each = Object.assign(each, organization, tables);
+          });
+        })
+        .then(() => {
+          dt.value.exportCSV();
+        });
     };
 
     const formatDate = (value) => {
