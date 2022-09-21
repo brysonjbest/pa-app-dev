@@ -276,8 +276,9 @@ export default {
         </ul>
 
         <br /><b>Warning regarding table charges:</b><br />
-        Please be aware that half tables may not be able to be accomodated, and
-        you may be charged the full table amount. <br />
+        Please be aware that half tables may only be accomodated at the
+        program's discretion, and you may be charged the full table amount.
+        <br />
       </PrimeDialog>
 
       <PrimeDialog
@@ -355,8 +356,8 @@ export default {
             </li>
           </ul>
           <p>
-            Please be aware that half tables may not be able to be accomodated,
-            and you may be charged the full table amount.
+            Please be aware that half tables may only be accomodated at the
+            program's discretion, and you may be charged the full table amount.
           </p>
           <p>
             Guests submitted on this registration: {{ guestCount() }}.<br />
@@ -432,11 +433,8 @@ export default {
       />
       <div class="submission-buttons">
         <PrimeButton
-          v-if="
-            !isSubmitted() &&
-            (settingsStore.getIsSalesOpen || isAdmin()) &&
-            (guestCount() >= 5 || isAdmin())
-          "
+          v-if="!isSubmitted() && (settingsStore.getIsSalesOpen || isAdmin())"
+          :disabled="guestCount() < 5 && !isAdmin()"
           type="button"
           label="Submit Registration"
           icon="pi pi-send"
@@ -444,6 +442,7 @@ export default {
           @click="submitRegistration()"
           badgeClass="p-badge-danger"
         />
+
         <PrimeButton
           v-if="isSubmitted() && isAdmin()"
           type="button"
@@ -453,6 +452,17 @@ export default {
           @click="submitRegistration()"
           badgeClass="p-badge-danger"
         />
+        <label
+          v-if="
+            !isSubmitted() &&
+            (settingsStore.getIsSalesOpen || isAdmin()) &&
+            guestCount() < 5 &&
+            !isAdmin()
+          "
+          class="p-error"
+          id="submit-registration-help"
+          >The minimum number of guests allowed on a registration is 5.</label
+        >
       </div>
     </div>
   </main>
@@ -505,6 +515,12 @@ export default {
     display: flex;
     justify-content: flex-end;
     padding: 1rem;
+    align-items: flex-end;
+    flex-direction: column;
+
+    button {
+      width: fit-content;
+    }
   }
 }
 #minister-approval-checkbox {
