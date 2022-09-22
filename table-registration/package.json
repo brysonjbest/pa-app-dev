@@ -5,7 +5,8 @@
     "dev": "vite --port 3002",
     "build": "vite build",
     "preview": "vite preview --port 4173",
-    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore"
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs --fix --ignore-path .gitignore",
+    "test": "vitest"
   },
   "dependencies": {
     "@vuelidate/core": "^2.0.0-alpha.42",
@@ -24,6 +25,7 @@
     "eslint": "^8.5.0",
     "eslint-plugin-vue": "^9.0.0",
     "sass": "^1.54.3",
-    "vite": "^2.9.12"
+    "vite": "^2.9.12",
+    "vitest": "^0.23.4"
   }
 }
