@@ -248,4 +248,8 @@ export default {
   display: flex;
   flex-wrap: wrap;
 }
+
+.edit-button {
+  margin-left: 0;
+}
 </style>

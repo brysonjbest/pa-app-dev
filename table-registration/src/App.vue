@@ -227,4 +227,8 @@ header {
     margin-right: 0;
   }
 }
+
+.p-datatable-table {
+  white-space: break-spaces !important;
+}
 </style>
