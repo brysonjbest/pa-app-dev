@@ -93,6 +93,11 @@ export default {
       }
     };
 
+    //guestList Reactivity
+
+    const keyCount = ref(0);
+    const keyAdd = () => keyCount.value++;
+
     const addGuestDialog = ref(false);
     const tableInfoDialog = ref(false);
     const guestInfoDialog = ref(false);
@@ -142,6 +147,8 @@ export default {
       message,
       loading,
       isCompleted,
+      keyCount,
+      keyAdd,
     };
   },
   components: { GuestList, RegistrationList, InputGuest, PageHeader },
@@ -422,6 +429,7 @@ export default {
         v-model:visible="addGuestDialog"
         :style="{ width: '50rem', margin: '5rem' }"
         header="Add a new Guest"
+        @hide="keyAdd()"
         :modal="true"
         class="p-fluid"
         ><InputGuest :registrationID="id"
@@ -430,6 +438,7 @@ export default {
         id="personal-registration-guests-table"
         :adminView="false || isAdmin()"
         :registrationID="id"
+        :key="keyCount"
       />
       <div class="submission-buttons">
         <PrimeButton
