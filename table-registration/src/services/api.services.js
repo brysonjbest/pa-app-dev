@@ -21,6 +21,4 @@ const api = axios.create({
   withCredentials: true,
 });
 
-console.log(process.env.NODE_ENV, "Testing Node");
-
 export default api;
