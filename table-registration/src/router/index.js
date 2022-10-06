@@ -90,14 +90,15 @@ const authenticate = async (to, from, next) => {
  */
 
 const authorizeRegistrar = async (to, from, next) => {
-  const { role = "" } = (await getUserData()) || {};
+  const { role = "", eventregistrar = false } = (await getUserData()) || {};
   if (
     ![
       "registrar",
       "nominator",
       "administrator",
       "super-administrator",
-    ].includes(role)
+    ].includes(role) ||
+    ((role === "registrar" || role === "nominator") && !eventregistrar)
   )
     return next({ name: "unauthorized" });
   else next();

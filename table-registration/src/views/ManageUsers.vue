@@ -3,7 +3,7 @@
     <div v-if="isAdmin">
       <PageHeader
         title="Manage Users"
-        subtitle="Manage User Access and Accounts"
+        subtitle="Manage user access and account types for the event registration application"
       />
       <PrimeCard v-if="loading">
         <PrimeRow class="vh-50 text-center" align-v="center">
@@ -12,6 +12,16 @@
           ></PrimeColumn>
         </PrimeRow>
       </PrimeCard>
+      <a :href="adminURL">
+        <PrimeButton
+          class="m2 p-button-success"
+          type="button"
+          id="user-management-button"
+          icon="pi pi-sign-in"
+          label="Go to Premier's Awards Advanced User Management"
+          :href="adminURL"
+        ></PrimeButton>
+      </a>
 
       <DataTable
         class="p-datatable-sm"
@@ -137,6 +147,44 @@
         ></PrimeColumn>
 
         <PrimeColumn
+          field="eventregistrar"
+          header="Eligible to Register?"
+          key="eventregistrar"
+          dataType="boolean"
+          filterField="eventregistrar"
+          sortable
+        >
+          <template #body="{ data }"
+            ><span
+              v-if="
+                data.role === 'administrator' ||
+                data.role === 'super-administrator'
+              "
+              ><i
+                class="true-icon pi pi-check-circle"
+                style="font-size: 2rem"
+              ></i
+              ><br />
+              <div>Eligible as Admin</div></span
+            >
+            <span v-else>
+              <i
+                :class="{
+                  'true-icon pi pi-check-circle': data.eventregistrar,
+                  'false-icon pi pi-times-circle': !data.eventregistrar,
+                }"
+                style="font-size: 2rem"
+              ></i
+              ><br />
+              <div v-if="data.eventregistrar">Eligible Event Registrar</div>
+              <div v-else>Pending</div></span
+            >
+          </template>
+          <template #filter="{ filterModel }">
+            <TriStateCheckbox v-model="filterModel.value" /> </template
+        ></PrimeColumn>
+
+        <PrimeColumn
           field="createdAt"
           header="Created:"
           key="createdAt"
@@ -188,12 +236,36 @@
               @click="editUser(slotProps.data)"
               >Edit</PrimeButton
             >
-            <router-link to="/user/update">
+            <div
+              v-if="
+                slotProps.data.role !== 'super-administrator' &&
+                slotProps.data.role !== 'administrator' &&
+                slotProps.data.role !== 'inactive' &&
+                slotProps.data.role !== userStore.getUser.role
+              "
+            >
               <PrimeButton
-                v-if="selfAssignment(slotProps.data.guid)"
-                icon="pi pi-pencil"
-                class="p-button-rounded p-button-success mr-2"
-            /></router-link>
+                v-if="!slotProps.data.eventregistrar"
+                label="Activate"
+                class="p-button-primary"
+                @click="toggleRegistrar(slotProps.data)"
+              />
+              <PrimeButton
+                v-else-if="slotProps.data.eventregistrar"
+                label="Deactivate"
+                class="p-button-danger"
+                @click="toggleRegistrar(slotProps.data)"
+              />
+            </div>
+
+            <div>
+              <router-link to="/user/update">
+                <PrimeButton
+                  v-if="selfAssignment(slotProps.data.guid)"
+                  icon="pi pi-pencil"
+                  class="p-button-rounded p-button-success mr-2"
+              /></router-link>
+            </div>
           </template>
         </PrimeColumn>
       </DataTable>
@@ -204,13 +276,23 @@
         :modal="true"
         class="p-fluid"
       >
-        <div class="dropdown">
+        <a :href="adminURL" v-if="user.role === 'nominator'">
+          <PrimeButton
+            class="m2 p-button-success"
+            type="button"
+            id="user-management-button"
+            icon="pi pi-sign-in"
+            label="Go to Premier's Awards Advanced User Management"
+            :href="adminURL"
+          ></PrimeButton>
+        </a>
+        <div class="dropdown" v-if="user.role !== 'nominator'">
           <label for="organization">Role:</label>
           <DropDown
             v-if="isSuperAdmin"
             id="organization"
             v-model="user.role"
-            :options="roles"
+            :options="dropdownRoles"
             optionLabel="text"
             optionValue="value"
             placeholder="Select a Role"
@@ -224,11 +306,14 @@
             optionValue="value"
             placeholder="Select a Role"
           />
-          <small class="p-error" v-if="submitted && !user.role"
-            >Role is required.</small
-          >
         </div>
         <template #footer>
+          <small v-if="user.role === 'nominator'"
+            ><p class="p-error">
+              Nominators cannot have their role changed here. Please navigate to
+              Advanced User Management to modify nominator roles.
+            </p></small
+          >
           <PrimeButton
             label="Cancel"
             icon="pi pi-times"
@@ -236,7 +321,7 @@
             @click="hideDialog"
           />
           <PrimeButton
-            v-if="!selfAssignment(user.guid)"
+            v-if="!selfAssignment(user.guid) && user.role !== 'nominator'"
             label="Save"
             icon="pi pi-check"
             class="p-button-text"
@@ -291,9 +376,19 @@ export default {
     const isSuperAdmin = userStore.isSuperAdmin;
     const dt = ref();
     const roles = ref(formServices.get("roles") || []);
-    const adminRoles = (formServices.get("roles") || []).filter(
-      (item) => item.value !== "super-administrator"
+    const dropdownRoles = (formServices.get("roles") || []).filter(
+      (item) => item.value !== "nominator"
     );
+    const adminRoles = (formServices.get("roles") || [])
+      .filter((item) => item.value !== "super-administrator")
+      .filter((item) => item.value !== "nominator");
+
+    const adminURL =
+      process.env.NODE_ENV === "production"
+        ? `https://premiersawards.gww.gov.bc.ca/nominations/admin/user/list`
+        : process.env.NODE_ENV === "dev"
+        ? "https://engagement.gww.gov.bc.ca/nominations/admin/user/list"
+        : "http://localhost:3002/event-registrations/admin/user/list";
 
     const selfAssignment = (guid) => {
       const user = userStore.getUser;
@@ -361,12 +456,39 @@ export default {
       submitted.value = false;
     };
 
+    const toggleRegistrar = async function (userData) {
+      user.value = userData;
+
+      let registrarStatus = userData.eventregistrar ? false : true;
+      userStore
+        .updateUser(user.value["guid"], { eventregistrar: registrarStatus })
+        .then(() => {
+          user.value = {};
+        })
+        .then(load())
+        .catch((error) => {
+          console.log(error);
+        })
+        .finally(() => {
+          load();
+        });
+    };
+
     const saveUser = async function (event) {
       event.preventDefault();
       submitted.value = true;
+      let eligibleRegistrar = false;
+      if (user.value.role !== "inactive" && user.value.role !== undefined) {
+        eligibleRegistrar = true;
+      }
 
-      userStore
+      await userStore
         .updateUser(user.value["guid"], user.value)
+        .then(async () => {
+          await userStore.updateUser(user.value["guid"], {
+            eventregistrar: eligibleRegistrar,
+          });
+        })
         .then(() => {
           userDialog.value = false;
           user.value = {};
@@ -417,14 +539,21 @@ export default {
       deleteUser,
       user,
       roles,
+      dropdownRoles,
       adminRoles,
       submitted,
       hideDialog,
       deleteUserDialog,
+      adminURL,
+      toggleRegistrar,
     };
   },
   components: { PageHeader },
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+#user-management-button {
+  margin-bottom: 1em;
+}
+</style>

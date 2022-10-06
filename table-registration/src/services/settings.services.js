@@ -291,6 +291,7 @@ const schemaData = {
       operator: FilterOperator.AND,
       constraints: [{ value: null, matchMode: FilterMatchMode.CONTAINS }],
     },
+    eventregistrar: { value: null, matchMode: FilterMatchMode.EQUALS },
   },
 };
 

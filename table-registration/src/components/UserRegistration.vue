@@ -10,6 +10,21 @@
         You are currently registered as a(n) <b>{{ user.role }}</b
         >.
       </p>
+      <p
+        v-if="
+          (user.role !== 'inactive' &&
+            user.eventregistrar === false &&
+            !isAdmin) ||
+          user.eventregistrar === undefined
+        "
+      >
+        Your profile is not currently eligible to submit and event registration.
+        If you believe this is a mistake, please contact
+        <a href="mailto: PremiersAwards@gov.bc.ca">PremiersAwards@gov.bc.ca</a>.
+      </p>
+      <p v-else-if="user.role !== 'inactive' && user.eventregistrar === true">
+        You are currently eligible to submit an event registration.
+      </p>
     </PrimeMessage>
     <PrimeMessage
       show

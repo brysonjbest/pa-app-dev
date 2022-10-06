@@ -13,6 +13,7 @@ export const useAuthUserStore = defineStore({
         lastname: "",
         email: "",
         role: "",
+        eventregistrar: false,
       },
       users: [],
     };
@@ -32,8 +33,7 @@ export const useAuthUserStore = defineStore({
 
     isRegistrar() {
       return (
-        this.user.role === "registrar" ||
-        this.user.role === "nominator" ||
+        (this.user.eventregistrar === true && this.user.role !== "inactive") ||
         this.user.role === "administrator" ||
         this.user.role === "super-administrator"
       );
@@ -85,6 +85,7 @@ export const useAuthUserStore = defineStore({
           email = "",
           createdAt = "",
           updatedAt = "",
+          eventregistrar = false,
         } = data || {};
         const updatedTS = new Date(updatedAt);
         const createdTS = new Date(createdAt);
@@ -98,6 +99,7 @@ export const useAuthUserStore = defineStore({
           email: email,
           created: createdTS,
           updated: updatedTS,
+          eventregistrar: eventregistrar,
         };
       });
     },
