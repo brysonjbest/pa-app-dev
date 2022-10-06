@@ -42,7 +42,7 @@ export default {
             class: "dropdown-account-item",
           },
           {
-            label: "Update Profile",
+            label: "View Profile",
             to: "/user/update/",
             visible: () => userStore.isRegistrar,
             class: "dropdown-account-item",

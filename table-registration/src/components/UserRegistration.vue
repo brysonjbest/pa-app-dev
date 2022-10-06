@@ -39,6 +39,7 @@
             title="first name"
             v-model="user.firstname"
             placeholder="Enter user's given name"
+            :disabled="edit && !isAdmin"
           >
           </InputText>
 
@@ -47,6 +48,7 @@
             title="last name"
             v-model="user.lastname"
             placeholder="Enter user's last name"
+            :disabled="edit && !isAdmin"
           />
 
           <InputText
@@ -55,10 +57,11 @@
             id="input-user-register-email"
             v-model="user.email"
             placeholder="Enter user's email"
+            :disabled="edit && !isAdmin"
           >
           </InputText>
           <PrimeButton
-            v-if="edit"
+            v-if="edit && isAdmin"
             @click="update"
             :disabled="!validation"
             class="m-2"
@@ -68,7 +71,7 @@
           >
 
           <PrimeButton
-            v-else
+            v-else-if="!edit && !isAdmin"
             @click="register"
             :disabled="!validation"
             class="m-2"
@@ -77,6 +80,15 @@
             >Register</PrimeButton
           >
         </form>
+        <small v-if="!isAdmin && edit">
+          <p class="p-error">
+            Please contact
+            <a href="mailto: PremiersAwards@gov.bc.ca"
+              >PremiersAwards@gov.bc.ca</a
+            >
+            if you need to update your personal profile information.
+          </p>
+        </small>
       </template>
     </PrimeCard>
   </div>
@@ -115,6 +127,15 @@ export default {
       const valid =
         user.value.email && user.value.firstname && user.value.lastname;
       return valid;
+    });
+
+    const isAdmin = computed(() => {
+      const admin =
+        user.value.role === "administrator" ||
+        user.value.role === "super-administrator"
+          ? true
+          : false;
+      return admin;
     });
 
     //Data check and handling
@@ -184,6 +205,7 @@ export default {
       register,
       update,
       activeMessage,
+      isAdmin,
     };
   },
 };
