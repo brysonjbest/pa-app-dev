@@ -90,7 +90,7 @@
         >
           <template #body="{ data }">
             {{ lookup("organizations", data.organization) }} </template
-          ><template #filter="{ filterModel }">
+          ><template #filter="{ filterModel }" v-if="adminView">
             <DropDown
               v-model="filterModel.value"
               :options="organizationsFilter"
@@ -117,7 +117,7 @@
         >
         <PrimeColumn field="firstname" header="First Name" key="firstname">
           <template #body="{ data }"> {{ data.firstname }} </template
-          ><template #filter="{ filterModel }">
+          ><template #filter="{ filterModel }" v-if="adminView">
             <InputText
               type="text"
               v-model="filterModel.value"
@@ -127,7 +127,7 @@
         ></PrimeColumn>
         <PrimeColumn field="lastname" header="Last Name" key="lastname">
           <template #body="{ data }"> {{ data.lastname }} </template
-          ><template #filter="{ filterModel }">
+          ><template #filter="{ filterModel }" v-if="adminView">
             <InputText
               type="text"
               v-model="filterModel.value"
@@ -142,7 +142,7 @@
         >
           <template #body="{ data }">
             {{ lookup("attendancetypes", data.attendancetype) }} </template
-          ><template #filter="{ filterModel }">
+          ><template #filter="{ filterModel }" v-if="adminView">
             <DropDown
               v-model="filterModel.value"
               :options="attendancetypesFilter"
@@ -180,7 +180,7 @@
             {{
               lookupLoop("accessibilityoptions", data.accessibility)
             }} </template
-          ><template #filter="{ filterModel }">
+          ><template #filter="{ filterModel }" v-if="adminView">
             <DropDown
               v-model="filterModel.value"
               :options="accessibilityFilter"
@@ -216,7 +216,7 @@
         >
           <template #body="{ data }">
             {{ lookupLoop("dietaryoptions", data.dietary) }} </template
-          ><template #filter="{ filterModel }">
+          ><template #filter="{ filterModel }" v-if="adminView">
             <DropDown
               v-model="filterModel.value"
               :options="dietaryFilter"

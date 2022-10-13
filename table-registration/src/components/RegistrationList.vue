@@ -87,7 +87,7 @@
           <template #body="{ data }">
             {{ lookup("organizations", data.organization) }}
           </template>
-          <template #filter="{ filterModel }">
+          <template #filter="{ filterModel }" v-if="adminView">
             <DropDown
               v-model="filterModel.value"
               :options="organizations"
@@ -118,7 +118,7 @@
           :header="col.text"
           :key="col.field"
         >
-          <template #filter="{ filterModel }">
+          <template #filter="{ filterModel }" v-if="adminView">
             <InputText
               type="text"
               v-model="filterModel.value"
