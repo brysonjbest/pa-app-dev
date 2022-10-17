@@ -89,7 +89,9 @@
           key="organization"
         >
           <template #body="{ data }">
-            {{ lookup("organizations", data.organization) }} </template
+            {{
+              lookup("organizations", data.organization) || data.organization
+            }} </template
           ><template #filter="{ filterModel }" v-if="adminView">
             <DropDown
               v-model="filterModel.value"
@@ -367,17 +369,21 @@
       >
         <div class="dropdown">
           <label for="organization">Organization:</label>
-          <DropDown
+          <AutoComplete
             v-bind:class="{ 'p-invalid': v$.organization.$error }"
-            id="organization"
             v-model="guest.organization"
-            :options="organizations"
+            :dropdown="true"
+            :suggestions="filteredOrganizations"
+            @complete="searchOrganization($event)"
+            placeholder="Select an organization or enter manually"
             optionLabel="text"
-            optionValue="value"
-            name="organization"
-            title="Organization"
-            placeholder="Select an Organization"
-          />
+            field="text"
+            modelValue="text"
+          >
+            <template #option="slotProps">
+              <div>{{ slotProps.option.text }}</div>
+            </template></AutoComplete
+          >
           <small
             v-if="v$.organization.$error"
             class="p-error"
@@ -590,6 +596,7 @@ export default {
     const attendancetypes = ref(formServices.get("attendancetypes") || []);
     const accessibility = ref(formServices.get("accessibilityoptions") || []);
     const dietary = ref(formServices.get("dietaryoptions") || []);
+    const filteredOrganizations = ref();
 
     const userStore = useAuthUserStore();
     const dt = ref();
@@ -598,6 +605,23 @@ export default {
     const messageText = ref({ severity: null, text: "" });
     const financialStore = useFinancialStore();
     const tableStore = useTablesStore();
+
+    //filters organizations on drop-down
+    const searchOrganization = (event) => {
+      setTimeout(() => {
+        if (!event.query.trim().length) {
+          filteredOrganizations.value = organizations.value;
+        } else {
+          filteredOrganizations.value = organizations.value.filter(
+            (organization) => {
+              return organization.text
+                .toLowerCase()
+                .startsWith(event.query.toLowerCase());
+            }
+          );
+        }
+      }, 100);
+    };
 
     //Conditionally Fill DataList
     const fillList = async function () {
@@ -691,6 +715,7 @@ export default {
         );
       });
       dt.value.exportCSV();
+      loadLazyData();
     };
 
     const lookup = function (key, value) {
@@ -760,6 +785,10 @@ export default {
       submitted.value = true;
       const isFormCorrect = await v$.value.$validate();
       if (!isFormCorrect) return;
+      guest.value["organization"] =
+        typeof guest.value["organization"] === "string"
+          ? guest.value["organization"]
+          : guest.value["organization"]["value"];
 
       guestStore
         .updateGuest(guest.value["_id"], guest.value)
@@ -882,6 +911,8 @@ export default {
       loadLazyData,
       router,
       userStore,
+      filteredOrganizations,
+      searchOrganization,
     };
   },
 };
