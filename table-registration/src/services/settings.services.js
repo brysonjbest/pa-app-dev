@@ -106,7 +106,7 @@ const schemaData = {
       value: "org-18",
       text: "Ministry of Land, Water and Resource Stewardship",
     },
-    { value: "org-19", text: "Ministry of Mental Health & Addictions" },
+    { value: "org-19", text: "Ministry of Mental Health and Addictions" },
     { value: "org-20", text: "Ministry of Municipal Affairs" },
     {
       value: "org-21",
