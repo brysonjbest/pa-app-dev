@@ -366,6 +366,10 @@
         header="Guest Details"
         :modal="true"
         class="p-fluid"
+        @show="
+          () =>
+            (guest.organization = lookup('organizations', guest.organization))
+        "
       >
         <div class="dropdown">
           <label for="organization">Organization:</label>
@@ -695,7 +699,8 @@ export default {
     const exportCSV = () => {
       dt.value.value.map((each) => {
         const organization = {
-          organization: lookup("organizations", each.organization),
+          organization:
+            lookup("organizations", each.organization) || each.organization,
         };
         const dietary = {
           dietary: lookupLoop("dietaryoptions", each.dietary),
